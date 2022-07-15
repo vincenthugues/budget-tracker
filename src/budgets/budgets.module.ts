@@ -5,8 +5,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Budget, BudgetSchema } from './schemas/budget.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Budget.name, schema: BudgetSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: Budget.name, schema: BudgetSchema }]),
+  ],
   controllers: [BudgetsController],
-  providers: [BudgetsService]
+  providers: [BudgetsService],
 })
 export class BudgetsModule {}

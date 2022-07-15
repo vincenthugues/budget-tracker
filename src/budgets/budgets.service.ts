@@ -7,7 +7,9 @@ import { Budget, BudgetDocument } from './schemas/budget.schema';
 
 @Injectable()
 export class BudgetsService {
-  constructor(@InjectModel(Budget.name) private budgetModel: Model<BudgetDocument>) {}
+  constructor(
+    @InjectModel(Budget.name) private budgetModel: Model<BudgetDocument>,
+  ) {}
 
   async create(createBudgetDto: CreateBudgetDto): Promise<Budget> {
     const createdBudget = new this.budgetModel(createBudgetDto);
@@ -19,14 +21,14 @@ export class BudgetsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} budget`;
+    return `returns #${id} budget`;
   }
 
   update(id: number, updateBudgetDto: UpdateBudgetDto) {
-    return `This action updates a #${id} budget`;
+    return `updates #${id} budget`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} budget`;
+    return `removes #${id} budget`;
   }
 }

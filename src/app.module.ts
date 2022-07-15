@@ -4,8 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BudgetsModule } from './budgets/budgets.module';
 
+const MONGODB_CONNECTION_URI = 'mongodb://localhost/nest';
+
 @Module({
-  imports: [MongooseModule.forRoot('mongodb://localhost/nest'), BudgetsModule],
+  imports: [MongooseModule.forRoot(MONGODB_CONNECTION_URI), BudgetsModule],
   controllers: [AppController],
   providers: [AppService],
 })

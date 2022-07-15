@@ -1,18 +1,85 @@
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Model } from 'mongoose';
+import {
+  dropInMemoryMongoCollections,
+  inMemoryMongoConnection,
+  setupInMemoryMongo,
+  teardownInMemoryMongo,
+} from '../../test/utils/inMemoryMongo';
+import { BudgetsController } from './budgets.controller';
 import { BudgetsService } from './budgets.service';
+import { Budget, BudgetSchema } from './schemas/budget.schema';
 
 describe('BudgetsService', () => {
-  let service: BudgetsService;
+  let budgetsController: BudgetsController;
+  let budgetsService: BudgetsService;
+  let budgetModel: Model<Budget>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [BudgetsService],
+  beforeAll(async () => {
+    await setupInMemoryMongo();
+    budgetModel = inMemoryMongoConnection.model(Budget.name, BudgetSchema);
+
+    const moduleRef: TestingModule = await Test.createTestingModule({
+      controllers: [BudgetsController],
+      providers: [
+        BudgetsService,
+        { provide: getModelToken(Budget.name), useValue: budgetModel },
+      ],
     }).compile();
 
-    service = module.get<BudgetsService>(BudgetsService);
+    budgetsController = moduleRef.get<BudgetsController>(BudgetsController);
+    budgetsService = moduleRef.get<BudgetsService>(BudgetsService);
+  });
+
+  afterEach(async () => {
+    await dropInMemoryMongoCollections();
+  });
+
+  afterAll(async () => {
+    await teardownInMemoryMongo();
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(budgetsService).toBeDefined();
+  });
+
+  describe('create', () => {
+    it('should return the saved object', async () => {
+      const budgetStub = {
+        name: 'New Budget',
+        externalId: 'abd123',
+      };
+      const createdBudget = await budgetsService.create({
+        name: 'New Budget',
+        externalId: 'abd123',
+      });
+
+      expect(createdBudget.name).toBe(budgetStub.name);
+    });
+
+    // it('should throw AlreadyExists (Bad Request - 400) exception', async () => {
+    //   const budgetStub = {
+    //     name: 'New Budget',
+    //     externalId: 'abd123',
+    //   };
+
+    //   await new budgetModel(budgetStub).save();
+
+    //   await expect(budgetsService.create(budgetStub)).rejects.toThrow();
+    // });
+  });
+
+  describe('findAll', () => {
+    it('should return an array of budgets', async () => {
+      const budgetStub = {
+        name: 'New Budget',
+        externalId: 'abd123',
+      };
+
+      await new budgetModel(budgetStub).save();
+
+      expect(await budgetsService.findAll()).toMatchObject([budgetStub]);
+    });
   });
 });

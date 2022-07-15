@@ -2,8 +2,8 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateBudgetDto {
   @IsNotEmpty()
-  name: string;
+  readonly name: string;
 
   @IsNotEmpty()
-  externalId: string;
+  readonly externalId: string;
 }
