@@ -20,15 +20,15 @@ export class BudgetsService {
     return this.budgetModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `returns #${id} budget`;
+  findOne(id: string) {
+    return this.budgetModel.findById(id).exec();
   }
 
-  update(id: number, updateBudgetDto: UpdateBudgetDto) {
-    return `updates #${id} budget`;
+  update(id: string, updateBudgetDto: UpdateBudgetDto) {
+    return `updates ${id} budget`;
   }
 
-  remove(id: number) {
-    return `removes #${id} budget`;
+  remove(id: string) {
+    return `removes ${id} budget`;
   }
 }

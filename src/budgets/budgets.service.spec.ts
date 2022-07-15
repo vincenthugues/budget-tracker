@@ -1,4 +1,4 @@
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
 import {
@@ -80,6 +80,27 @@ describe('BudgetsService', () => {
       await new budgetModel(budgetStub).save();
 
       expect(await budgetsService.findAll()).toMatchObject([budgetStub]);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return a budget if given a valid id', async () => {
+      const budgetStub = {
+        name: 'New Budget',
+        externalId: 'abd123',
+      };
+
+      const savedBudget = await new budgetModel(budgetStub).save();
+
+      expect(await budgetsService.findOne(savedBudget.id)).toMatchObject(
+        budgetStub,
+      );
+    });
+
+    it('should return null otherwise', async () => {
+      expect(
+        await budgetsService.findOne('ffffffffffffffffffffffff'),
+      ).toBeNull();
     });
   });
 });
