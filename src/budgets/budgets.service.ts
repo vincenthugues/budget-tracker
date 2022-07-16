@@ -25,10 +25,10 @@ export class BudgetsService {
   }
 
   update(id: string, updateBudgetDto: UpdateBudgetDto) {
-    return `updates ${id} budget`;
+    return this.budgetModel.findOneAndUpdate({ id }, updateBudgetDto);
   }
 
   remove(id: string) {
-    return `removes ${id} budget`;
+    return this.budgetModel.deleteOne({ id });
   }
 }

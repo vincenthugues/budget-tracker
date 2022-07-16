@@ -103,4 +103,50 @@ describe('BudgetsService', () => {
       ).toBeNull();
     });
   });
+
+  describe('update', () => {
+    it('should update a budget if given a valid id', async () => {
+      const budgetStub = {
+        name: 'Budget',
+        externalId: 'abd123',
+      };
+
+      const savedBudget = await new budgetModel(budgetStub).save();
+
+      expect(
+        await budgetsService.update(savedBudget.id, {
+          name: 'Budget (updated)',
+        }),
+      ).toMatchObject(budgetStub);
+    });
+
+    it('should return null otherwise', async () => {
+      expect(
+        await budgetsService.update('ffffffffffffffffffffffff', {
+          name: 'Budget (updated)',
+        }),
+      ).toBeNull();
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove a budget if given a valid id', async () => {
+      const budgetStub = {
+        name: 'Budget',
+        externalId: 'abd123',
+      };
+      const savedBudget = await new budgetModel(budgetStub).save();
+
+      expect((await budgetsService.remove(savedBudget.id)).deletedCount).toBe(
+        1,
+      );
+      expect((await budgetModel.find().exec()).length).toBe(0);
+    });
+
+    it('should return null otherwise', async () => {
+      expect(
+        (await budgetsService.remove('ffffffffffffffffffffffff')).deletedCount,
+      ).toBe(0);
+    });
+  });
 });

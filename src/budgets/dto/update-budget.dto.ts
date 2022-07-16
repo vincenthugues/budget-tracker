@@ -1,3 +1,5 @@
 import { CreateBudgetDto } from './create-budget.dto';
 
-export type UpdateBudgetDto = Pick<CreateBudgetDto, 'name' | 'externalId'>;
+export type UpdateBudgetDto = Partial<
+  Pick<CreateBudgetDto, 'name' | 'externalId'>
+>;
