@@ -25,7 +25,9 @@ export class BudgetsService {
   }
 
   update(id: string, updateBudgetDto: UpdateBudgetDto) {
-    return this.budgetModel.findOneAndUpdate({ id }, updateBudgetDto);
+    return this.budgetModel.findOneAndUpdate({ id }, updateBudgetDto, {
+      new: true,
+    });
   }
 
   remove(id: string) {

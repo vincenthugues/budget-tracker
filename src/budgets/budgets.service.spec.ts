@@ -110,14 +110,18 @@ describe('BudgetsService', () => {
         name: 'Budget',
         externalId: 'abd123',
       };
-
       const savedBudget = await new budgetModel(budgetStub).save();
 
+      const budgetPatch = {
+        name: 'Budget (updated)',
+        startingDate: new Date('2020-01-15'),
+      };
       expect(
-        await budgetsService.update(savedBudget.id, {
-          name: 'Budget (updated)',
-        }),
-      ).toMatchObject(budgetStub);
+        await budgetsService.update(savedBudget.id, budgetPatch),
+      ).toMatchObject({
+        ...budgetStub,
+        ...budgetPatch,
+      });
     });
 
     it('should return null otherwise', async () => {
