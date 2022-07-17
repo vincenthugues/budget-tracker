@@ -45,27 +45,51 @@ describe('BudgetsController', () => {
   describe('[POST]', () => {
     it('should return the saved object', async () => {
       const budgetStub = {
-        name: 'New Budget',
+        name: 'New budget',
         externalId: 'abd123',
+        startingDate: new Date('2022-01-15'),
       };
-      const createdBudget = await budgetsController.create({
-        name: 'New Budget',
-        externalId: 'abd123',
-      });
+      const createdBudget = await budgetsController.create(budgetStub);
 
-      expect(createdBudget.name).toBe(budgetStub.name);
+      expect(createdBudget).toMatchObject(budgetStub);
     });
 
-    // it('should throw AlreadyExists (Bad Request - 400) exception', async () => {
-    //   const budgetStub = {
-    //     name: 'New Budget',
-    //     externalId: 'abd123',
-    //   };
+    it('should fail if the name is empty', async () => {
+      const budgetStub = {
+        name: '',
+        externalId: 'abd123',
+        startingDate: new Date('2022-01-15'),
+      };
 
-    //   await new budgetModel(budgetStub).save();
+      expect(budgetsController.create(budgetStub)).rejects.toThrowError(
+        'Budget validation failed: name: Path `name` is required.',
+      );
+    });
 
-    //   await expect(budgetsController.create(budgetStub)).rejects.toThrow();
-    // });
+    it('should fail if the externalId is empty', async () => {
+      const budgetStub = {
+        name: 'New budget',
+        externalId: '',
+        startingDate: new Date('2022-01-15'),
+      };
+
+      expect(budgetsController.create(budgetStub)).rejects.toThrowError(
+        'Budget validation failed: externalId: Path `externalId` is required.',
+      );
+    });
+
+    it('should work if the startingDate is empty', async () => {
+      const budgetStub = {
+        name: 'New budget',
+        externalId: 'abc123',
+        startingDate: null,
+      };
+
+      expect(await budgetsController.create(budgetStub)).toMatchObject({
+        name: 'New budget',
+        externalId: 'abc123',
+      });
+    });
   });
 
   describe('[GET]', () => {

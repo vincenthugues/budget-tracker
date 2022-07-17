@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsDateString, IsOptional } from 'class-validator';
 import { Document } from 'mongoose';
 
 export type BudgetDocument = Budget & Document;
@@ -15,6 +16,8 @@ export class Budget {
   externalId: string;
 
   @Prop({ type: Date })
+  @IsOptional()
+  @IsDateString()
   startingDate?: Date;
 }
 

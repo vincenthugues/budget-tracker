@@ -1,5 +1,6 @@
+import { PartialType, PickType } from '@nestjs/mapped-types';
 import { CreateBudgetDto } from './create-budget.dto';
 
-export type UpdateBudgetDto = Partial<
-  Pick<CreateBudgetDto, 'name' | 'externalId' | 'startingDate'>
->;
+export class UpdateBudgetDto extends PartialType(
+  PickType(CreateBudgetDto, ['name', 'externalId', 'startingDate'] as const),
+) {}
