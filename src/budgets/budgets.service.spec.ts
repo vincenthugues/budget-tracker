@@ -12,7 +12,6 @@ import { BudgetsService } from './budgets.service';
 import { Budget, BudgetSchema } from './schemas/budget.schema';
 
 describe('BudgetsService', () => {
-  let budgetsController: BudgetsController;
   let budgetsService: BudgetsService;
   let budgetModel: Model<Budget>;
 
@@ -28,7 +27,6 @@ describe('BudgetsService', () => {
       ],
     }).compile();
 
-    budgetsController = moduleRef.get<BudgetsController>(BudgetsController);
     budgetsService = moduleRef.get<BudgetsService>(BudgetsService);
   });
 

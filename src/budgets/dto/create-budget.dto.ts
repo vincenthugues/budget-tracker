@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsDateString, IsNotEmpty } from 'class-validator';
 
 export class CreateBudgetDto {
   @IsNotEmpty()
@@ -6,4 +6,7 @@ export class CreateBudgetDto {
 
   @IsNotEmpty()
   readonly externalId: string;
+
+  @IsDateString()
+  readonly startingDate?: Date;
 }

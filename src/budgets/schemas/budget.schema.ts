@@ -13,6 +13,9 @@ export class Budget {
 
   @Prop({ required: true })
   externalId: string;
+
+  @Prop({ type: Date })
+  startingDate?: Date;
 }
 
 export const BudgetSchema = SchemaFactory.createForClass(Budget);
