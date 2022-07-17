@@ -45,17 +45,16 @@ describe('BudgetsService', () => {
   });
 
   describe('create', () => {
-    it('should return the saved object', async () => {
+    it('should return the saved object with timestamps', async () => {
       const budgetStub = {
         name: 'New Budget',
         externalId: 'abd123',
       };
-      const createdBudget = await budgetsService.create({
-        name: 'New Budget',
-        externalId: 'abd123',
-      });
+      const createdBudget = await budgetsService.create(budgetStub);
 
-      expect(createdBudget.name).toBe(budgetStub.name);
+      expect(createdBudget).toMatchObject(budgetStub);
+      expect(createdBudget.createdAt).toBeDefined();
+      expect(createdBudget.updatedAt).toBeDefined();
     });
 
     // it('should throw AlreadyExists (Bad Request - 400) exception', async () => {

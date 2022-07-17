@@ -3,8 +3,11 @@ import { Document } from 'mongoose';
 
 export type BudgetDocument = Budget & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Budget {
+  createdAt: Date;
+  updatedAt: Date;
+
   @Prop({ required: true })
   name: string;
 
