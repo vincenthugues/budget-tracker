@@ -11,7 +11,7 @@ export class BudgetsService {
     @InjectModel(Budget.name) private budgetModel: Model<BudgetDocument>,
   ) {}
 
-  async create(createBudgetDto: CreateBudgetDto): Promise<Budget> {
+  create(createBudgetDto: CreateBudgetDto): Promise<Budget> {
     const createdBudget = new this.budgetModel(createBudgetDto);
     return createdBudget.save();
   }
