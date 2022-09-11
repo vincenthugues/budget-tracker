@@ -74,27 +74,28 @@ describe('CategoriesController', () => {
       );
     });
 
-    it('should fail if the externalId is empty', async () => {
+    it('should work if the externalId is undefined', async () => {
       const categoryStub = {
         ...CATEGORY_PAYLOAD,
-        externalId: '',
+        externalId: undefined,
       };
 
-      expect(categoriesController.create(categoryStub)).rejects.toThrowError(
-        'Category validation failed: externalId: Path `externalId` is required.',
-      );
+      expect(await categoriesController.create(categoryStub)).toMatchObject({
+        name: 'Coffee shop',
+        externalId: undefined,
+      });
     });
 
-    it('should work if parentCategory is empty', async () => {
+    it('should work if parentCategory is undefined', async () => {
       const categoryStub = {
         ...CATEGORY_PAYLOAD,
-        parentCategory: null,
+        parentCategory: undefined,
       };
 
       expect(await categoriesController.create(categoryStub)).toMatchObject({
         name: 'Coffee shop',
         externalId: 'abc123',
-        parentCategory: null,
+        parentCategory: undefined,
       });
     });
 

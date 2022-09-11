@@ -6,7 +6,7 @@ export class CreateCategoryDto {
   readonly name: string;
 
   @IsNotEmpty()
-  readonly externalId: string;
+  readonly externalId?: string;
 
   @IsMongoId()
   readonly parentCategory?: Types.ObjectId;

@@ -12,8 +12,9 @@ export class Category {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
-  externalId: string;
+  @Prop()
+  @IsOptional()
+  externalId?: string;
 
   @Prop()
   @IsOptional()
