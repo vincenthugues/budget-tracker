@@ -5,11 +5,12 @@ import { AppService } from './app.service';
 import { BudgetsModule } from './budgets/budgets.module';
 import { AccountsModule } from './accounts/accounts.module';
 import { CategoriesModule } from './categories/categories.module';
+import { PayeesModule } from './payees/payees.module';
 
 const MONGODB_CONNECTION_URI = 'mongodb://localhost/nest';
 
 @Module({
-  imports: [MongooseModule.forRoot(MONGODB_CONNECTION_URI), BudgetsModule, AccountsModule, CategoriesModule],
+  imports: [MongooseModule.forRoot(MONGODB_CONNECTION_URI), BudgetsModule, AccountsModule, CategoriesModule, PayeesModule],
   controllers: [AppController],
   providers: [AppService],
 })
