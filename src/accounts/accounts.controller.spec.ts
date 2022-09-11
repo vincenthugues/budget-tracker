@@ -68,27 +68,27 @@ describe('AccountsController', () => {
       );
     });
 
-    it('should fail if the externalId is empty', async () => {
+    it('should work if the externalId is undefined', async () => {
       const accountStub = {
         ...ACCOUNT_PAYLOAD,
-        externalId: '',
-      };
-
-      expect(accountsController.create(accountStub)).rejects.toThrowError(
-        'Account validation failed: externalId: Path `externalId` is required.',
-      );
-    });
-
-    it('should work if the type is empty', async () => {
-      const accountStub = {
-        ...ACCOUNT_PAYLOAD,
-        type: null,
+        externalId: undefined,
       };
 
       expect(await accountsController.create(accountStub)).toMatchObject({
         name: 'Compte Courant',
-        externalId: 'abc123',
-        type: null,
+        externalId: undefined,
+      });
+    });
+
+    it('should work if the type is undefined', async () => {
+      const accountStub = {
+        ...ACCOUNT_PAYLOAD,
+        type: undefined,
+      };
+
+      expect(await accountsController.create(accountStub)).toMatchObject({
+        name: 'Compte Courant',
+        type: undefined,
       });
     });
 

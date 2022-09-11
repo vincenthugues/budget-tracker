@@ -18,14 +18,15 @@ export class Account {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
-  externalId: string;
+  @Prop()
+  @IsOptional()
+  externalId?: string;
 
   // @Prop({ type: AccountType, enum: AccountType })
   @Prop()
   @IsEnum(AccountType)
   @IsOptional()
-  type: string;
+  type?: string;
 
   @Prop({ default: false })
   @IsOptional()
