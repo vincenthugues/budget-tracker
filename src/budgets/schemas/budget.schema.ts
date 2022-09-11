@@ -12,8 +12,9 @@ export class Budget {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
-  externalId: string;
+  @Prop()
+  @IsOptional()
+  externalId?: string;
 
   @Prop({ type: Date })
   @IsOptional()

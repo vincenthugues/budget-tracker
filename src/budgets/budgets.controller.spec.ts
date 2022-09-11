@@ -66,23 +66,23 @@ describe('BudgetsController', () => {
       );
     });
 
-    it('should fail if the externalId is empty', async () => {
+    it('should fail if the externalId is undefined', async () => {
       const budgetStub = {
         name: 'New budget',
-        externalId: '',
-        startingDate: new Date('2022-01-15'),
+        externalId: undefined,
       };
 
-      expect(budgetsController.create(budgetStub)).rejects.toThrowError(
-        'Budget validation failed: externalId: Path `externalId` is required.',
-      );
+      expect(await budgetsController.create(budgetStub)).toMatchObject({
+        name: 'New budget',
+        externalId: undefined,
+      });
     });
 
-    it('should work if the startingDate is empty', async () => {
+    it('should work if the startingDate is undefined', async () => {
       const budgetStub = {
         name: 'New budget',
         externalId: 'abc123',
-        startingDate: null,
+        startingDate: undefined,
       };
 
       expect(await budgetsController.create(budgetStub)).toMatchObject({
