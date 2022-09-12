@@ -1,4 +1,12 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { AccountType } from '../schemas/account.schema';
 
 export class CreateAccountDto {
   @IsNotEmpty()
@@ -7,8 +15,9 @@ export class CreateAccountDto {
   @IsString()
   readonly externalId?: string;
 
-  @IsString()
-  readonly type?: string;
+  @IsEnum(AccountType)
+  @IsOptional()
+  readonly type?: AccountType;
 
   @IsBoolean()
   readonly isClosed?: boolean;

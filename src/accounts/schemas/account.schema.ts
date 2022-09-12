@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsDateString, IsEnum, IsOptional } from 'class-validator';
+import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
 import { Document } from 'mongoose';
 
 export type AccountDocument = Account & Document;
 
 export enum AccountType {
-  CHECKING,
-  SAVINGS,
-  OTHER,
+  CHECKING = 'Checking',
+  SAVINGS = 'Savings',
+  OTHER = 'Other',
 }
 
 @Schema({ timestamps: true })
@@ -22,11 +22,10 @@ export class Account {
   @IsOptional()
   externalId?: string;
 
-  // @Prop({ type: AccountType, enum: AccountType })
-  @Prop()
+  @Prop({ type: String, enum: AccountType })
   @IsEnum(AccountType)
   @IsOptional()
-  type?: string;
+  type?: AccountType;
 
   @Prop({ default: false })
   @IsOptional()

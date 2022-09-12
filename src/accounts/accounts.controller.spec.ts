@@ -9,7 +9,7 @@ import {
 } from '../../test/utils/inMemoryMongo';
 import { AccountsController } from './accounts.controller';
 import { AccountsService } from './accounts.service';
-import { Account, AccountSchema } from './schemas/account.schema';
+import { Account, AccountSchema, AccountType } from './schemas/account.schema';
 
 describe('AccountsController', () => {
   let accountsController: AccountsController;
@@ -46,7 +46,7 @@ describe('AccountsController', () => {
     const ACCOUNT_PAYLOAD = {
       name: 'Compte Courant',
       externalId: 'abc123',
-      type: 'checking',
+      type: 'Other' as unknown as AccountType,
       isClosed: false,
       balance: 12345,
     };

@@ -9,7 +9,7 @@ import {
 } from '../../test/utils/inMemoryMongo';
 import { AccountsController } from './accounts.controller';
 import { AccountsService } from './accounts.service';
-import { Account, AccountSchema } from './schemas/account.schema';
+import { Account, AccountSchema, AccountType } from './schemas/account.schema';
 
 describe('AccountsService', () => {
   let accountsService: AccountsService;
@@ -47,7 +47,7 @@ describe('AccountsService', () => {
       const accountStub = {
         name: 'New Account',
         externalId: 'abc123',
-        type: 'checking',
+        type: 'Savings' as unknown as AccountType,
       };
       const createdAccount = await accountsService.create(accountStub);
 
