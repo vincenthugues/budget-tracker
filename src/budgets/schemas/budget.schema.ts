@@ -16,7 +16,7 @@ export class Budget {
   @IsOptional()
   externalId?: string;
 
-  @Prop({ type: Date })
+  @Prop()
   @IsOptional()
   @IsDateString()
   startingDate?: Date;

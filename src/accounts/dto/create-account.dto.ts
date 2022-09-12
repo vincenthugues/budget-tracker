@@ -9,10 +9,13 @@ import {
 import { AccountType } from '../schemas/account.schema';
 
 export class CreateAccountDto {
+  @IsString()
   @IsNotEmpty()
   readonly name: string;
 
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   readonly externalId?: string;
 
   @IsEnum(AccountType)
@@ -20,8 +23,10 @@ export class CreateAccountDto {
   readonly type?: AccountType;
 
   @IsBoolean()
+  @IsOptional()
   readonly isClosed?: boolean;
 
   @IsNumber()
+  @IsOptional()
   readonly balance?: number;
 }
