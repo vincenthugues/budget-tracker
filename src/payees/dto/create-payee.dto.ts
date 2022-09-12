@@ -1,9 +1,10 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreatePayeeDto {
   @IsNotEmpty()
   readonly name: string;
 
   @IsNotEmpty()
-  readonly externalId: string;
+  @IsOptional()
+  readonly externalId?: string;
 }
