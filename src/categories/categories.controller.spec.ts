@@ -9,7 +9,7 @@ import {
 } from '../../test/utils/inMemoryMongo';
 import { CategoriesController } from './categories.controller';
 import { CategoriesService } from './categories.service';
-import { Category, CategorySchema } from './schemas/category.entity';
+import { Category, CategorySchema } from './schemas/category.schema';
 
 describe('CategoriesController', () => {
   let categoriesController: CategoriesController;
