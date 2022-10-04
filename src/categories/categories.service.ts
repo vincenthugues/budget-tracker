@@ -20,17 +20,17 @@ export class CategoriesService {
     return this.categoryModel.find().exec();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.categoryModel.findById(id).exec();
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  update(id: string, updateCategoryDto: UpdateCategoryDto) {
     return this.categoryModel.findOneAndUpdate({ id }, updateCategoryDto, {
       new: true,
     });
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.categoryModel.deleteOne({ id });
   }
 }
