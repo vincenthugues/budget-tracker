@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,
@@ -96,7 +96,9 @@ describe('BudgetsService', () => {
 
     it('should return null otherwise', async () => {
       expect(
-        await budgetsService.findOne('ffffffffffffffffffffffff'),
+        await budgetsService.findOne(
+          new Types.ObjectId('ffffffffffffffffffffffff'),
+        ),
       ).toBeNull();
     });
   });
@@ -123,9 +125,12 @@ describe('BudgetsService', () => {
 
     it('should return null otherwise', async () => {
       expect(
-        await budgetsService.update('ffffffffffffffffffffffff', {
-          name: 'Budget (updated)',
-        }),
+        await budgetsService.update(
+          new Types.ObjectId('ffffffffffffffffffffffff'),
+          {
+            name: 'Budget (updated)',
+          },
+        ),
       ).toBeNull();
     });
   });
@@ -146,7 +151,11 @@ describe('BudgetsService', () => {
 
     it('should return null otherwise', async () => {
       expect(
-        (await budgetsService.remove('ffffffffffffffffffffffff')).deletedCount,
+        (
+          await budgetsService.remove(
+            new Types.ObjectId('ffffffffffffffffffffffff'),
+          )
+        ).deletedCount,
       ).toBe(0);
     });
   });

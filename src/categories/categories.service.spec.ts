@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model, ObjectId, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,
@@ -50,7 +50,8 @@ describe('CategoriesService', () => {
       const categoryStub = {
         name: 'Coffee shop',
         externalId: 'abc123',
-        parentCategory: '5e1a0651741b255ddda996c4' as unknown as Types.ObjectId,
+        parentCategoryId:
+          '5e1a0651741b255ddda996c4' as unknown as Types.ObjectId,
       };
       const createdCategory = await categoriesService.create(categoryStub);
 

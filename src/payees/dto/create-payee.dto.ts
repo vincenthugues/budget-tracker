@@ -6,7 +6,6 @@ export class CreatePayeeDto {
   readonly name: string;
 
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   readonly externalId?: string;
 }

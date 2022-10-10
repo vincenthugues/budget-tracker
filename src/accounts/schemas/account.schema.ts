@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 import { Document } from 'mongoose';
 
 export type AccountDocument = Account & Document;
@@ -29,11 +29,11 @@ export class Account {
 
   @Prop({ default: false })
   @IsOptional()
-  isClosed: boolean;
+  isClosed?: boolean;
 
   @Prop({ default: 0 })
   @IsOptional()
-  balance: number;
+  balance?: number;
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);

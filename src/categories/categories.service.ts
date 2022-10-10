@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category, CategoryDocument } from './schemas/category.schema';
@@ -11,26 +11,26 @@ export class CategoriesService {
     @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
   ) {}
 
-  create(createCategoryDto: CreateCategoryDto) {
+  create(createCategoryDto: CreateCategoryDto): Promise<Category> {
     const createdCategory = new this.categoryModel(createCategoryDto);
     return createdCategory.save();
   }
 
-  findAll() {
+  findAll(): Promise<Category[]> {
     return this.categoryModel.find().exec();
   }
 
-  findOne(id: string) {
+  findOne(id: Types.ObjectId): Promise<Category> {
     return this.categoryModel.findById(id).exec();
   }
 
-  update(id: string, updateCategoryDto: UpdateCategoryDto) {
+  update(id: Types.ObjectId, updateCategoryDto: UpdateCategoryDto) {
     return this.categoryModel.findOneAndUpdate({ id }, updateCategoryDto, {
       new: true,
     });
   }
 
-  remove(id: string) {
+  remove(id: Types.ObjectId) {
     return this.categoryModel.deleteOne({ id });
   }
 }

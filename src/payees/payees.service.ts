@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreatePayeeDto } from './dto/create-payee.dto';
 import { UpdatePayeeDto } from './dto/update-payee.dto';
 import { Payee, PayeeDocument } from './schemas/payee.schema';
@@ -16,21 +16,21 @@ export class PayeesService {
     return createdPayee.save();
   }
 
-  findAll() {
+  findAll(): Promise<Payee[]> {
     return this.payeeModel.find().exec();
   }
 
-  findOne(id: string) {
+  findOne(id: Types.ObjectId): Promise<Payee> {
     return this.payeeModel.findById(id).exec();
   }
 
-  update(id: string, updatePayeeDto: UpdatePayeeDto) {
+  update(id: Types.ObjectId, updatePayeeDto: UpdatePayeeDto) {
     return this.payeeModel.findOneAndUpdate({ id }, updatePayeeDto, {
       new: true,
     });
   }
 
-  remove(id: string) {
+  remove(id: Types.ObjectId) {
     return this.payeeModel.deleteOne({ id });
   }
 }

@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Type } from 'class-transformer';
 import { IsBoolean, IsDateString, IsNumber, IsOptional } from 'class-validator';
-import { SchemaTypes, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Transaction {
@@ -16,22 +15,34 @@ export class Transaction {
   @IsNumber()
   amount: number;
 
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
-  account: Types.ObjectId;
+  @Prop({
+    required: true,
+    type: Types.ObjectId,
+    ref: 'Account',
+  })
+  accountId: string;
 
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
-  payee: Types.ObjectId;
+  @Prop({
+    required: true,
+    type: Types.ObjectId,
+    ref: 'Payee',
+  })
+  payeeId: string;
 
-  @Prop({ type: SchemaTypes.ObjectId, required: true })
-  category: Types.ObjectId;
+  @Prop({
+    required: true,
+    type: Types.ObjectId,
+    ref: 'Category',
+  })
+  categoryId: string;
 
   @Prop({ required: true, default: false })
   @IsBoolean()
-  isCleared: Boolean;
+  isCleared: boolean;
 
   @Prop({ required: true, default: false })
   @IsBoolean()
-  isDeleted: Boolean;
+  isDeleted: boolean;
 
   @Prop()
   @IsOptional()
@@ -39,7 +50,7 @@ export class Transaction {
 
   @Prop()
   @IsOptional()
-  notes?: String;
+  notes?: string;
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);

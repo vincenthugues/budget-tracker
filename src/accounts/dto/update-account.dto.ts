@@ -1,4 +1,31 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateAccountDto } from './create-account.dto';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { AccountType } from '../schemas/account.schema';
 
-export class UpdateAccountDto extends PartialType(CreateAccountDto) {}
+export class UpdateAccountDto {
+  @IsString()
+  @IsOptional()
+  readonly name?: string;
+
+  @IsString()
+  @IsOptional()
+  readonly externalId?: string;
+
+  @IsEnum(AccountType)
+  @IsOptional()
+  readonly type?: AccountType;
+
+  @IsBoolean()
+  @IsOptional()
+  readonly isClosed?: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  readonly balance?: number;
+}

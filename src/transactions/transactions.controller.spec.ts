@@ -1,12 +1,13 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
+import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Transaction, TransactionSchema } from './schemas/transaction.schema';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsService } from './transactions.service';
@@ -15,12 +16,12 @@ describe('TransactionsController', () => {
   let transactionsController: TransactionsController;
   let transactionModel: Model<Transaction>;
 
-  const TRANSACTION_PAYLOAD = {
+  const TRANSACTION_PAYLOAD: CreateTransactionDto = {
     date: new Date('2022-01-15'),
     amount: 123,
-    account: new Types.ObjectId('5e1a0651741b255ddda996c4'),
-    payee: new Types.ObjectId('5e1a0651741b255ddda996c4'),
-    category: new Types.ObjectId('5e1a0651741b255ddda996c4'),
+    accountId: '5e1a0651741b255ddda996c4',
+    payeeId: '5e1a0651741b255ddda996c4',
+    categoryId: '5e1a0651741b255ddda996c4',
     isCleared: true,
     isDeleted: false,
     externalId: 'abc123',
@@ -97,42 +98,42 @@ describe('TransactionsController', () => {
       );
     });
 
-    it('should fail if the account is empty', async () => {
+    it('should fail if the accountId is empty', async () => {
       const transactionStub = {
         ...TRANSACTION_PAYLOAD,
-        account: null,
+        accountId: null,
       };
 
       expect(
         transactionsController.create(transactionStub),
       ).rejects.toThrowError(
-        'Transaction validation failed: account: Path `account` is required.',
+        'Transaction validation failed: accountId: Path `accountId` is required.',
       );
     });
 
-    it('should fail if the payee is empty', async () => {
+    it('should fail if the payeeId is empty', async () => {
       const transactionStub = {
         ...TRANSACTION_PAYLOAD,
-        payee: null,
+        payeeId: null,
       };
 
       expect(
         transactionsController.create(transactionStub),
       ).rejects.toThrowError(
-        'Transaction validation failed: payee: Path `payee` is required.',
+        'Transaction validation failed: payeeId: Path `payeeId` is required.',
       );
     });
 
-    it('should fail if the category is empty', async () => {
+    it('should fail if the categoryId is empty', async () => {
       const transactionStub = {
         ...TRANSACTION_PAYLOAD,
-        category: null,
+        categoryId: null,
       };
 
       expect(
         transactionsController.create(transactionStub),
       ).rejects.toThrowError(
-        'Transaction validation failed: category: Path `category` is required',
+        'Transaction validation failed: categoryId: Path `categoryId` is required',
       );
     });
 

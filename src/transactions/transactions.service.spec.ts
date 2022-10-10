@@ -7,6 +7,7 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
+import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Transaction, TransactionSchema } from './schemas/transaction.schema';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsService } from './transactions.service';
@@ -14,12 +15,12 @@ import { TransactionsService } from './transactions.service';
 describe('TransactionsService', () => {
   let transactionsService: TransactionsService;
   let transactionModel: Model<Transaction>;
-  const TRANSACTION_PAYLOAD = {
+  const TRANSACTION_PAYLOAD: CreateTransactionDto = {
     date: new Date('2022-01-15'),
     amount: 123,
-    account: new Types.ObjectId('5e1a0651741b255ddda996c4'),
-    payee: new Types.ObjectId('5e1a0651741b255ddda996c4'),
-    category: new Types.ObjectId('5e1a0651741b255ddda996c4'),
+    accountId: '5e1a0651741b255ddda996c4',
+    payeeId: '5e1a0651741b255ddda996c4',
+    categoryId: '5e1a0651741b255ddda996c4',
   };
 
   beforeAll(async () => {
@@ -91,7 +92,9 @@ describe('TransactionsService', () => {
 
     it('should return null otherwise', async () => {
       expect(
-        await transactionsService.findOne('ffffffffffffffffffffffff'),
+        await transactionsService.findOne(
+          new Types.ObjectId('ffffffffffffffffffffffff'),
+        ),
       ).toBeNull();
     });
   });
@@ -116,9 +119,12 @@ describe('TransactionsService', () => {
 
     it('should return null otherwise', async () => {
       expect(
-        await transactionsService.update('ffffffffffffffffffffffff', {
-          amount: 1234,
-        }),
+        await transactionsService.update(
+          new Types.ObjectId('ffffffffffffffffffffffff'),
+          {
+            amount: 1234,
+          },
+        ),
       ).toBeNull();
     });
   });
@@ -137,8 +143,11 @@ describe('TransactionsService', () => {
 
     it('should return null otherwise', async () => {
       expect(
-        (await transactionsService.remove('ffffffffffffffffffffffff'))
-          .deletedCount,
+        (
+          await transactionsService.remove(
+            new Types.ObjectId('ffffffffffffffffffffffff'),
+          )
+        ).deletedCount,
       ).toBe(0);
     });
   });

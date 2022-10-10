@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsOptional } from 'class-validator';
 import { Document } from 'mongoose';
 
 export type PayeeDocument = Payee & Document;
@@ -11,7 +12,8 @@ export class Payee {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: false })
+  @Prop()
+  @IsOptional()
   externalId?: string;
 }
 

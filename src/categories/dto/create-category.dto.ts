@@ -12,20 +12,18 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   readonly name: string;
 
+  @IsBoolean()
+  readonly isDeleted?: boolean;
+
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   readonly externalId?: string;
 
   @IsMongoId()
   @IsOptional()
-  readonly parentCategory?: Types.ObjectId;
+  readonly parentCategoryId?: Types.ObjectId;
 
   @IsBoolean()
   @IsOptional()
   readonly isHidden?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  readonly isDeleted?: boolean;
 }

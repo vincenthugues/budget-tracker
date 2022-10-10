@@ -12,21 +12,19 @@ export class Category {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ required: true, default: false })
+  isHidden: boolean;
+
+  @Prop({ required: true, default: false })
+  isDeleted: boolean;
+
   @Prop()
   @IsOptional()
   externalId?: string;
 
-  @Prop()
+  @Prop({ type: Types.ObjectId, ref: 'Category' })
   @IsOptional()
-  parentCategory: Types.ObjectId;
-
-  @Prop({ default: false })
-  @IsOptional()
-  isHidden: boolean;
-
-  @Prop({ default: false })
-  @IsOptional()
-  isDeleted: boolean;
+  parentCategoryId?: Types.ObjectId;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

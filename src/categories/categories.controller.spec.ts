@@ -50,7 +50,7 @@ describe('CategoriesController', () => {
     const CATEGORY_PAYLOAD = {
       name: 'Coffee shop',
       externalId: 'abc123',
-      parentCategory: undefined,
+      parentCategoryId: undefined,
       isHidden: false,
       isDeleted: false,
     };
@@ -86,16 +86,16 @@ describe('CategoriesController', () => {
       });
     });
 
-    it('should work if parentCategory is undefined', async () => {
+    it('should work if parentCategoryId is undefined', async () => {
       const categoryStub = {
         ...CATEGORY_PAYLOAD,
-        parentCategory: undefined,
+        parentCategoryId: undefined,
       };
 
       expect(await categoriesController.create(categoryStub)).toMatchObject({
         name: 'Coffee shop',
         externalId: 'abc123',
-        parentCategory: undefined,
+        parentCategoryId: undefined,
       });
     });
 

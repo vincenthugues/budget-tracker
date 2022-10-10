@@ -1,6 +1,20 @@
-import { PartialType, PickType } from '@nestjs/mapped-types';
-import { CreateBudgetDto } from './create-budget.dto';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
-export class UpdateBudgetDto extends PartialType(
-  PickType(CreateBudgetDto, ['name', 'externalId', 'startingDate'] as const),
-) {}
+export class UpdateBudgetDto {
+  @IsString()
+  @IsOptional()
+  readonly name?: string;
+
+  @IsString()
+  @IsOptional()
+  readonly externalId?: string;
+
+  @IsDateString()
+  @IsOptional()
+  readonly startingDate?: Date;
+}

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
 import { Budget, BudgetDocument } from './schemas/budget.schema';
@@ -16,21 +16,21 @@ export class BudgetsService {
     return createdBudget.save();
   }
 
-  findAll() {
+  findAll(): Promise<Budget[]> {
     return this.budgetModel.find().exec();
   }
 
-  findOne(id: string) {
+  findOne(id: Types.ObjectId): Promise<Budget> {
     return this.budgetModel.findById(id).exec();
   }
 
-  update(id: string, updateBudgetDto: UpdateBudgetDto) {
+  update(id: Types.ObjectId, updateBudgetDto: UpdateBudgetDto) {
     return this.budgetModel.findOneAndUpdate({ id }, updateBudgetDto, {
       new: true,
     });
   }
 
-  remove(id: string) {
+  remove(id: Types.ObjectId) {
     return this.budgetModel.deleteOne({ id });
   }
 }

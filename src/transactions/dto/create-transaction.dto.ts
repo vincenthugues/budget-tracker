@@ -8,7 +8,6 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Types } from 'mongoose';
 
 export class CreateTransactionDto {
   @IsDateString()
@@ -21,31 +20,29 @@ export class CreateTransactionDto {
 
   @IsMongoId()
   @IsNotEmpty()
-  readonly account: Types.ObjectId;
+  readonly accountId: string;
 
   @IsMongoId()
   @IsNotEmpty()
-  readonly payee: Types.ObjectId;
+  readonly payeeId: string;
 
   @IsMongoId()
   @IsNotEmpty()
-  readonly category: Types.ObjectId;
+  readonly categoryId: string;
 
   @IsBoolean()
   @IsOptional()
-  readonly isCleared?: Boolean;
+  readonly isCleared?: boolean;
 
   @IsBoolean()
   @IsOptional()
-  readonly isDeleted?: Boolean;
+  readonly isDeleted?: boolean;
 
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   readonly externalId?: string;
 
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   readonly notes?: string;
 }

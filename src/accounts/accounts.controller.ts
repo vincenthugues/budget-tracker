@@ -1,32 +1,40 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
+import { ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
+import { Account } from './schemas/account.schema';
 
+@ApiTags('accounts')
 @Controller('accounts')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
   @Post()
-  create(@Body() createAccountDto: CreateAccountDto) {
+  @ApiBody({ type: CreateAccountDto })
+  @ApiCreatedResponse({
+    description: 'The record has been successfully created.',
+    type: Account,
+  })
+  create(@Body() createAccountDto: CreateAccountDto): Promise<Account> {
     return this.accountsService.create(createAccountDto);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Account[]> {
     return this.accountsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Account> {
     return this.accountsService.findOne(id);
   }
 
