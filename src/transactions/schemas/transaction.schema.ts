@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsDateString, IsNumber, IsOptional } from 'class-validator';
-import { Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
+
+export type TransactionDocument = Transaction & Document;
 
 @Schema({ timestamps: true })
 export class Transaction {
@@ -54,5 +56,3 @@ export class Transaction {
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
-
-export type TransactionDocument = Transaction & Document;
