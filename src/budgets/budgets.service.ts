@@ -11,16 +11,16 @@ export class BudgetsService {
     @InjectModel(Budget.name) private budgetModel: Model<BudgetDocument>,
   ) {}
 
-  create(createBudgetDto: CreateBudgetDto): Promise<Budget> {
+  create(createBudgetDto: CreateBudgetDto): Promise<BudgetDocument> {
     const createdBudget = new this.budgetModel(createBudgetDto);
     return createdBudget.save();
   }
 
-  findAll(): Promise<Budget[]> {
+  findAll(): Promise<BudgetDocument[]> {
     return this.budgetModel.find().exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<Budget> {
+  findOne(id: Types.ObjectId): Promise<BudgetDocument> {
     return this.budgetModel.findById(id).exec();
   }
 

@@ -11,7 +11,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
-import { Transaction } from './schemas/transaction.schema';
+import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 import { TransactionsService } from './transactions.service';
 
 @ApiTags('transactions')
@@ -22,17 +22,17 @@ export class TransactionsController {
   @Post()
   create(
     @Body() createTransactionDto: CreateTransactionDto,
-  ): Promise<Transaction> {
+  ): Promise<TransactionDocument> {
     return this.transactionsService.create(createTransactionDto);
   }
 
   @Get()
-  findAll(): Promise<Transaction[]> {
+  findAll(): Promise<TransactionDocument[]> {
     return this.transactionsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: Types.ObjectId): Promise<Transaction> {
+  findOne(@Param('id') id: Types.ObjectId): Promise<TransactionDocument> {
     return this.transactionsService.findOne(id);
   }
 

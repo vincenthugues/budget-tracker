@@ -12,7 +12,7 @@ import { Types } from 'mongoose';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { Category } from './schemas/category.schema';
+import { Category, CategoryDocument } from './schemas/category.schema';
 
 @ApiTags('categories')
 @Controller('categories')
@@ -20,17 +20,19 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
+  create(
+    @Body() createCategoryDto: CreateCategoryDto,
+  ): Promise<CategoryDocument> {
     return this.categoriesService.create(createCategoryDto);
   }
 
   @Get()
-  findAll(): Promise<Category[]> {
+  findAll(): Promise<CategoryDocument[]> {
     return this.categoriesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: Types.ObjectId): Promise<Category> {
+  findOne(@Param('id') id: Types.ObjectId): Promise<CategoryDocument> {
     return this.categoriesService.findOne(id);
   }
 

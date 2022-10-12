@@ -11,7 +11,7 @@ import { ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
-import { Account } from './schemas/account.schema';
+import { Account, AccountDocument } from './schemas/account.schema';
 
 @ApiTags('accounts')
 @Controller('accounts')
@@ -24,17 +24,17 @@ export class AccountsController {
     description: 'The record has been successfully created.',
     type: Account,
   })
-  create(@Body() createAccountDto: CreateAccountDto): Promise<Account> {
+  create(@Body() createAccountDto: CreateAccountDto): Promise<AccountDocument> {
     return this.accountsService.create(createAccountDto);
   }
 
   @Get()
-  findAll(): Promise<Account[]> {
+  findAll(): Promise<AccountDocument[]> {
     return this.accountsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Account> {
+  findOne(@Param('id') id: string): Promise<AccountDocument> {
     return this.accountsService.findOne(id);
   }
 

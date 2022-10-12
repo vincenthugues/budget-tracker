@@ -11,16 +11,16 @@ export class PayeesService {
     @InjectModel(Payee.name) private payeeModel: Model<PayeeDocument>,
   ) {}
 
-  create(createPayeeDto: CreatePayeeDto): Promise<Payee> {
+  create(createPayeeDto: CreatePayeeDto): Promise<PayeeDocument> {
     const createdPayee = new this.payeeModel(createPayeeDto);
     return createdPayee.save();
   }
 
-  findAll(): Promise<Payee[]> {
+  findAll(): Promise<PayeeDocument[]> {
     return this.payeeModel.find().exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<Payee> {
+  findOne(id: Types.ObjectId): Promise<PayeeDocument> {
     return this.payeeModel.findById(id).exec();
   }
 

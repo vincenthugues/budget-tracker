@@ -12,16 +12,18 @@ export class TransactionsService {
     private transactionModel: Model<TransactionDocument>,
   ) {}
 
-  create(createTransactionDto: CreateTransactionDto): Promise<Transaction> {
+  create(
+    createTransactionDto: CreateTransactionDto,
+  ): Promise<TransactionDocument> {
     const createdTransaction = new this.transactionModel(createTransactionDto);
     return createdTransaction.save();
   }
 
-  findAll(): Promise<Transaction[]> {
+  findAll(): Promise<TransactionDocument[]> {
     return this.transactionModel.find().exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<Transaction> {
+  findOne(id: Types.ObjectId): Promise<TransactionDocument> {
     return this.transactionModel.findById(id).exec();
   }
 

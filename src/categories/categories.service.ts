@@ -11,16 +11,16 @@ export class CategoriesService {
     @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
   ) {}
 
-  create(createCategoryDto: CreateCategoryDto): Promise<Category> {
+  create(createCategoryDto: CreateCategoryDto): Promise<CategoryDocument> {
     const createdCategory = new this.categoryModel(createCategoryDto);
     return createdCategory.save();
   }
 
-  findAll(): Promise<Category[]> {
+  findAll(): Promise<CategoryDocument[]> {
     return this.categoryModel.find().exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<Category> {
+  findOne(id: Types.ObjectId): Promise<CategoryDocument> {
     return this.categoryModel.findById(id).exec();
   }
 

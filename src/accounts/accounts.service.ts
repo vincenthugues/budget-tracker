@@ -11,16 +11,16 @@ export class AccountsService {
     @InjectModel(Account.name) private accountModel: Model<AccountDocument>,
   ) {}
 
-  create(createAccountDto: CreateAccountDto): Promise<Account> {
+  create(createAccountDto: CreateAccountDto): Promise<AccountDocument> {
     const createdAccount = new this.accountModel(createAccountDto);
     return createdAccount.save();
   }
 
-  findAll(): Promise<Account[]> {
+  findAll(): Promise<AccountDocument[]> {
     return this.accountModel.find().exec();
   }
 
-  findOne(id: string): Promise<Account> {
+  findOne(id: string): Promise<AccountDocument> {
     return this.accountModel.findById(id).exec();
   }
 

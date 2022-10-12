@@ -12,7 +12,7 @@ import { Types } from 'mongoose';
 import { BudgetsService } from './budgets.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
-import { Budget } from './schemas/budget.schema';
+import { Budget, BudgetDocument } from './schemas/budget.schema';
 
 @ApiTags('budgets')
 @Controller('budgets')
@@ -20,17 +20,17 @@ export class BudgetsController {
   constructor(private readonly budgetsService: BudgetsService) {}
 
   @Post()
-  create(@Body() createBudgetDto: CreateBudgetDto): Promise<Budget> {
+  create(@Body() createBudgetDto: CreateBudgetDto): Promise<BudgetDocument> {
     return this.budgetsService.create(createBudgetDto);
   }
 
   @Get()
-  findAll(): Promise<Budget[]> {
+  findAll(): Promise<BudgetDocument[]> {
     return this.budgetsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: Types.ObjectId): Promise<Budget> {
+  findOne(@Param('id') id: Types.ObjectId): Promise<BudgetDocument> {
     return this.budgetsService.findOne(id);
   }
 
