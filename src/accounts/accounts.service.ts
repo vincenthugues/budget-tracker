@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { Account, AccountDocument } from './schemas/account.schema';
@@ -12,25 +12,42 @@ export class AccountsService {
   ) {}
 
   create(createAccountDto: CreateAccountDto): Promise<AccountDocument> {
-    const createdAccount = new this.accountModel(createAccountDto);
-    return createdAccount.save();
+    return this.accountModel.create(createAccountDto);
   }
 
   findAll(): Promise<AccountDocument[]> {
     return this.accountModel.find().exec();
   }
 
-  findOne(id: string): Promise<AccountDocument> {
-    return this.accountModel.findById(id).exec();
+  async findOne(id: Types.ObjectId): Promise<AccountDocument> {
+    const account = await this.accountModel.findById(id).exec();
+    if (!account) {
+      throw new NotFoundException(`No account found for id ${id}`);
+    }
+
+    return account;
   }
 
-  update(id: string, updateAccountDto: UpdateAccountDto) {
-    return this.accountModel.findOneAndUpdate({ id }, updateAccountDto, {
-      new: true,
-    });
+  async update(
+    id: Types.ObjectId,
+    updateAccountDto: UpdateAccountDto,
+  ): Promise<AccountDocument> {
+    const account = await this.accountModel
+      .findByIdAndUpdate(id, updateAccountDto, { new: true })
+      .exec();
+    if (!account) {
+      throw new NotFoundException(`No account found for id ${id}`);
+    }
+
+    return account;
   }
 
-  remove(id: string) {
-    return this.accountModel.deleteOne({ id });
+  async remove(id: Types.ObjectId): Promise<AccountDocument> {
+    const account = await this.accountModel.findByIdAndDelete(id).exec();
+    if (!account) {
+      throw new NotFoundException(`No account found for id ${id}`);
+    }
+
+    return account;
   }
 }

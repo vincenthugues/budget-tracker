@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,
@@ -123,8 +123,7 @@ describe('AccountsController', () => {
         name: 'Compte Courant',
         externalId: 'abc123',
       };
-
-      await new accountModel(accountStub).save();
+      await accountModel.create(accountStub);
 
       expect(await accountsController.findAll()).toMatchObject([accountStub]);
     });

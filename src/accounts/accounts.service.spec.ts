@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,
@@ -38,10 +38,6 @@ describe('AccountsService', () => {
     await teardownInMemoryMongo();
   });
 
-  it('should be defined', () => {
-    expect(accountsService).toBeDefined();
-  });
-
   describe('create', () => {
     it('should return the saved object with timestamps', async () => {
       const accountStub = {
@@ -54,6 +50,80 @@ describe('AccountsService', () => {
       expect(createdAccount).toMatchObject(accountStub);
       expect(createdAccount.createdAt).toBeDefined();
       expect(createdAccount.updatedAt).toBeDefined();
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return an array of all accounts', async () => {
+      const account1Stub = { name: 'Account 1' };
+      const account2Stub = { name: 'Account 2' };
+      await accountModel.create(account1Stub, account2Stub);
+
+      expect(await accountsService.findAll()).toMatchObject([
+        account1Stub,
+        account2Stub,
+      ]);
+    });
+
+    it('should return an empty array when there are no accounts', async () => {
+      expect(await accountsService.findAll()).toMatchObject([]);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return the account with matching id', async () => {
+      const accountStub = { name: '[findOne] Test account' };
+      const { _id } = await accountModel.create(accountStub);
+      const foundAccount = await accountsService.findOne(_id);
+
+      expect(foundAccount.name).toEqual(accountStub.name);
+    });
+
+    it('should fail if no account matches the id', async () => {
+      const id = '6348784df0ea88d406093123';
+      expect(
+        accountsService.findOne(id as unknown as Types.ObjectId),
+      ).rejects.toThrowError(`No account found for id ${id}`);
+    });
+  });
+
+  describe('update', () => {
+    it('should update the account', async () => {
+      const { _id } = await accountModel.create({
+        name: '[update] Test account',
+      });
+      const update = { name: '[update] Test account (updated)' };
+      const updatedAccount = await accountsService.update(_id, update);
+
+      expect(updatedAccount.name).toEqual(update.name);
+    });
+
+    it('should fail if no account matches the id', async () => {
+      const id = '6348784df0ea88d406093123';
+      const update = { name: '[update] Test account (updated)' };
+
+      expect(
+        accountsService.update(id as unknown as Types.ObjectId, update),
+      ).rejects.toThrowError(`No account found for id ${id}`);
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove the account', async () => {
+      const { _id } = await accountModel.create({
+        name: '[remove] Test account',
+      });
+      await accountsService.remove(_id);
+
+      expect(await accountModel.find({})).toMatchObject([]);
+    });
+
+    it('should fail if no account matches the id', async () => {
+      const id = '6348784df0ea88d406093123';
+
+      expect(
+        accountsService.remove(id as unknown as Types.ObjectId),
+      ).rejects.toThrowError(`No account found for id ${id}`);
     });
   });
 });

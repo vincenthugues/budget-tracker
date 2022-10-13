@@ -7,7 +7,13 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiBody, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
@@ -19,32 +25,47 @@ export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
   @Post()
-  @ApiBody({ type: CreateAccountDto })
-  @ApiCreatedResponse({
-    description: 'The record has been successfully created.',
-    type: Account,
-  })
+  @ApiCreatedResponse({ description: 'Account successfully created' })
   create(@Body() createAccountDto: CreateAccountDto): Promise<AccountDocument> {
     return this.accountsService.create(createAccountDto);
   }
 
   @Get()
+  @ApiOkResponse({
+    type: [Account],
+    description: 'Returns the list of accounts',
+  })
   findAll(): Promise<AccountDocument[]> {
     return this.accountsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<AccountDocument> {
+  @ApiOkResponse({
+    type: Account,
+    description: 'Returns the requested account',
+  })
+  @ApiNotFoundResponse({ description: 'Account not found' })
+  findOne(@Param('id') id: Types.ObjectId): Promise<AccountDocument> {
     return this.accountsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
+  @ApiOkResponse({
+    type: Account,
+    description: 'Returns the updated account',
+  })
+  @ApiNotFoundResponse({ description: 'Account not found' })
+  update(
+    @Param('id') id: Types.ObjectId,
+    @Body() updateAccountDto: UpdateAccountDto,
+  ): Promise<AccountDocument> {
     return this.accountsService.update(id, updateAccountDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @ApiOkResponse({ description: 'The requested account was deleted' })
+  @ApiNotFoundResponse({ description: 'Account not found' })
+  remove(@Param('id') id: Types.ObjectId): Promise<AccountDocument> {
     return this.accountsService.remove(id);
   }
 }
