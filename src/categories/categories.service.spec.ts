@@ -47,15 +47,15 @@ describe('CategoriesService', () => {
 
   describe('create', () => {
     it('should return the saved object with timestamps', async () => {
-      const categoryStub = {
+      const categoryPayload = {
         name: 'Coffee shop',
         externalId: 'abc123',
         parentCategoryId:
           '5e1a0651741b255ddda996c4' as unknown as Types.ObjectId,
       };
-      const createdCategory = await categoriesService.create(categoryStub);
+      const createdCategory = await categoriesService.create(categoryPayload);
 
-      expect(createdCategory).toMatchObject(categoryStub);
+      expect(createdCategory).toMatchObject(categoryPayload);
       expect(createdCategory.createdAt).toBeDefined();
       expect(createdCategory.updatedAt).toBeDefined();
     });

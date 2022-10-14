@@ -47,7 +47,7 @@ describe('CategoriesController', () => {
   });
 
   describe('[POST]', () => {
-    const CATEGORY_PAYLOAD = {
+    const BASE_CATEGORY_PAYLOAD = {
       name: 'Coffee shop',
       externalId: 'abc123',
       parentCategoryId: undefined,
@@ -57,42 +57,42 @@ describe('CategoriesController', () => {
 
     it('should return the saved object', async () => {
       const createdCategory = await categoriesController.create(
-        CATEGORY_PAYLOAD,
+        BASE_CATEGORY_PAYLOAD,
       );
 
-      expect(createdCategory).toMatchObject(CATEGORY_PAYLOAD);
+      expect(createdCategory).toMatchObject(BASE_CATEGORY_PAYLOAD);
     });
 
     it('should fail if the name is empty', async () => {
-      const categoryStub = {
-        ...CATEGORY_PAYLOAD,
+      const categoryPayload = {
+        ...BASE_CATEGORY_PAYLOAD,
         name: '',
       };
 
-      expect(categoriesController.create(categoryStub)).rejects.toThrowError(
+      expect(categoriesController.create(categoryPayload)).rejects.toThrowError(
         'Category validation failed: name: Path `name` is required.',
       );
     });
 
     it('should work if the externalId is undefined', async () => {
-      const categoryStub = {
-        ...CATEGORY_PAYLOAD,
+      const categoryPayload = {
+        ...BASE_CATEGORY_PAYLOAD,
         externalId: undefined,
       };
 
-      expect(await categoriesController.create(categoryStub)).toMatchObject({
+      expect(await categoriesController.create(categoryPayload)).toMatchObject({
         name: 'Coffee shop',
         externalId: undefined,
       });
     });
 
     it('should work if parentCategoryId is undefined', async () => {
-      const categoryStub = {
-        ...CATEGORY_PAYLOAD,
+      const categoryPayload = {
+        ...BASE_CATEGORY_PAYLOAD,
         parentCategoryId: undefined,
       };
 
-      expect(await categoriesController.create(categoryStub)).toMatchObject({
+      expect(await categoriesController.create(categoryPayload)).toMatchObject({
         name: 'Coffee shop',
         externalId: 'abc123',
         parentCategoryId: undefined,
@@ -100,24 +100,24 @@ describe('CategoriesController', () => {
     });
 
     it('should work if isHidden is undefined; defaults to false', async () => {
-      const categoryStub = {
-        ...CATEGORY_PAYLOAD,
+      const categoryPayload = {
+        ...BASE_CATEGORY_PAYLOAD,
         isHidden: undefined,
       };
 
-      expect(await categoriesController.create(categoryStub)).toMatchObject({
+      expect(await categoriesController.create(categoryPayload)).toMatchObject({
         name: 'Coffee shop',
         isHidden: false,
       });
     });
 
     it('should work if isDeleted is undefined; defaults to false', async () => {
-      const categoryStub = {
-        ...CATEGORY_PAYLOAD,
+      const categoryPayload = {
+        ...BASE_CATEGORY_PAYLOAD,
         isDeleted: undefined,
       };
 
-      expect(await categoriesController.create(categoryStub)).toMatchObject({
+      expect(await categoriesController.create(categoryPayload)).toMatchObject({
         name: 'Coffee shop',
         isDeleted: false,
       });

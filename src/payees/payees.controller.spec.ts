@@ -44,47 +44,47 @@ describe('PayeesController', () => {
 
   describe('[POST]', () => {
     it('should return the saved object', async () => {
-      const payeeStub = {
+      const payeePayload = {
         name: 'New Payee',
         externalId: 'abd123',
       };
-      const createdPayee = await payeesController.create(payeeStub);
+      const createdPayee = await payeesController.create(payeePayload);
 
-      expect(createdPayee).toMatchObject(payeeStub);
+      expect(createdPayee).toMatchObject(payeePayload);
     });
 
     it('should fail if the name is empty', async () => {
-      const payeeStub = {
+      const payeePayload = {
         name: '',
         externalId: 'abd123',
       };
 
-      expect(payeesController.create(payeeStub)).rejects.toThrowError(
+      expect(payeesController.create(payeePayload)).rejects.toThrowError(
         'Payee validation failed: name: Path `name` is required.',
       );
     });
 
     it('should work if the externalId is null', async () => {
-      const payeeStub = {
+      const payeePayload = {
         name: 'New Payee',
         externalId: null,
       };
 
-      const createdPayee = await payeesController.create(payeeStub);
-      expect(createdPayee).toMatchObject(payeeStub);
+      const createdPayee = await payeesController.create(payeePayload);
+      expect(createdPayee).toMatchObject(payeePayload);
     });
   });
 
   describe('[GET]', () => {
     it('should return an array of payees', async () => {
-      const payeeStub = {
+      const payeePayload = {
         name: 'New Payee',
         externalId: 'abd123',
       };
 
-      await new payeeModel(payeeStub).save();
+      await new payeeModel(payeePayload).save();
 
-      expect(await payeesController.findAll()).toMatchObject([payeeStub]);
+      expect(await payeesController.findAll()).toMatchObject([payeePayload]);
     });
   });
 });

@@ -16,7 +16,7 @@ describe('TransactionsController', () => {
   let transactionsController: TransactionsController;
   let transactionModel: Model<Transaction>;
 
-  const TRANSACTION_PAYLOAD: CreateTransactionDto = {
+  const BASE_TRANSACTION_PAYLOAD: CreateTransactionDto = {
     date: new Date('2022-01-15'),
     amount: 123,
     accountId: '5e1a0651741b255ddda996c4',
@@ -66,115 +66,115 @@ describe('TransactionsController', () => {
   describe('[POST]', () => {
     it('should return the saved object', async () => {
       const createdTransaction = await transactionsController.create(
-        TRANSACTION_PAYLOAD,
+        BASE_TRANSACTION_PAYLOAD,
       );
 
-      expect(createdTransaction).toMatchObject(TRANSACTION_PAYLOAD);
+      expect(createdTransaction).toMatchObject(BASE_TRANSACTION_PAYLOAD);
     });
 
     it('should fail if the date is empty', async () => {
-      const transactionStub = {
-        ...TRANSACTION_PAYLOAD,
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
         date: null,
       };
 
       expect(
-        transactionsController.create(transactionStub),
+        transactionsController.create(transactionPayload),
       ).rejects.toThrowError(
         'Transaction validation failed: date: Path `date` is required.',
       );
     });
 
     it('should fail if the amount is empty', async () => {
-      const transactionStub = {
-        ...TRANSACTION_PAYLOAD,
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
         amount: null,
       };
 
       expect(
-        transactionsController.create(transactionStub),
+        transactionsController.create(transactionPayload),
       ).rejects.toThrowError(
         'Transaction validation failed: amount: Path `amount` is required.',
       );
     });
 
     it('should fail if the accountId is empty', async () => {
-      const transactionStub = {
-        ...TRANSACTION_PAYLOAD,
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
         accountId: null,
       };
 
       expect(
-        transactionsController.create(transactionStub),
+        transactionsController.create(transactionPayload),
       ).rejects.toThrowError(
         'Transaction validation failed: accountId: Path `accountId` is required.',
       );
     });
 
     it('should fail if the payeeId is empty', async () => {
-      const transactionStub = {
-        ...TRANSACTION_PAYLOAD,
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
         payeeId: null,
       };
 
       expect(
-        transactionsController.create(transactionStub),
+        transactionsController.create(transactionPayload),
       ).rejects.toThrowError(
         'Transaction validation failed: payeeId: Path `payeeId` is required.',
       );
     });
 
     it('should fail if the categoryId is empty', async () => {
-      const transactionStub = {
-        ...TRANSACTION_PAYLOAD,
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
         categoryId: null,
       };
 
       expect(
-        transactionsController.create(transactionStub),
+        transactionsController.create(transactionPayload),
       ).rejects.toThrowError(
         'Transaction validation failed: categoryId: Path `categoryId` is required',
       );
     });
 
     it('should work if isCleared is undefined; defaults to false', async () => {
-      const transactionStub = {
-        ...TRANSACTION_PAYLOAD,
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
         isCleared: undefined,
       };
 
       expect(
-        await transactionsController.create(transactionStub),
+        await transactionsController.create(transactionPayload),
       ).toMatchObject({
-        ...TRANSACTION_PAYLOAD,
+        ...BASE_TRANSACTION_PAYLOAD,
         isCleared: false,
       });
     });
 
     it('should work if the externalId is undefined', async () => {
-      const transactionStub = {
-        ...TRANSACTION_PAYLOAD,
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
         externalId: undefined,
       };
 
       expect(
-        await transactionsController.create(transactionStub),
+        await transactionsController.create(transactionPayload),
       ).toMatchObject({
-        ...TRANSACTION_PAYLOAD,
+        ...BASE_TRANSACTION_PAYLOAD,
         externalId: undefined,
       });
     });
 
     it('should work if isDeleted is undefined; defaults to false', async () => {
-      const transactionStub = {
-        ...TRANSACTION_PAYLOAD,
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
         isDeleted: undefined,
       };
 
       expect(
-        await transactionsController.create(transactionStub),
+        await transactionsController.create(transactionPayload),
       ).toMatchObject({
-        ...TRANSACTION_PAYLOAD,
+        ...BASE_TRANSACTION_PAYLOAD,
         isDeleted: false,
       });
     });
@@ -182,10 +182,10 @@ describe('TransactionsController', () => {
 
   describe('[GET]', () => {
     it('should return an array of transactions', async () => {
-      await new transactionModel(TRANSACTION_PAYLOAD).save();
+      await new transactionModel(BASE_TRANSACTION_PAYLOAD).save();
 
       expect(await transactionsController.findAll()).toMatchObject([
-        TRANSACTION_PAYLOAD,
+        BASE_TRANSACTION_PAYLOAD,
       ]);
     });
   });

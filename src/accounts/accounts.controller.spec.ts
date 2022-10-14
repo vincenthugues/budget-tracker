@@ -43,7 +43,7 @@ describe('AccountsController', () => {
   });
 
   describe('[POST]', () => {
-    const ACCOUNT_PAYLOAD = {
+    const BASE_ACCOUNT_PAYLOAD = {
       name: 'Compte Courant',
       externalId: 'abc123',
       type: 'Other' as unknown as AccountType,
@@ -52,65 +52,67 @@ describe('AccountsController', () => {
     };
 
     it('should return the saved object', async () => {
-      const createdAccount = await accountsController.create(ACCOUNT_PAYLOAD);
+      const createdAccount = await accountsController.create(
+        BASE_ACCOUNT_PAYLOAD,
+      );
 
-      expect(createdAccount).toMatchObject(ACCOUNT_PAYLOAD);
+      expect(createdAccount).toMatchObject(BASE_ACCOUNT_PAYLOAD);
     });
 
     it('should fail if the name is empty', async () => {
-      const accountStub = {
-        ...ACCOUNT_PAYLOAD,
+      const accountPayload = {
+        ...BASE_ACCOUNT_PAYLOAD,
         name: '',
       };
 
-      expect(accountsController.create(accountStub)).rejects.toThrowError(
+      expect(accountsController.create(accountPayload)).rejects.toThrowError(
         'Account validation failed: name: Path `name` is required.',
       );
     });
 
     it('should work if the externalId is undefined', async () => {
-      const accountStub = {
-        ...ACCOUNT_PAYLOAD,
+      const accountPayload = {
+        ...BASE_ACCOUNT_PAYLOAD,
         externalId: undefined,
       };
 
-      expect(await accountsController.create(accountStub)).toMatchObject({
+      expect(await accountsController.create(accountPayload)).toMatchObject({
         name: 'Compte Courant',
         externalId: undefined,
       });
     });
 
     it('should work if the type is undefined', async () => {
-      const accountStub = {
-        ...ACCOUNT_PAYLOAD,
+      const accountPayload = {
+        ...BASE_ACCOUNT_PAYLOAD,
         type: undefined,
       };
 
-      expect(await accountsController.create(accountStub)).toMatchObject({
+      expect(await accountsController.create(accountPayload)).toMatchObject({
         name: 'Compte Courant',
         type: undefined,
       });
     });
 
     it('should work if isClosed is undefined; defaults to false', async () => {
-      const accountStub = {
-        ...ACCOUNT_PAYLOAD,
+      const accountPayload = {
+        ...BASE_ACCOUNT_PAYLOAD,
         isClosed: undefined,
       };
 
-      expect(await accountsController.create(accountStub)).toMatchObject({
+      expect(await accountsController.create(accountPayload)).toMatchObject({
         name: 'Compte Courant',
         isClosed: false,
       });
     });
 
     it('should work if the balance is undefined; default to 0', async () => {
-      const accountStub = {
-        ...ACCOUNT_PAYLOAD,
+      const accountPayload = {
+        ...BASE_ACCOUNT_PAYLOAD,
         balance: undefined,
       };
 
-      expect(await accountsController.create(accountStub)).toMatchObject({
+      expect(await accountsController.create(accountPayload)).toMatchObject({
         name: 'Compte Courant',
         balance: 0,
       });
@@ -119,13 +121,15 @@ describe('AccountsController', () => {
 
   describe('[GET]', () => {
     it('should return an array of accounts', async () => {
-      const accountStub = {
+      const accountPayload = {
         name: 'Compte Courant',
         externalId: 'abc123',
       };
-      await accountModel.create(accountStub);
+      await accountModel.create(accountPayload);
 
-      expect(await accountsController.findAll()).toMatchObject([accountStub]);
+      expect(await accountsController.findAll()).toMatchObject([
+        accountPayload,
+      ]);
     });
   });
 });

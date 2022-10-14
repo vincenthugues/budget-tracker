@@ -15,7 +15,7 @@ import { TransactionsService } from './transactions.service';
 describe('TransactionsService', () => {
   let transactionsService: TransactionsService;
   let transactionModel: Model<Transaction>;
-  const TRANSACTION_PAYLOAD: CreateTransactionDto = {
+  const BASE_TRANSACTION_PAYLOAD: CreateTransactionDto = {
     date: new Date('2022-01-15'),
     amount: 123,
     accountId: '5e1a0651741b255ddda996c4',
@@ -60,10 +60,10 @@ describe('TransactionsService', () => {
   describe('create', () => {
     it('should return the saved object with timestamps', async () => {
       const createdTransaction = await transactionsService.create(
-        TRANSACTION_PAYLOAD,
+        BASE_TRANSACTION_PAYLOAD,
       );
 
-      expect(createdTransaction).toMatchObject(TRANSACTION_PAYLOAD);
+      expect(createdTransaction).toMatchObject(BASE_TRANSACTION_PAYLOAD);
       expect(createdTransaction.createdAt).toBeDefined();
       expect(createdTransaction.updatedAt).toBeDefined();
     });
@@ -71,10 +71,10 @@ describe('TransactionsService', () => {
 
   describe('findAll', () => {
     it('should return an array of transactions', async () => {
-      await new transactionModel(TRANSACTION_PAYLOAD).save();
+      await new transactionModel(BASE_TRANSACTION_PAYLOAD).save();
 
       expect(await transactionsService.findAll()).toMatchObject([
-        TRANSACTION_PAYLOAD,
+        BASE_TRANSACTION_PAYLOAD,
       ]);
     });
   });
@@ -82,12 +82,12 @@ describe('TransactionsService', () => {
   describe('findOne', () => {
     it('should return a transaction if given a valid id', async () => {
       const savedTransaction = await new transactionModel(
-        TRANSACTION_PAYLOAD,
+        BASE_TRANSACTION_PAYLOAD,
       ).save();
 
       expect(
         await transactionsService.findOne(savedTransaction.id),
-      ).toMatchObject(TRANSACTION_PAYLOAD);
+      ).toMatchObject(BASE_TRANSACTION_PAYLOAD);
     });
 
     it('should return null otherwise', async () => {
@@ -102,7 +102,7 @@ describe('TransactionsService', () => {
   describe('update', () => {
     it('should update a transaction if given a valid id', async () => {
       const savedTransaction = await new transactionModel({
-        ...TRANSACTION_PAYLOAD,
+        ...BASE_TRANSACTION_PAYLOAD,
         amount: 1234,
       }).save();
 
@@ -112,7 +112,7 @@ describe('TransactionsService', () => {
       expect(
         await transactionsService.update(savedTransaction.id, transactionPatch),
       ).toMatchObject({
-        ...TRANSACTION_PAYLOAD,
+        ...BASE_TRANSACTION_PAYLOAD,
         amount: 5678,
       });
     });
@@ -132,7 +132,7 @@ describe('TransactionsService', () => {
   describe('remove', () => {
     it('should remove a transaction if given a valid id', async () => {
       const savedTransaction = await new transactionModel(
-        TRANSACTION_PAYLOAD,
+        BASE_TRANSACTION_PAYLOAD,
       ).save();
 
       expect(

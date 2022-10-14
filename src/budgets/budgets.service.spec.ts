@@ -44,53 +44,53 @@ describe('BudgetsService', () => {
 
   describe('create', () => {
     it('should return the saved object with timestamps', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: 'New Budget',
         externalId: 'abd123',
       };
-      const createdBudget = await budgetsService.create(budgetStub);
+      const createdBudget = await budgetsService.create(budgetPayload);
 
-      expect(createdBudget).toMatchObject(budgetStub);
+      expect(createdBudget).toMatchObject(budgetPayload);
       expect(createdBudget.createdAt).toBeDefined();
       expect(createdBudget.updatedAt).toBeDefined();
     });
 
     // it('should throw AlreadyExists (Bad Request - 400) exception', async () => {
-    //   const budgetStub = {
+    //   const budgetPayload = {
     //     name: 'New Budget',
     //     externalId: 'abd123',
     //   };
 
-    //   await new budgetModel(budgetStub).save();
+    //   await new budgetModel(budgetPayload).save();
 
-    //   await expect(budgetsService.create(budgetStub)).rejects.toThrow();
+    //   await expect(budgetsService.create(budgetPayload)).rejects.toThrow();
     // });
   });
 
   describe('findAll', () => {
     it('should return an array of budgets', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: 'New Budget',
         externalId: 'abd123',
       };
 
-      await new budgetModel(budgetStub).save();
+      await new budgetModel(budgetPayload).save();
 
-      expect(await budgetsService.findAll()).toMatchObject([budgetStub]);
+      expect(await budgetsService.findAll()).toMatchObject([budgetPayload]);
     });
   });
 
   describe('findOne', () => {
     it('should return a budget if given a valid id', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: 'New Budget',
         externalId: 'abd123',
       };
 
-      const savedBudget = await new budgetModel(budgetStub).save();
+      const savedBudget = await new budgetModel(budgetPayload).save();
 
       expect(await budgetsService.findOne(savedBudget.id)).toMatchObject(
-        budgetStub,
+        budgetPayload,
       );
     });
 
@@ -105,11 +105,11 @@ describe('BudgetsService', () => {
 
   describe('update', () => {
     it('should update a budget if given a valid id', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: 'Budget',
         externalId: 'abd123',
       };
-      const savedBudget = await new budgetModel(budgetStub).save();
+      const savedBudget = await new budgetModel(budgetPayload).save();
 
       const budgetPatch = {
         name: 'Budget (updated)',
@@ -118,7 +118,7 @@ describe('BudgetsService', () => {
       expect(
         await budgetsService.update(savedBudget.id, budgetPatch),
       ).toMatchObject({
-        ...budgetStub,
+        ...budgetPayload,
         ...budgetPatch,
       });
     });
@@ -137,11 +137,11 @@ describe('BudgetsService', () => {
 
   describe('remove', () => {
     it('should remove a budget if given a valid id', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: 'Budget',
         externalId: 'abd123',
       };
-      const savedBudget = await new budgetModel(budgetStub).save();
+      const savedBudget = await new budgetModel(budgetPayload).save();
 
       expect((await budgetsService.remove(savedBudget.id)).deletedCount).toBe(
         1,

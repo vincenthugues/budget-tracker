@@ -40,14 +40,14 @@ describe('AccountsService', () => {
 
   describe('create', () => {
     it('should return the saved object with timestamps', async () => {
-      const accountStub = {
+      const accountPayload = {
         name: 'New Account',
         externalId: 'abc123',
         type: 'Savings' as unknown as AccountType,
       };
-      const createdAccount = await accountsService.create(accountStub);
+      const createdAccount = await accountsService.create(accountPayload);
 
-      expect(createdAccount).toMatchObject(accountStub);
+      expect(createdAccount).toMatchObject(accountPayload);
       expect(createdAccount.createdAt).toBeDefined();
       expect(createdAccount.updatedAt).toBeDefined();
     });
@@ -55,13 +55,13 @@ describe('AccountsService', () => {
 
   describe('findAll', () => {
     it('should return an array of all accounts', async () => {
-      const account1Stub = { name: 'Account 1' };
-      const account2Stub = { name: 'Account 2' };
-      await accountModel.create(account1Stub, account2Stub);
+      const account1Payload = { name: 'Account 1' };
+      const account2Payload = { name: 'Account 2' };
+      await accountModel.create(account1Payload, account2Payload);
 
       expect(await accountsService.findAll()).toMatchObject([
-        account1Stub,
-        account2Stub,
+        account1Payload,
+        account2Payload,
       ]);
     });
 
@@ -72,11 +72,11 @@ describe('AccountsService', () => {
 
   describe('findOne', () => {
     it('should return the account with matching id', async () => {
-      const accountStub = { name: '[findOne] Test account' };
-      const { _id } = await accountModel.create(accountStub);
+      const accountPayload = { name: '[findOne] Test account' };
+      const { _id } = await accountModel.create(accountPayload);
       const foundAccount = await accountsService.findOne(_id);
 
-      expect(foundAccount.name).toEqual(accountStub.name);
+      expect(foundAccount.name).toEqual(accountPayload.name);
     });
 
     it('should fail if no account matches the id', async () => {

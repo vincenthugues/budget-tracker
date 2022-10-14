@@ -44,48 +44,48 @@ describe('BudgetsController', () => {
 
   describe('[POST]', () => {
     it('should return the saved object', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: 'New budget',
         externalId: 'abd123',
         startingDate: new Date('2022-01-15'),
       };
-      const createdBudget = await budgetsController.create(budgetStub);
+      const createdBudget = await budgetsController.create(budgetPayload);
 
-      expect(createdBudget).toMatchObject(budgetStub);
+      expect(createdBudget).toMatchObject(budgetPayload);
     });
 
     it('should fail if the name is empty', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: '',
         externalId: 'abd123',
         startingDate: new Date('2022-01-15'),
       };
 
-      expect(budgetsController.create(budgetStub)).rejects.toThrowError(
+      expect(budgetsController.create(budgetPayload)).rejects.toThrowError(
         'Budget validation failed: name: Path `name` is required.',
       );
     });
 
     it('should fail if the externalId is undefined', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: 'New budget',
         externalId: undefined,
       };
 
-      expect(await budgetsController.create(budgetStub)).toMatchObject({
+      expect(await budgetsController.create(budgetPayload)).toMatchObject({
         name: 'New budget',
         externalId: undefined,
       });
     });
 
     it('should work if the startingDate is undefined', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: 'New budget',
         externalId: 'abc123',
         startingDate: undefined,
       };
 
-      expect(await budgetsController.create(budgetStub)).toMatchObject({
+      expect(await budgetsController.create(budgetPayload)).toMatchObject({
         name: 'New budget',
         externalId: 'abc123',
       });
@@ -94,14 +94,14 @@ describe('BudgetsController', () => {
 
   describe('[GET]', () => {
     it('should return an array of budgets', async () => {
-      const budgetStub = {
+      const budgetPayload = {
         name: 'New Budget',
         externalId: 'abd123',
       };
 
-      await new budgetModel(budgetStub).save();
+      await new budgetModel(budgetPayload).save();
 
-      expect(await budgetsController.findAll()).toMatchObject([budgetStub]);
+      expect(await budgetsController.findAll()).toMatchObject([budgetPayload]);
     });
   });
 });

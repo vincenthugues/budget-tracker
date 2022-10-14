@@ -44,53 +44,53 @@ describe('PayeesService', () => {
 
   describe('create', () => {
     it('should return the saved object with timestamps', async () => {
-      const payeeStub = {
+      const payeePayload = {
         name: 'New Payee',
         externalId: 'abd123',
       };
-      const createdPayee = await payeesService.create(payeeStub);
+      const createdPayee = await payeesService.create(payeePayload);
 
-      expect(createdPayee).toMatchObject(payeeStub);
+      expect(createdPayee).toMatchObject(payeePayload);
       expect(createdPayee.createdAt).toBeDefined();
       expect(createdPayee.updatedAt).toBeDefined();
     });
 
     // it('should throw AlreadyExists (Bad Request - 400) exception', async () => {
-    //   const payeeStub = {
+    //   const payeePayload = {
     //     name: 'New Payee',
     //     externalId: 'abd123',
     //   };
 
-    //   await new payeeModel(payeeStub).save();
+    //   await new payeeModel(payeePayload).save();
 
-    //   await expect(payeesService.create(payeeStub)).rejects.toThrow();
+    //   await expect(payeesService.create(payeePayload)).rejects.toThrow();
     // });
   });
 
   describe('findAll', () => {
     it('should return an array of payees', async () => {
-      const payeeStub = {
+      const payeePayload = {
         name: 'New Payee',
         externalId: 'abd123',
       };
 
-      await new payeeModel(payeeStub).save();
+      await new payeeModel(payeePayload).save();
 
-      expect(await payeesService.findAll()).toMatchObject([payeeStub]);
+      expect(await payeesService.findAll()).toMatchObject([payeePayload]);
     });
   });
 
   describe('findOne', () => {
     it('should return a payee if given a valid id', async () => {
-      const payeeStub = {
+      const payeePayload = {
         name: 'New Payee',
         externalId: 'abd123',
       };
 
-      const savedPayee = await new payeeModel(payeeStub).save();
+      const savedPayee = await new payeeModel(payeePayload).save();
 
       expect(await payeesService.findOne(savedPayee.id)).toMatchObject(
-        payeeStub,
+        payeePayload,
       );
     });
 
@@ -105,11 +105,11 @@ describe('PayeesService', () => {
 
   describe('update', () => {
     it('should update a payee if given a valid id', async () => {
-      const payeeStub = {
+      const payeePayload = {
         name: 'Payee',
         externalId: 'abd123',
       };
-      const savedPayee = await new payeeModel(payeeStub).save();
+      const savedPayee = await new payeeModel(payeePayload).save();
 
       const payeePatch = {
         name: 'Payee (updated)',
@@ -136,11 +136,11 @@ describe('PayeesService', () => {
 
   describe('remove', () => {
     it('should remove a payee if given a valid id', async () => {
-      const payeeStub = {
+      const payeePayload = {
         name: 'Payee',
         externalId: 'abd123',
       };
-      const savedPayee = await new payeeModel(payeeStub).save();
+      const savedPayee = await new payeeModel(payeePayload).save();
 
       expect((await payeesService.remove(savedPayee.id)).deletedCount).toBe(1);
       expect((await payeeModel.find().exec()).length).toBe(0);
