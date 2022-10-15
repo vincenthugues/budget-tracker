@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateBudgetDto } from './dto/create-budget.dto';
@@ -12,25 +12,39 @@ export class BudgetsService {
   ) {}
 
   create(createBudgetDto: CreateBudgetDto): Promise<BudgetDocument> {
-    const createdBudget = new this.budgetModel(createBudgetDto);
-    return createdBudget.save();
+    return this.budgetModel.create(createBudgetDto);
   }
 
   findAll(): Promise<BudgetDocument[]> {
     return this.budgetModel.find().exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<BudgetDocument> {
-    return this.budgetModel.findById(id).exec();
+  async findOne(id: Types.ObjectId): Promise<BudgetDocument> {
+    const budget = await this.budgetModel.findById(id).exec();
+    if (!budget) {
+      throw new NotFoundException(`No budget found for id ${id}`);
+    }
+
+    return budget;
   }
 
-  update(id: Types.ObjectId, updateBudgetDto: UpdateBudgetDto) {
-    return this.budgetModel.findOneAndUpdate({ id }, updateBudgetDto, {
-      new: true,
-    });
+  async update(id: Types.ObjectId, updateBudgetDto: UpdateBudgetDto) {
+    const budget = await this.budgetModel
+      .findByIdAndUpdate(id, updateBudgetDto, { new: true })
+      .exec();
+    if (!budget) {
+      throw new NotFoundException(`No budget found for id ${id}`);
+    }
+
+    return budget;
   }
 
-  remove(id: Types.ObjectId) {
-    return this.budgetModel.deleteOne({ id });
+  async remove(id: Types.ObjectId) {
+    const budget = await this.budgetModel.findByIdAndDelete(id).exec();
+    if (!budget) {
+      throw new NotFoundException(`No budget found for id ${id}`);
+    }
+
+    return budget;
   }
 }

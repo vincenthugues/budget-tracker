@@ -38,27 +38,23 @@ describe('BudgetsController', () => {
     await teardownInMemoryMongo();
   });
 
-  it('should be defined', () => {
-    expect(budgetsController).toBeDefined();
-  });
-
   describe('[POST]', () => {
-    it('should return the saved object', async () => {
-      const budgetPayload = {
-        name: 'New budget',
-        externalId: 'abd123',
-        startingDate: new Date('2022-01-15'),
-      };
-      const createdBudget = await budgetsController.create(budgetPayload);
+    const BASE_BUDGET_PAYLOAD = {
+      name: 'New budget',
+      externalId: 'abc123',
+      startingDate: new Date('2022-01-15'),
+    };
 
-      expect(createdBudget).toMatchObject(budgetPayload);
+    it('should return the saved object', async () => {
+      const createdBudget = await budgetsController.create(BASE_BUDGET_PAYLOAD);
+
+      expect(createdBudget).toMatchObject(BASE_BUDGET_PAYLOAD);
     });
 
     it('should fail if the name is empty', async () => {
       const budgetPayload = {
+        ...BASE_BUDGET_PAYLOAD,
         name: '',
-        externalId: 'abd123',
-        startingDate: new Date('2022-01-15'),
       };
 
       expect(budgetsController.create(budgetPayload)).rejects.toThrowError(
@@ -68,7 +64,7 @@ describe('BudgetsController', () => {
 
     it('should fail if the externalId is undefined', async () => {
       const budgetPayload = {
-        name: 'New budget',
+        ...BASE_BUDGET_PAYLOAD,
         externalId: undefined,
       };
 
@@ -80,8 +76,7 @@ describe('BudgetsController', () => {
 
     it('should work if the startingDate is undefined', async () => {
       const budgetPayload = {
-        name: 'New budget',
-        externalId: 'abc123',
+        ...BASE_BUDGET_PAYLOAD,
         startingDate: undefined,
       };
 
@@ -98,8 +93,7 @@ describe('BudgetsController', () => {
         name: 'New Budget',
         externalId: 'abd123',
       };
-
-      await new budgetModel(budgetPayload).save();
+      await budgetModel.create(budgetPayload);
 
       expect(await budgetsController.findAll()).toMatchObject([budgetPayload]);
     });
