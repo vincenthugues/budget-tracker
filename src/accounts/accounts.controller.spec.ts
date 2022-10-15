@@ -38,10 +38,6 @@ describe('AccountsController', () => {
     await teardownInMemoryMongo();
   });
 
-  it('should be defined', () => {
-    expect(accountsController).toBeDefined();
-  });
-
   describe('[POST]', () => {
     const BASE_ACCOUNT_PAYLOAD = {
       name: 'Compte Courant',

@@ -25,7 +25,10 @@ export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
   @Post()
-  @ApiCreatedResponse({ description: 'Account successfully created' })
+  @ApiCreatedResponse({
+    type: Account,
+    description: 'Account successfully created',
+  })
   create(@Body() createAccountDto: CreateAccountDto): Promise<AccountDocument> {
     return this.accountsService.create(createAccountDto);
   }
