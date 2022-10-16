@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,
@@ -9,7 +9,12 @@ import {
 } from '../../test/utils/inMemoryMongo';
 import { CategoriesController } from './categories.controller';
 import { CategoriesService } from './categories.service';
-import { Category, CategorySchema } from './schemas/category.schema';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import {
+  Category,
+  CategoryDocument,
+  CategorySchema,
+} from './schemas/category.schema';
 
 describe('CategoriesController', () => {
   let categoriesController: CategoriesController;
@@ -42,15 +47,11 @@ describe('CategoriesController', () => {
     await teardownInMemoryMongo();
   });
 
-  it('should be defined', () => {
-    expect(categoriesController).toBeDefined();
-  });
-
   describe('[POST]', () => {
-    const BASE_CATEGORY_PAYLOAD = {
+    const BASE_CATEGORY_PAYLOAD: CreateCategoryDto = {
       name: 'Coffee shop',
       externalId: 'abc123',
-      parentCategoryId: undefined,
+      parentCategoryId: '5e1a0651741b255ddda996c4' as unknown as Types.ObjectId,
       isHidden: false,
       isDeleted: false,
     };
@@ -126,16 +127,48 @@ describe('CategoriesController', () => {
 
   describe('[GET]', () => {
     it('should return an array of categories', async () => {
-      const categoryStub = {
+      const categoryPayload = {
         name: 'Coffee shop',
         externalId: 'abc123',
       };
 
-      await new categoryModel(categoryStub).save();
+      await categoryModel.create(categoryPayload);
 
       expect(await categoriesController.findAll()).toMatchObject([
-        categoryStub,
+        categoryPayload,
       ]);
+    });
+  });
+
+  describe('[PATCH]', () => {
+    const CATEGORY_PAYLOAD = {
+      name: 'Coffee shop',
+      externalId: 'abc123',
+      parentCategoryId: undefined,
+      isHidden: false,
+      isDeleted: false,
+    };
+
+    it('should return the updated object', async () => {
+      const createdCategory: CategoryDocument =
+        await categoriesController.create(CATEGORY_PAYLOAD);
+      const categoryUpdate = {
+        name: 'New name',
+        externalId: 'def456',
+        parentCategoryId:
+          '5e1a0651741b255ddda996c4' as unknown as Types.ObjectId,
+        isHidden: true,
+        isDeleted: true,
+      };
+      const updatedCategory = await categoriesController.update(
+        createdCategory._id,
+        categoryUpdate,
+      );
+
+      expect(updatedCategory).toMatchObject({
+        ...CATEGORY_PAYLOAD,
+        ...categoryUpdate,
+      });
     });
   });
 });

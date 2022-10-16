@@ -91,7 +91,7 @@ describe('BudgetsController', () => {
     it('should return an array of budgets', async () => {
       const budgetPayload = {
         name: 'New Budget',
-        externalId: 'abd123',
+        externalId: 'abc123',
       };
       await budgetModel.create(budgetPayload);
 

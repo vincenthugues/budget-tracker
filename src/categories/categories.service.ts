@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -12,25 +12,39 @@ export class CategoriesService {
   ) {}
 
   create(createCategoryDto: CreateCategoryDto): Promise<CategoryDocument> {
-    const createdCategory = new this.categoryModel(createCategoryDto);
-    return createdCategory.save();
+    return this.categoryModel.create(createCategoryDto);
   }
 
   findAll(): Promise<CategoryDocument[]> {
     return this.categoryModel.find().exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<CategoryDocument> {
-    return this.categoryModel.findById(id).exec();
+  async findOne(id: Types.ObjectId): Promise<CategoryDocument> {
+    const category = await this.categoryModel.findById(id).exec();
+    if (!category) {
+      throw new NotFoundException(`No category found for id ${id}`);
+    }
+
+    return category;
   }
 
-  update(id: Types.ObjectId, updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryModel.findOneAndUpdate({ id }, updateCategoryDto, {
-      new: true,
-    });
+  async update(id: Types.ObjectId, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.categoryModel
+      .findByIdAndUpdate(id, updateCategoryDto, { new: true })
+      .exec();
+    if (!category) {
+      throw new NotFoundException(`No category found for id ${id}`);
+    }
+
+    return category;
   }
 
-  remove(id: Types.ObjectId) {
-    return this.categoryModel.deleteOne({ id });
+  async remove(id: Types.ObjectId) {
+    const category = await this.categoryModel.findByIdAndDelete(id).exec();
+    if (!category) {
+      throw new NotFoundException(`No category found for id ${id}`);
+    }
+
+    return category;
   }
 }
