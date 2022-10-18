@@ -38,15 +38,11 @@ describe('PayeesService', () => {
     await teardownInMemoryMongo();
   });
 
-  it('should be defined', () => {
-    expect(payeesService).toBeDefined();
-  });
-
   describe('create', () => {
     it('should return the saved object with timestamps', async () => {
       const payeePayload = {
         name: 'New Payee',
-        externalId: 'abd123',
+        externalId: 'abc123',
       };
       const createdPayee = await payeesService.create(payeePayload);
 
@@ -54,106 +50,79 @@ describe('PayeesService', () => {
       expect(createdPayee.createdAt).toBeDefined();
       expect(createdPayee.updatedAt).toBeDefined();
     });
-
-    // it('should throw AlreadyExists (Bad Request - 400) exception', async () => {
-    //   const payeePayload = {
-    //     name: 'New Payee',
-    //     externalId: 'abd123',
-    //   };
-
-    //   await new payeeModel(payeePayload).save();
-
-    //   await expect(payeesService.create(payeePayload)).rejects.toThrow();
-    // });
   });
 
   describe('findAll', () => {
-    it('should return an array of payees', async () => {
-      const payeePayload = {
-        name: 'New Payee',
-        externalId: 'abd123',
-      };
+    it('should return an array of all payees', async () => {
+      const payee1Payload = { name: 'Payee 1' };
+      const payee2Payload = { name: 'Payee 2' };
+      await payeeModel.create(payee1Payload, payee2Payload);
 
-      await new payeeModel(payeePayload).save();
+      expect(await payeesService.findAll()).toMatchObject([
+        payee1Payload,
+        payee2Payload,
+      ]);
+    });
 
-      expect(await payeesService.findAll()).toMatchObject([payeePayload]);
+    it('should return an empty array when there are no payees', async () => {
+      expect(await payeesService.findAll()).toMatchObject([]);
     });
   });
 
   describe('findOne', () => {
-    it('should return a payee if given a valid id', async () => {
-      const payeePayload = {
-        name: 'New Payee',
-        externalId: 'abd123',
-      };
+    it('should return the payee with matching id', async () => {
+      const payeePayload = { name: 'New Payee' };
+      const { _id } = await payeeModel.create(payeePayload);
 
-      const savedPayee = await new payeeModel(payeePayload).save();
+      const foundPayee = await payeesService.findOne(_id);
 
-      expect(await payeesService.findOne(savedPayee.id)).toMatchObject(
-        payeePayload,
-      );
+      expect(foundPayee.name).toBe(payeePayload.name);
     });
 
-    it('should return null otherwise', async () => {
+    it('should fail if no payee matches the id', async () => {
+      const id = '6348784df0ea88d406093123';
+
       expect(
-        await payeesService.findOne(
-          new Types.ObjectId('ffffffffffffffffffffffff'),
-        ),
-      ).toBeNull();
+        payeesService.findOne(id as unknown as Types.ObjectId),
+      ).rejects.toThrowError(`No payee found for id ${id}`);
     });
   });
 
   describe('update', () => {
-    it('should update a payee if given a valid id', async () => {
-      const payeePayload = {
-        name: 'Payee',
-        externalId: 'abd123',
-      };
-      const savedPayee = await new payeeModel(payeePayload).save();
+    it('should update the payee', async () => {
+      const { _id } = await payeeModel.create({ name: 'Test Payee' });
+      const update = { name: 'Test Payee (updated)' };
 
-      const payeePatch = {
-        name: 'Payee (updated)',
-      };
-      expect(
-        await payeesService.update(savedPayee.id, payeePatch),
-      ).toMatchObject({
-        name: 'Payee (updated)',
-        externalId: 'abd123',
-      });
+      const updatedPayee = await payeesService.update(_id, update);
+
+      expect(updatedPayee.name).toEqual(update.name);
     });
 
-    it('should return null otherwise', async () => {
+    it('should fail if no payee matches the id', async () => {
+      const id = '6348784df0ea88d406093123';
+      const update = { name: 'Payee (updated)' };
+
       expect(
-        await payeesService.update(
-          new Types.ObjectId('ffffffffffffffffffffffff'),
-          {
-            name: 'Payee (updated)',
-          },
-        ),
-      ).toBeNull();
+        payeesService.update(id as unknown as Types.ObjectId, update),
+      ).rejects.toThrowError(`No payee found for id ${id}`);
     });
   });
 
   describe('remove', () => {
-    it('should remove a payee if given a valid id', async () => {
-      const payeePayload = {
-        name: 'Payee',
-        externalId: 'abd123',
-      };
-      const savedPayee = await new payeeModel(payeePayload).save();
+    it('should remove the payee', async () => {
+      const { _id } = await payeeModel.create({ name: 'Test Payee' });
 
-      expect((await payeesService.remove(savedPayee.id)).deletedCount).toBe(1);
-      expect((await payeeModel.find().exec()).length).toBe(0);
+      await payeesService.remove(_id);
+
+      expect(await payeeModel.find({})).toMatchObject([]);
     });
 
-    it('should return null otherwise', async () => {
+    it('should fail if no payee matches the id', async () => {
+      const id = '6348784df0ea88d406093123';
+
       expect(
-        (
-          await payeesService.remove(
-            new Types.ObjectId('ffffffffffffffffffffffff'),
-          )
-        ).deletedCount,
-      ).toBe(0);
+        payeesService.remove(id as unknown as Types.ObjectId),
+      ).rejects.toThrowError(`No payee found for id ${id}`);
     });
   });
 });

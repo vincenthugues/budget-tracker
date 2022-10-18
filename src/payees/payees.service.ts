@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreatePayeeDto } from './dto/create-payee.dto';
@@ -12,25 +12,39 @@ export class PayeesService {
   ) {}
 
   create(createPayeeDto: CreatePayeeDto): Promise<PayeeDocument> {
-    const createdPayee = new this.payeeModel(createPayeeDto);
-    return createdPayee.save();
+    return this.payeeModel.create(createPayeeDto);
   }
 
   findAll(): Promise<PayeeDocument[]> {
     return this.payeeModel.find().exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<PayeeDocument> {
-    return this.payeeModel.findById(id).exec();
+  async findOne(id: Types.ObjectId): Promise<PayeeDocument> {
+    const payee = await this.payeeModel.findById(id).exec();
+    if (!payee) {
+      throw new NotFoundException(`No payee found for id ${id}`);
+    }
+
+    return payee;
   }
 
-  update(id: Types.ObjectId, updatePayeeDto: UpdatePayeeDto) {
-    return this.payeeModel.findOneAndUpdate({ id }, updatePayeeDto, {
-      new: true,
-    });
+  async update(id: Types.ObjectId, updatePayeeDto: UpdatePayeeDto) {
+    const payee = await this.payeeModel
+      .findByIdAndUpdate(id, updatePayeeDto, { new: true })
+      .exec();
+    if (!payee) {
+      throw new NotFoundException(`No payee found for id ${id}`);
+    }
+
+    return payee;
   }
 
-  remove(id: Types.ObjectId) {
-    return this.payeeModel.deleteOne({ id });
+  async remove(id: Types.ObjectId) {
+    const payee = await this.payeeModel.findByIdAndDelete(id).exec();
+    if (!payee) {
+      throw new NotFoundException(`No payee found for id ${id}`);
+    }
+
+    return payee;
   }
 }

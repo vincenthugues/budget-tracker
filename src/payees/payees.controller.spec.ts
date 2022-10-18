@@ -7,6 +7,7 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
+import { CreatePayeeDto } from './dto/create-payee.dto';
 import { PayeesController } from './payees.controller';
 import { PayeesService } from './payees.service';
 import { Payee, PayeeSchema } from './schemas/payee.schema';
@@ -38,25 +39,22 @@ describe('PayeesController', () => {
     await teardownInMemoryMongo();
   });
 
-  it('should be defined', () => {
-    expect(payeesController).toBeDefined();
-  });
-
   describe('[POST]', () => {
-    it('should return the saved object', async () => {
-      const payeePayload = {
-        name: 'New Payee',
-        externalId: 'abd123',
-      };
-      const createdPayee = await payeesController.create(payeePayload);
+    const BASE_PAYEE_PAYLOAD: CreatePayeeDto = {
+      name: 'New Payee',
+      externalId: 'abc123',
+    };
 
-      expect(createdPayee).toMatchObject(payeePayload);
+    it('should return the saved object', async () => {
+      const createdPayee = await payeesController.create(BASE_PAYEE_PAYLOAD);
+
+      expect(createdPayee).toMatchObject(BASE_PAYEE_PAYLOAD);
     });
 
     it('should fail if the name is empty', async () => {
       const payeePayload = {
+        ...BASE_PAYEE_PAYLOAD,
         name: '',
-        externalId: 'abd123',
       };
 
       expect(payeesController.create(payeePayload)).rejects.toThrowError(
@@ -66,7 +64,7 @@ describe('PayeesController', () => {
 
     it('should work if the externalId is null', async () => {
       const payeePayload = {
-        name: 'New Payee',
+        ...BASE_PAYEE_PAYLOAD,
         externalId: null,
       };
 
@@ -79,12 +77,36 @@ describe('PayeesController', () => {
     it('should return an array of payees', async () => {
       const payeePayload = {
         name: 'New Payee',
-        externalId: 'abd123',
+        externalId: 'abc123',
       };
 
       await new payeeModel(payeePayload).save();
 
       expect(await payeesController.findAll()).toMatchObject([payeePayload]);
+    });
+  });
+
+  describe('[PATCH]', () => {
+    const BASE_PAYEE_PAYLOAD = {
+      name: 'Shop ABC',
+      externalId: 'abc123',
+    };
+
+    it('should return the updated object', async () => {
+      const createdPayee = await payeesController.create(BASE_PAYEE_PAYLOAD);
+      const payeeUpdate = {
+        name: 'Shop ABC (updated)',
+        externalId: 'def456',
+      };
+      const updatedPayee = await payeesController.update(
+        createdPayee._id,
+        payeeUpdate,
+      );
+
+      expect(updatedPayee).toMatchObject({
+        ...BASE_PAYEE_PAYLOAD,
+        ...payeeUpdate,
+      });
     });
   });
 });
