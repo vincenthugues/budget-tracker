@@ -63,14 +63,14 @@ export class CategoriesController {
   update(
     @Param('id') id: Types.ObjectId,
     @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
+  ): Promise<CategoryDocument> {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested category was deleted' })
   @ApiNotFoundResponse({ description: 'Category not found' })
-  remove(@Param('id') id: Types.ObjectId) {
+  remove(@Param('id') id: Types.ObjectId): Promise<CategoryDocument> {
     return this.categoriesService.remove(id);
   }
 }

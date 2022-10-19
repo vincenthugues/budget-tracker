@@ -28,7 +28,10 @@ export class CategoriesService {
     return category;
   }
 
-  async update(id: Types.ObjectId, updateCategoryDto: UpdateCategoryDto) {
+  async update(
+    id: Types.ObjectId,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<CategoryDocument> {
     const category = await this.categoryModel
       .findByIdAndUpdate(id, updateCategoryDto, { new: true })
       .exec();
@@ -39,7 +42,7 @@ export class CategoriesService {
     return category;
   }
 
-  async remove(id: Types.ObjectId) {
+  async remove(id: Types.ObjectId): Promise<CategoryDocument> {
     const category = await this.categoryModel.findByIdAndDelete(id).exec();
     if (!category) {
       throw new NotFoundException(`No category found for id ${id}`);

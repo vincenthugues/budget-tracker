@@ -28,7 +28,10 @@ export class BudgetsService {
     return budget;
   }
 
-  async update(id: Types.ObjectId, updateBudgetDto: UpdateBudgetDto) {
+  async update(
+    id: Types.ObjectId,
+    updateBudgetDto: UpdateBudgetDto,
+  ): Promise<BudgetDocument> {
     const budget = await this.budgetModel
       .findByIdAndUpdate(id, updateBudgetDto, { new: true })
       .exec();
@@ -39,7 +42,7 @@ export class BudgetsService {
     return budget;
   }
 
-  async remove(id: Types.ObjectId) {
+  async remove(id: Types.ObjectId): Promise<BudgetDocument> {
     const budget = await this.budgetModel.findByIdAndDelete(id).exec();
     if (!budget) {
       throw new NotFoundException(`No budget found for id ${id}`);

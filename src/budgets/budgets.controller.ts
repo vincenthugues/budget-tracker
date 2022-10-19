@@ -61,14 +61,14 @@ export class BudgetsController {
   update(
     @Param('id') id: Types.ObjectId,
     @Body() updateBudgetDto: UpdateBudgetDto,
-  ) {
+  ): Promise<BudgetDocument> {
     return this.budgetsService.update(id, updateBudgetDto);
   }
 
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested budget was deleted' })
   @ApiNotFoundResponse({ description: 'Budget not found' })
-  remove(@Param('id') id: Types.ObjectId) {
+  remove(@Param('id') id: Types.ObjectId): Promise<BudgetDocument> {
     return this.budgetsService.remove(id);
   }
 }

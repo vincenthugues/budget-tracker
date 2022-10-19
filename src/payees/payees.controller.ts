@@ -61,14 +61,14 @@ export class PayeesController {
   update(
     @Param('id') id: Types.ObjectId,
     @Body() updatePayeeDto: UpdatePayeeDto,
-  ) {
+  ): Promise<PayeeDocument> {
     return this.payeesService.update(id, updatePayeeDto);
   }
 
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested payee was deleted' })
   @ApiNotFoundResponse({ description: 'Payee not found' })
-  remove(@Param('id') id: Types.ObjectId) {
+  remove(@Param('id') id: Types.ObjectId): Promise<PayeeDocument> {
     return this.payeesService.remove(id);
   }
 }

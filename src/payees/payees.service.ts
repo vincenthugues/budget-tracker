@@ -28,7 +28,10 @@ export class PayeesService {
     return payee;
   }
 
-  async update(id: Types.ObjectId, updatePayeeDto: UpdatePayeeDto) {
+  async update(
+    id: Types.ObjectId,
+    updatePayeeDto: UpdatePayeeDto,
+  ): Promise<PayeeDocument> {
     const payee = await this.payeeModel
       .findByIdAndUpdate(id, updatePayeeDto, { new: true })
       .exec();
@@ -39,7 +42,7 @@ export class PayeesService {
     return payee;
   }
 
-  async remove(id: Types.ObjectId) {
+  async remove(id: Types.ObjectId): Promise<PayeeDocument> {
     const payee = await this.payeeModel.findByIdAndDelete(id).exec();
     if (!payee) {
       throw new NotFoundException(`No payee found for id ${id}`);
