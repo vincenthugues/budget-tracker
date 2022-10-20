@@ -7,7 +7,12 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -20,6 +25,10 @@ export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
+  @ApiCreatedResponse({
+    type: Transaction,
+    description: 'Transaction successfully created',
+  })
   create(
     @Body() createTransactionDto: CreateTransactionDto,
   ): Promise<TransactionDocument> {
@@ -27,16 +36,30 @@ export class TransactionsController {
   }
 
   @Get()
+  @ApiOkResponse({
+    type: [Transaction],
+    description: 'Returns the list of transactions',
+  })
   findAll(): Promise<TransactionDocument[]> {
     return this.transactionsService.findAll();
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    type: Transaction,
+    description: 'Returns the requested transaction',
+  })
+  @ApiNotFoundResponse({ description: 'Transaction not found' })
   findOne(@Param('id') id: Types.ObjectId): Promise<TransactionDocument> {
     return this.transactionsService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiOkResponse({
+    type: Transaction,
+    description: 'Returns the updated transaction',
+  })
+  @ApiNotFoundResponse({ description: 'Transaction not found' })
   update(
     @Param('id') id: Types.ObjectId,
     @Body() updateTransactionDto: UpdateTransactionDto,
@@ -45,6 +68,8 @@ export class TransactionsController {
   }
 
   @Delete(':id')
+  @ApiOkResponse({ description: 'The requested transaction was deleted' })
+  @ApiNotFoundResponse({ description: 'Transaction not found' })
   remove(@Param('id') id: Types.ObjectId) {
     return this.transactionsService.remove(id);
   }

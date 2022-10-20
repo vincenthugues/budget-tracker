@@ -15,12 +15,17 @@ import { TransactionsService } from './transactions.service';
 describe('TransactionsService', () => {
   let transactionsService: TransactionsService;
   let transactionModel: Model<Transaction>;
+
   const BASE_TRANSACTION_PAYLOAD: CreateTransactionDto = {
     date: new Date('2022-01-15'),
     amount: 123,
     accountId: '5e1a0651741b255ddda996c4',
     payeeId: '5e1a0651741b255ddda996c4',
     categoryId: '5e1a0651741b255ddda996c4',
+    isCleared: true,
+    isDeleted: false,
+    externalId: 'abc123',
+    notes: 'Test',
   };
 
   beforeAll(async () => {
@@ -53,10 +58,6 @@ describe('TransactionsService', () => {
     await teardownInMemoryMongo();
   });
 
-  it('should be defined', () => {
-    expect(transactionsService).toBeDefined();
-  });
-
   describe('create', () => {
     it('should return the saved object with timestamps', async () => {
       const createdTransaction = await transactionsService.create(
@@ -70,85 +71,91 @@ describe('TransactionsService', () => {
   });
 
   describe('findAll', () => {
-    it('should return an array of transactions', async () => {
-      await new transactionModel(BASE_TRANSACTION_PAYLOAD).save();
+    it('should return an array of all transactions', async () => {
+      const transaction1Payload = {
+        ...BASE_TRANSACTION_PAYLOAD,
+        notes: 'Transaction 1',
+      };
+      const transaction2Payload = {
+        ...BASE_TRANSACTION_PAYLOAD,
+        notes: 'Transaction 2',
+      };
+      await transactionModel.create(transaction1Payload, transaction2Payload);
 
       expect(await transactionsService.findAll()).toMatchObject([
-        BASE_TRANSACTION_PAYLOAD,
+        transaction1Payload,
+        transaction2Payload,
       ]);
+    });
+
+    it('should return an empty array when there are no transactions', async () => {
+      expect(await transactionsService.findAll()).toMatchObject([]);
     });
   });
 
   describe('findOne', () => {
-    it('should return a transaction if given a valid id', async () => {
-      const savedTransaction = await new transactionModel(
-        BASE_TRANSACTION_PAYLOAD,
-      ).save();
+    it('should return the transaction with matching id', async () => {
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
+        notes: 'Test transaction',
+      };
+      const { _id } = await transactionModel.create(transactionPayload);
 
-      expect(
-        await transactionsService.findOne(savedTransaction.id),
-      ).toMatchObject(BASE_TRANSACTION_PAYLOAD);
+      const foundTransaction = await transactionsService.findOne(_id);
+
+      expect(foundTransaction.notes).toBe(transactionPayload.notes);
     });
 
-    it('should return null otherwise', async () => {
+    it('should fail if no transaction matches the id', async () => {
+      const id = '6348784df0ea88d406093123';
+
       expect(
-        await transactionsService.findOne(
-          new Types.ObjectId('ffffffffffffffffffffffff'),
-        ),
-      ).toBeNull();
+        transactionsService.findOne(id as unknown as Types.ObjectId),
+      ).rejects.toThrowError(`No transaction found for id ${id}`);
     });
   });
 
   describe('update', () => {
-    it('should update a transaction if given a valid id', async () => {
-      const savedTransaction = await new transactionModel({
+    it('should update the transaction', async () => {
+      const { _id } = await transactionModel.create({
         ...BASE_TRANSACTION_PAYLOAD,
-        amount: 1234,
-      }).save();
-
-      const transactionPatch = {
-        amount: 5678,
-      };
-      expect(
-        await transactionsService.update(savedTransaction.id, transactionPatch),
-      ).toMatchObject({
-        ...BASE_TRANSACTION_PAYLOAD,
-        amount: 5678,
+        notes: 'Test transaction',
       });
+      const update = { notes: 'Test transaction (updated)' };
+
+      const updatedCategory = await transactionsService.update(_id, update);
+
+      expect(updatedCategory.notes).toEqual(update.notes);
     });
 
-    it('should return null otherwise', async () => {
+    it('should fail if no transaction matches the id', async () => {
+      const id = '6348784df0ea88d406093123';
+      const update = { notes: 'Category (updated)' };
+
       expect(
-        await transactionsService.update(
-          new Types.ObjectId('ffffffffffffffffffffffff'),
-          {
-            amount: 1234,
-          },
-        ),
-      ).toBeNull();
+        transactionsService.update(id as unknown as Types.ObjectId, update),
+      ).rejects.toThrowError(`No transaction found for id ${id}`);
     });
   });
 
   describe('remove', () => {
-    it('should remove a transaction if given a valid id', async () => {
-      const savedTransaction = await new transactionModel(
-        BASE_TRANSACTION_PAYLOAD,
-      ).save();
+    it('should remove the transaction', async () => {
+      const { _id } = await transactionModel.create({
+        ...BASE_TRANSACTION_PAYLOAD,
+        notes: 'Test transaction',
+      });
 
-      expect(
-        (await transactionsService.remove(savedTransaction.id)).deletedCount,
-      ).toBe(1);
-      expect((await transactionModel.find().exec()).length).toBe(0);
+      await transactionsService.remove(_id);
+
+      expect(await transactionModel.find({})).toMatchObject([]);
     });
 
-    it('should return null otherwise', async () => {
+    it('should fail if no transaction matches the id', async () => {
+      const id = '6348784df0ea88d406093123';
+
       expect(
-        (
-          await transactionsService.remove(
-            new Types.ObjectId('ffffffffffffffffffffffff'),
-          )
-        ).deletedCount,
-      ).toBe(0);
+        transactionsService.remove(id as unknown as Types.ObjectId),
+      ).rejects.toThrowError(`No transaction found for id ${id}`);
     });
   });
 });

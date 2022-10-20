@@ -8,7 +8,11 @@ import {
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { Transaction, TransactionSchema } from './schemas/transaction.schema';
+import {
+  Transaction,
+  TransactionDocument,
+  TransactionSchema,
+} from './schemas/transaction.schema';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsService } from './transactions.service';
 
@@ -57,10 +61,6 @@ describe('TransactionsController', () => {
 
   afterAll(async () => {
     await teardownInMemoryMongo();
-  });
-
-  it('should be defined', () => {
-    expect(TransactionsController).toBeDefined();
   });
 
   describe('[POST]', () => {
@@ -151,6 +151,20 @@ describe('TransactionsController', () => {
       });
     });
 
+    it('should work if isDeleted is undefined; defaults to false', async () => {
+      const transactionPayload = {
+        ...BASE_TRANSACTION_PAYLOAD,
+        isDeleted: undefined,
+      };
+
+      expect(
+        await transactionsController.create(transactionPayload),
+      ).toMatchObject({
+        ...BASE_TRANSACTION_PAYLOAD,
+        isDeleted: false,
+      });
+    });
+
     it('should work if the externalId is undefined', async () => {
       const transactionPayload = {
         ...BASE_TRANSACTION_PAYLOAD,
@@ -165,28 +179,45 @@ describe('TransactionsController', () => {
       });
     });
 
-    it('should work if isDeleted is undefined; defaults to false', async () => {
+    it('should work if notes is undefined', async () => {
       const transactionPayload = {
         ...BASE_TRANSACTION_PAYLOAD,
-        isDeleted: undefined,
+        notes: undefined,
       };
 
       expect(
         await transactionsController.create(transactionPayload),
       ).toMatchObject({
         ...BASE_TRANSACTION_PAYLOAD,
-        isDeleted: false,
+        notes: undefined,
       });
     });
   });
 
   describe('[GET]', () => {
     it('should return an array of transactions', async () => {
-      await new transactionModel(BASE_TRANSACTION_PAYLOAD).save();
+      await transactionModel.create(BASE_TRANSACTION_PAYLOAD);
 
       expect(await transactionsController.findAll()).toMatchObject([
         BASE_TRANSACTION_PAYLOAD,
       ]);
+    });
+  });
+
+  describe('[PATCH]', () => {
+    it('should return the updated object', async () => {
+      const createdTransaction: TransactionDocument =
+        await transactionsController.create(BASE_TRANSACTION_PAYLOAD);
+      const transactionUpdate = { amount: 456 };
+      const updatedTransaction = await transactionsController.update(
+        createdTransaction._id,
+        transactionUpdate,
+      );
+
+      expect(updatedTransaction).toMatchObject({
+        ...BASE_TRANSACTION_PAYLOAD,
+        amount: 456,
+      });
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -15,25 +15,44 @@ export class TransactionsService {
   create(
     createTransactionDto: CreateTransactionDto,
   ): Promise<TransactionDocument> {
-    const createdTransaction = new this.transactionModel(createTransactionDto);
-    return createdTransaction.save();
+    return this.transactionModel.create(createTransactionDto);
   }
 
   findAll(): Promise<TransactionDocument[]> {
     return this.transactionModel.find().exec();
   }
 
-  findOne(id: Types.ObjectId): Promise<TransactionDocument> {
-    return this.transactionModel.findById(id).exec();
+  async findOne(id: Types.ObjectId): Promise<TransactionDocument> {
+    const transaction = await this.transactionModel.findById(id).exec();
+    if (!transaction) {
+      throw new NotFoundException(`No transaction found for id ${id}`);
+    }
+
+    return transaction;
   }
 
-  update(id: Types.ObjectId, updateTransactionDto: UpdateTransactionDto) {
-    return this.transactionModel.findByIdAndUpdate(id, updateTransactionDto, {
-      new: true,
-    });
+  async update(
+    id: Types.ObjectId,
+    updateTransactionDto: UpdateTransactionDto,
+  ): Promise<TransactionDocument> {
+    const transaction = await this.transactionModel
+      .findByIdAndUpdate(id, updateTransactionDto, { new: true })
+      .exec();
+    if (!transaction) {
+      throw new NotFoundException(`No transaction found for id ${id}`);
+    }
+
+    return transaction;
   }
 
-  remove(id: Types.ObjectId) {
-    return this.transactionModel.deleteOne({ id });
+  async remove(id: Types.ObjectId): Promise<TransactionDocument> {
+    const transaction = await this.transactionModel
+      .findByIdAndDelete(id)
+      .exec();
+    if (!transaction) {
+      throw new NotFoundException(`No transaction found for id ${id}`);
+    }
+
+    return transaction;
   }
 }
