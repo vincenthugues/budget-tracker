@@ -63,14 +63,14 @@ export class TransactionsController {
   update(
     @Param('id') id: Types.ObjectId,
     @Body() updateTransactionDto: UpdateTransactionDto,
-  ) {
+  ): Promise<TransactionDocument> {
     return this.transactionsService.update(id, updateTransactionDto);
   }
 
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested transaction was deleted' })
   @ApiNotFoundResponse({ description: 'Transaction not found' })
-  remove(@Param('id') id: Types.ObjectId) {
+  remove(@Param('id') id: Types.ObjectId): Promise<TransactionDocument> {
     return this.transactionsService.remove(id);
   }
 }
