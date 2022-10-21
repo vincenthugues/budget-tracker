@@ -42,7 +42,7 @@ export class AccountsService {
     return account;
   }
 
-  async remove(id: Types.ObjectId): Promise<AccountDocument> {
+  async remove(id: Types.ObjectId): Promise<any> {
     const account = await this.accountModel.findByIdAndDelete(id).exec();
     if (!account) {
       throw new NotFoundException(`No account found for id ${id}`);

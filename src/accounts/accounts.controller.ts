@@ -68,7 +68,7 @@ export class AccountsController {
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested account was deleted' })
   @ApiNotFoundResponse({ description: 'Account not found' })
-  remove(@Param('id') id: Types.ObjectId): Promise<AccountDocument> {
+  remove(@Param('id') id: Types.ObjectId): Promise<any> {
     return this.accountsService.remove(id);
   }
 }

@@ -68,7 +68,7 @@ export class BudgetsController {
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested budget was deleted' })
   @ApiNotFoundResponse({ description: 'Budget not found' })
-  remove(@Param('id') id: Types.ObjectId): Promise<BudgetDocument> {
+  remove(@Param('id') id: Types.ObjectId): Promise<any> {
     return this.budgetsService.remove(id);
   }
 }

@@ -42,7 +42,7 @@ export class CategoriesService {
     return category;
   }
 
-  async remove(id: Types.ObjectId): Promise<CategoryDocument> {
+  async remove(id: Types.ObjectId): Promise<any> {
     const category = await this.categoryModel.findByIdAndDelete(id).exec();
     if (!category) {
       throw new NotFoundException(`No category found for id ${id}`);

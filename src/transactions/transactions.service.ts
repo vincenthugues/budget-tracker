@@ -45,7 +45,7 @@ export class TransactionsService {
     return transaction;
   }
 
-  async remove(id: Types.ObjectId): Promise<TransactionDocument> {
+  async remove(id: Types.ObjectId): Promise<any> {
     const transaction = await this.transactionModel
       .findByIdAndDelete(id)
       .exec();

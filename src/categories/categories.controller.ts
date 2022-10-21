@@ -70,7 +70,7 @@ export class CategoriesController {
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested category was deleted' })
   @ApiNotFoundResponse({ description: 'Category not found' })
-  remove(@Param('id') id: Types.ObjectId): Promise<CategoryDocument> {
+  remove(@Param('id') id: Types.ObjectId): Promise<any> {
     return this.categoriesService.remove(id);
   }
 }

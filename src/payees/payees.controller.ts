@@ -68,7 +68,7 @@ export class PayeesController {
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested payee was deleted' })
   @ApiNotFoundResponse({ description: 'Payee not found' })
-  remove(@Param('id') id: Types.ObjectId): Promise<PayeeDocument> {
+  remove(@Param('id') id: Types.ObjectId): Promise<any> {
     return this.payeesService.remove(id);
   }
 }

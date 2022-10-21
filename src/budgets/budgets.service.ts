@@ -42,7 +42,7 @@ export class BudgetsService {
     return budget;
   }
 
-  async remove(id: Types.ObjectId): Promise<BudgetDocument> {
+  async remove(id: Types.ObjectId): Promise<any> {
     const budget = await this.budgetModel.findByIdAndDelete(id).exec();
     if (!budget) {
       throw new NotFoundException(`No budget found for id ${id}`);

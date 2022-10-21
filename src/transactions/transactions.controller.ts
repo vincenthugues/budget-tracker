@@ -70,7 +70,7 @@ export class TransactionsController {
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested transaction was deleted' })
   @ApiNotFoundResponse({ description: 'Transaction not found' })
-  remove(@Param('id') id: Types.ObjectId): Promise<TransactionDocument> {
+  remove(@Param('id') id: Types.ObjectId): Promise<any> {
     return this.transactionsService.remove(id);
   }
 }

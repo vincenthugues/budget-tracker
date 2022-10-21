@@ -42,7 +42,7 @@ export class PayeesService {
     return payee;
   }
 
-  async remove(id: Types.ObjectId): Promise<PayeeDocument> {
+  async remove(id: Types.ObjectId): Promise<any> {
     const payee = await this.payeeModel.findByIdAndDelete(id).exec();
     if (!payee) {
       throw new NotFoundException(`No payee found for id ${id}`);
