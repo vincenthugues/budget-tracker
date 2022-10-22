@@ -13,6 +13,7 @@ export class CreateCategoryDto {
   readonly name: string;
 
   @IsBoolean()
+  @IsOptional()
   readonly isDeleted?: boolean;
 
   @IsString()

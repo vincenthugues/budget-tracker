@@ -51,7 +51,7 @@ describe('CategoriesService', () => {
       };
       const createdCategory = await categoriesService.create(categoryPayload);
 
-      expect(createdCategory).toMatchObject(categoryPayload);
+      expect(createdCategory).toMatchObject({ name: 'Groceries' });
       expect(createdCategory.createdAt).toBeDefined();
       expect(createdCategory.updatedAt).toBeDefined();
     });

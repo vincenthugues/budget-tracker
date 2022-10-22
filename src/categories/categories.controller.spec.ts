@@ -57,11 +57,12 @@ describe('CategoriesController', () => {
     };
 
     it('should return the saved object', async () => {
-      const createdCategory = await categoriesController.create(
-        BASE_CATEGORY_PAYLOAD,
-      );
+      const createdCategory = await categoriesController.create({
+        ...BASE_CATEGORY_PAYLOAD,
+        name: 'Test',
+      });
 
-      expect(createdCategory).toMatchObject(BASE_CATEGORY_PAYLOAD);
+      expect(createdCategory).toMatchObject({ name: 'Test' });
     });
 
     it('should fail if the name is empty', async () => {
@@ -166,8 +167,10 @@ describe('CategoriesController', () => {
       );
 
       expect(updatedCategory).toMatchObject({
-        ...CATEGORY_PAYLOAD,
-        ...categoryUpdate,
+        name: 'New name',
+        externalId: 'def456',
+        isHidden: true,
+        isDeleted: true,
       });
     });
   });

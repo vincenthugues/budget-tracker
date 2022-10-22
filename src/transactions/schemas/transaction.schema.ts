@@ -1,6 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsDateString, IsNumber, IsOptional } from 'class-validator';
-import { Document, Types } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
+import { Account } from '../../accounts/schemas/account.schema';
+import { Category } from '../../categories/schemas/category.schema';
+import { Payee } from '../../payees/schemas/payee.schema';
 
 export type TransactionDocument = Transaction & Document;
 
@@ -9,7 +12,7 @@ export class Transaction {
   createdAt: Date;
   updatedAt: Date;
 
-  @Prop({ required: true })
+  @Prop({ required: true, default: Date.now() })
   @IsDateString()
   date: Date;
 
@@ -19,24 +22,24 @@ export class Transaction {
 
   @Prop({
     required: true,
-    type: Types.ObjectId,
-    ref: 'Account',
+    type: SchemaTypes.ObjectId,
+    ref: Account.name,
   })
-  accountId: string;
+  accountId: Types.ObjectId;
 
   @Prop({
     required: true,
-    type: Types.ObjectId,
-    ref: 'Payee',
+    type: SchemaTypes.ObjectId,
+    ref: Payee.name,
   })
-  payeeId: string;
+  payeeId: Types.ObjectId;
 
   @Prop({
     required: true,
-    type: Types.ObjectId,
-    ref: 'Category',
+    type: SchemaTypes.ObjectId,
+    ref: Category.name,
   })
-  categoryId: string;
+  categoryId: Types.ObjectId;
 
   @Prop({ required: true, default: false })
   @IsBoolean()

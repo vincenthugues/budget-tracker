@@ -29,7 +29,7 @@ describe('TransactionsController', () => {
     isCleared: true,
     isDeleted: false,
     externalId: 'abc123',
-    notes: 'Test',
+    notes: 'default notes',
   };
 
   beforeAll(async () => {
@@ -65,11 +65,12 @@ describe('TransactionsController', () => {
 
   describe('[POST]', () => {
     it('should return the saved object', async () => {
-      const createdTransaction = await transactionsController.create(
-        BASE_TRANSACTION_PAYLOAD,
-      );
+      const createdTransaction = await transactionsController.create({
+        ...BASE_TRANSACTION_PAYLOAD,
+        notes: 'Test',
+      });
 
-      expect(createdTransaction).toMatchObject(BASE_TRANSACTION_PAYLOAD);
+      expect(createdTransaction).toMatchObject({ notes: 'Test' });
     });
 
     it('should fail if the date is empty', async () => {
@@ -146,7 +147,6 @@ describe('TransactionsController', () => {
       expect(
         await transactionsController.create(transactionPayload),
       ).toMatchObject({
-        ...BASE_TRANSACTION_PAYLOAD,
         isCleared: false,
       });
     });
@@ -160,7 +160,6 @@ describe('TransactionsController', () => {
       expect(
         await transactionsController.create(transactionPayload),
       ).toMatchObject({
-        ...BASE_TRANSACTION_PAYLOAD,
         isDeleted: false,
       });
     });
@@ -174,7 +173,6 @@ describe('TransactionsController', () => {
       expect(
         await transactionsController.create(transactionPayload),
       ).toMatchObject({
-        ...BASE_TRANSACTION_PAYLOAD,
         externalId: undefined,
       });
     });
@@ -188,7 +186,6 @@ describe('TransactionsController', () => {
       expect(
         await transactionsController.create(transactionPayload),
       ).toMatchObject({
-        ...BASE_TRANSACTION_PAYLOAD,
         notes: undefined,
       });
     });
@@ -196,11 +193,14 @@ describe('TransactionsController', () => {
 
   describe('[GET]', () => {
     it('should return an array of transactions', async () => {
-      await transactionModel.create(BASE_TRANSACTION_PAYLOAD);
+      await transactionModel.create({
+        ...BASE_TRANSACTION_PAYLOAD,
+        notes: 'Test',
+      });
 
-      expect(await transactionsController.findAll()).toMatchObject([
-        BASE_TRANSACTION_PAYLOAD,
-      ]);
+      expect(await transactionsController.findAll()).toEqual(
+        expect.arrayContaining([expect.objectContaining({ notes: 'Test' })]),
+      );
     });
   });
 
@@ -215,7 +215,6 @@ describe('TransactionsController', () => {
       );
 
       expect(updatedTransaction).toMatchObject({
-        ...BASE_TRANSACTION_PAYLOAD,
         amount: 456,
       });
     });

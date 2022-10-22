@@ -60,11 +60,14 @@ describe('TransactionsService', () => {
 
   describe('create', () => {
     it('should return the saved object with timestamps', async () => {
-      const createdTransaction = await transactionsService.create(
-        BASE_TRANSACTION_PAYLOAD,
-      );
+      const createdTransaction = await transactionsService.create({
+        ...BASE_TRANSACTION_PAYLOAD,
+        notes: '[create] Test transaction',
+      });
 
-      expect(createdTransaction).toMatchObject(BASE_TRANSACTION_PAYLOAD);
+      expect(createdTransaction).toMatchObject({
+        notes: '[create] Test transaction',
+      });
       expect(createdTransaction.createdAt).toBeDefined();
       expect(createdTransaction.updatedAt).toBeDefined();
     });
@@ -82,10 +85,12 @@ describe('TransactionsService', () => {
       };
       await transactionModel.create(transaction1Payload, transaction2Payload);
 
-      expect(await transactionsService.findAll()).toMatchObject([
-        transaction1Payload,
-        transaction2Payload,
-      ]);
+      expect(await transactionsService.findAll()).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ notes: 'Transaction 1' }),
+          expect.objectContaining({ notes: 'Transaction 2' }),
+        ]),
+      );
     });
 
     it('should return an empty array when there are no transactions', async () => {

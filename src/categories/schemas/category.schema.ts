@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsOptional } from 'class-validator';
-import { Document, Types } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 
 export type CategoryDocument = Category & Document;
 
@@ -22,7 +22,7 @@ export class Category {
   @IsOptional()
   externalId?: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Category' })
+  @Prop({ type: SchemaTypes.ObjectId, ref: Category.name })
   @IsOptional()
   parentCategoryId?: Types.ObjectId;
 }
