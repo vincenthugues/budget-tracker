@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-const Accounts = () => {
-  const [items, setItems] = useState([]);
+type Account = {
+  _id: string;
+  name: string;
+};
+
+const Accounts = (): JSX.Element => {
+  const [items, setItems] = useState<Account[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<{ message: string } | null>(null);
 
   useEffect(() => {
-    fetch("/accounts")
+    fetch('/accounts')
       .then((res) => res.json())
       .then(
         (result) => {
@@ -27,8 +32,8 @@ const Accounts = () => {
   } else {
     return (
       <ul>
-        {items.map((item) => (
-          <li key={item._id}>{item.name}</li>
+        {items.map(({ _id, name }) => (
+          <li key={_id}>{name}</li>
         ))}
       </ul>
     );

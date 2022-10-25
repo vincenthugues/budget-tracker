@@ -1,12 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-const Categories = () => {
-  const [items, setItems] = useState([]);
+type Transaction = {
+  _id: string;
+  date: Date;
+  amount: number;
+};
+
+const Transactions = (): JSX.Element => {
+  const [items, setItems] = useState<Transaction[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<{ message: string } | null>(null);
 
   useEffect(() => {
-    fetch("/categories")
+    fetch('/transactions')
       .then((res) => res.json())
       .then(
         (result) => {
@@ -27,12 +33,16 @@ const Categories = () => {
   } else {
     return (
       <ul>
-        {items.map((item) => (
-          <li key={item._id}>{item.name}</li>
+        {items.map(({ _id, date, amount }) => (
+          <li key={_id}>
+            <>
+              [{date}] {amount}
+            </>
+          </li>
         ))}
       </ul>
     );
   }
 };
 
-export default Categories;
+export default Transactions;

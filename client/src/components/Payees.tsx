@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-const Transactions = () => {
-  const [items, setItems] = useState([]);
+type Payee = {
+  _id: string;
+  name: string;
+};
+
+const Payees = (): JSX.Element => {
+  const [items, setItems] = useState<Payee[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<{ message: string } | null>(null);
 
   useEffect(() => {
-    fetch("/transactions")
+    fetch('/payees')
       .then((res) => res.json())
       .then(
         (result) => {
@@ -27,12 +32,12 @@ const Transactions = () => {
   } else {
     return (
       <ul>
-        {items.map((item) => (
-          <li key={item._id}>{item.name}</li>
+        {items.map(({ _id, name }) => (
+          <li key={_id}>{name}</li>
         ))}
       </ul>
     );
   }
 };
 
-export default Transactions;
+export default Payees;

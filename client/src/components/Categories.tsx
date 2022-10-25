@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-const Budgets = () => {
-  const [items, setItems] = useState([]);
+type Category = {
+  _id: string;
+  name: string;
+};
+
+const Categories = (): JSX.Element => {
+  const [items, setItems] = useState<Category[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<{ message: string } | null>(null);
 
   useEffect(() => {
-    fetch("/budgets")
+    fetch('/categories')
       .then((res) => res.json())
       .then(
         (result) => {
@@ -27,12 +32,12 @@ const Budgets = () => {
   } else {
     return (
       <ul>
-        {items.map((item) => (
-          <li key={item._id}>{item.name}</li>
+        {items.map(({ _id, name }) => (
+          <li key={_id}>{name}</li>
         ))}
       </ul>
     );
   }
 };
 
-export default Budgets;
+export default Categories;
