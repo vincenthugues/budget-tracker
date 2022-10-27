@@ -1,41 +1,9 @@
 import { useEffect, useState } from 'react';
+import Creator from './Creator';
 
 type Budget = {
   _id: string;
   name: string;
-};
-
-type BudgetCreatorProps = {
-  onSubmit: Function;
-  onCancel: Function;
-};
-const BudgetCreator = ({
-  onSubmit,
-  onCancel,
-}: BudgetCreatorProps): JSX.Element => {
-  const [name, setName] = useState('');
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit({ name });
-      }}
-    >
-      <label htmlFor="name">Name</label>
-      <input
-        id="name"
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      />
-      <button type="submit">Submit</button>
-      <button type="button" onClick={() => onCancel()}>
-        Cancel
-      </button>
-    </form>
-  );
 };
 
 const Budgets = (): JSX.Element => {
@@ -64,6 +32,9 @@ const Budgets = (): JSX.Element => {
     });
     setItems(items.filter(({ _id }) => _id !== budgetId));
   };
+  const budgetCreatorProperties = [
+    { name: 'name', label: 'Name', type: 'text' },
+  ];
 
   useEffect(() => {
     fetch('/budgets')
@@ -89,7 +60,11 @@ const Budgets = (): JSX.Element => {
     return (
       <>
         {showCreator ? (
-          <BudgetCreator onSubmit={onSubmit} onCancel={onCancel} />
+          <Creator
+            onSubmit={onSubmit}
+            onCancel={onCancel}
+            properties={budgetCreatorProperties}
+          />
         ) : (
           <button
             onClick={() => {

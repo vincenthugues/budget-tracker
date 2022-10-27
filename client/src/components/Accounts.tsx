@@ -1,41 +1,9 @@
 import { useEffect, useState } from 'react';
+import Creator from './Creator';
 
 type Account = {
   _id: string;
   name: string;
-};
-
-type AccountCreatorProps = {
-  onSubmit: Function;
-  onCancel: Function;
-};
-const AccountCreator = ({
-  onSubmit,
-  onCancel,
-}: AccountCreatorProps): JSX.Element => {
-  const [name, setName] = useState('');
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit({ name });
-      }}
-    >
-      <label htmlFor="name">Name</label>
-      <input
-        id="name"
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      />
-      <button type="submit">Submit</button>
-      <button type="button" onClick={() => onCancel()}>
-        Cancel
-      </button>
-    </form>
-  );
 };
 
 const Accounts = (): JSX.Element => {
@@ -64,6 +32,9 @@ const Accounts = (): JSX.Element => {
     });
     setItems(items.filter(({ _id }) => _id !== accountId));
   };
+  const accountCreatorProperties = [
+    { name: 'name', label: 'Name', type: 'text' },
+  ];
 
   useEffect(() => {
     fetch('/accounts')
@@ -89,7 +60,11 @@ const Accounts = (): JSX.Element => {
     return (
       <>
         {showCreator ? (
-          <AccountCreator onSubmit={onSubmit} onCancel={onCancel} />
+          <Creator
+            onSubmit={onSubmit}
+            onCancel={onCancel}
+            properties={accountCreatorProperties}
+          />
         ) : (
           <button
             onClick={() => {
