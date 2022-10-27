@@ -58,6 +58,12 @@ const Accounts = (): JSX.Element => {
   const onCancel = () => {
     setShowCreator(false);
   };
+  const onDelete = async (accountId: string) => {
+    await fetch(`/accounts/${accountId}`, {
+      method: 'DELETE',
+    });
+    setItems(items.filter(({ _id }) => _id !== accountId));
+  };
 
   useEffect(() => {
     fetch('/accounts')
@@ -95,7 +101,18 @@ const Accounts = (): JSX.Element => {
         )}
         <ul>
           {items.map(({ _id, name }) => (
-            <li key={_id}>{name}</li>
+            <li key={_id}>
+              {name}
+              <button
+                onClick={() => {
+                  if (window.confirm(`Delete the account "${name}"?`)) {
+                    onDelete(_id);
+                  }
+                }}
+              >
+                ❌
+              </button>
+            </li>
           ))}
         </ul>
       </>
