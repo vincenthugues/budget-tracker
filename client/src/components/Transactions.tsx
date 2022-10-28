@@ -1,15 +1,48 @@
 import { useEffect, useState } from 'react';
+import Creator, { CreatorInput } from './Creator';
 
 type Transaction = {
   _id: string;
   date: Date;
   amount: number;
+  accountId: string;
+  payeeId: string;
+  categoryId: string;
 };
 
 const Transactions = (): JSX.Element => {
   const [items, setItems] = useState<Transaction[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
+  const [showCreator, setShowCreator] = useState(false);
+
+  const onSubmit = async (transactionToCreate: { name: string }) => {
+    const response = await fetch('/transactions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(transactionToCreate),
+    });
+    const createdTransaction = await response.json();
+    setItems([...items, createdTransaction]);
+
+    setShowCreator(false);
+  };
+  const onCancel = () => {
+    setShowCreator(false);
+  };
+  const onDelete = async (transactionId: string) => {
+    await fetch(`/transactions/${transactionId}`, {
+      method: 'DELETE',
+    });
+    setItems(items.filter(({ _id }) => _id !== transactionId));
+  };
+  const transactionCreatorProperties: CreatorInput[] = [
+    { name: 'date', label: 'Date', type: 'datetime-local' },
+    { name: 'amount', label: 'Amount', type: 'number' },
+    { name: 'accountId', label: 'Account ID', type: 'string' },
+    { name: 'payeeId', label: 'Payee ID', type: 'string' },
+    { name: 'categoryId', label: 'Category ID', type: 'string' },
+  ];
 
   useEffect(() => {
     fetch('/transactions')
@@ -27,20 +60,67 @@ const Transactions = (): JSX.Element => {
   }, []);
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    console.log(`Error: ${error.message}`);
+    return <div>Error when fetching data</div>;
   } else if (!isLoaded) {
     return <div>Loading...</div>;
   } else {
     return (
-      <ul>
-        {items.map(({ _id, date, amount }) => (
-          <li key={_id}>
-            <>
-              [{date}] {amount}
-            </>
-          </li>
-        ))}
-      </ul>
+      <>
+        {showCreator ? (
+          <Creator
+            onSubmit={onSubmit}
+            onCancel={onCancel}
+            properties={transactionCreatorProperties}
+          />
+        ) : (
+          <button
+            onClick={() => {
+              setShowCreator(true);
+            }}
+          >
+            ➕
+          </button>
+        )}
+        <table>
+          <tbody>
+            <tr>
+              <th>Date</th>
+              <th>Account</th>
+              <th>Category</th>
+              <th>Payee</th>
+              <th>Amount</th>
+              <th></th>
+            </tr>
+            {items.map(
+              ({ _id, date, amount, accountId, payeeId, categoryId }) => (
+                <tr key={_id}>
+                  <td>{new Date(date).toLocaleDateString()}</td>
+                  <td>{accountId}</td>
+                  <td>{payeeId}</td>
+                  <td>{categoryId}</td>
+                  <td>{amount}</td>
+                  <td>
+                    <button
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `Delete the transaction "[${date}] ${amount}"?`
+                          )
+                        ) {
+                          onDelete(_id);
+                        }
+                      }}
+                    >
+                      ❌
+                    </button>
+                  </td>
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      </>
     );
   }
 };
