@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { HTMLInputTypeAttribute, useState } from 'react';
+
+export type CreatorInput = {
+  name: string;
+  label: string;
+  type: HTMLInputTypeAttribute;
+};
 
 type CreatorProps = {
   onSubmit: Function;
   onCancel: Function;
-  properties: Array<{
-    name: string;
-    label: string;
-    type: string;
-  }>;
+  properties: CreatorInput[];
 };
 const Creator = ({
   onSubmit,
