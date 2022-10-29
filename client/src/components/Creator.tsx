@@ -4,6 +4,7 @@ export type CreatorInput = {
   name: string;
   label: string;
   type: HTMLInputTypeAttribute;
+  defaultValue?: any;
 };
 
 type CreatorProps = {
@@ -17,7 +18,7 @@ const Creator = ({
   properties,
 }: CreatorProps): JSX.Element => {
   const defaultObject = properties.reduce(
-    (acc, { name }) => ({ ...acc, [name]: '' }),
+    (acc, { name, defaultValue }) => ({ ...acc, [name]: defaultValue ?? '' }),
     {}
   );
   const [objectToCreate, setObjectToCreate] = useState<{

@@ -23,8 +23,16 @@ const Transactions = (): JSX.Element => {
       body: JSON.stringify(transactionToCreate),
     });
     const createdTransaction = await response.json();
-    setItems([...items, createdTransaction]);
 
+    if (createdTransaction.error) {
+      console.error(
+        `Error (${createdTransaction.statusCode}: ${createdTransaction.error}) while creating the resource: `,
+        createdTransaction.message.join(', ')
+      );
+      return;
+    }
+
+    setItems([...items, createdTransaction]);
     setShowCreator(false);
   };
   const onCancel = () => {
@@ -37,7 +45,12 @@ const Transactions = (): JSX.Element => {
     setItems(items.filter(({ _id }) => _id !== transactionId));
   };
   const transactionCreatorProperties: CreatorInput[] = [
-    { name: 'date', label: 'Date', type: 'datetime-local' },
+    {
+      name: 'date',
+      label: 'Date',
+      type: 'datetime-local',
+      defaultValue: new Date().toISOString().split('.')[0],
+    },
     { name: 'amount', label: 'Amount', type: 'number' },
     { name: 'accountId', label: 'Account ID', type: 'string' },
     { name: 'payeeId', label: 'Payee ID', type: 'string' },
