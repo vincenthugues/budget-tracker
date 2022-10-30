@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import Creator from './Creator';
+import Creator, { CreatorInput } from './Creator';
 
-type Budget = {
-  _id: string;
+type BudgetDraft = {
   name: string;
+  externalId?: string;
+  startingDate?: Date;
 };
+
+type Budget = BudgetDraft & { _id: string };
 
 const Budgets = (): JSX.Element => {
   const [items, setItems] = useState<Budget[]>([]);
@@ -19,8 +22,16 @@ const Budgets = (): JSX.Element => {
       body: JSON.stringify(budgetToCreate),
     });
     const createdBudget = await response.json();
-    setItems([...items, createdBudget]);
 
+    if (createdBudget.error) {
+      console.error(
+        `Error (${createdBudget.statusCode}: ${createdBudget.error}) while creating the resource: `,
+        createdBudget.message.join(', ')
+      );
+      return;
+    }
+
+    setItems([...items, createdBudget]);
     setShowCreator(false);
   };
   const onCancel = () => {
@@ -32,8 +43,21 @@ const Budgets = (): JSX.Element => {
     });
     setItems(items.filter(({ _id }) => _id !== budgetId));
   };
-  const budgetCreatorProperties = [
+  const budgetCreatorProperties: CreatorInput[] = [
     { name: 'name', label: 'Name', type: 'text' },
+    {
+      name: 'externalId',
+      label: 'External ID',
+      type: 'text',
+      isOptional: true,
+    },
+    {
+      name: 'startingDate',
+      label: 'Starting date',
+      type: 'date',
+      defaultValue: null,
+      isOptional: true,
+    },
   ];
 
   useEffect(() => {
@@ -74,22 +98,38 @@ const Budgets = (): JSX.Element => {
             ➕
           </button>
         )}
-        <ul>
-          {items.map(({ _id, name }) => (
-            <li key={_id}>
-              {name}
-              <button
-                onClick={() => {
-                  if (window.confirm(`Delete the account "${name}"?`)) {
-                    onDelete(_id);
-                  }
-                }}
-              >
-                ❌
-              </button>
-            </li>
-          ))}
-        </ul>
+        <table>
+          <tbody>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Starting date</th>
+              <th>External ID</th>
+              <th></th>
+            </tr>
+            {items.map(({ _id, name, externalId, startingDate }) => (
+              <tr key={_id}>
+                <td>{_id}</td>
+                <td>{name}</td>
+                <td>
+                  {startingDate && new Date(startingDate).toLocaleDateString()}
+                </td>
+                <td>{externalId}</td>
+                <td>
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`Delete the budget "${name}"?`)) {
+                        onDelete(_id);
+                      }
+                    }}
+                  >
+                    ❌
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </>
     );
   }
