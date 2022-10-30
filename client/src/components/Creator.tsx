@@ -1,4 +1,4 @@
-import { HTMLInputTypeAttribute, useState } from 'react';
+import { ChangeEventHandler, HTMLInputTypeAttribute, useState } from 'react';
 
 export type CreatorInput = {
   name: string;
@@ -6,7 +6,72 @@ export type CreatorInput = {
   type: HTMLInputTypeAttribute;
   defaultValue?: any;
   isOptional?: boolean;
+  options?: [key: string, value: string][];
 };
+
+const DefaultInput = ({
+  property: { name, type, isOptional },
+  value,
+  setValue,
+}: {
+  property: CreatorInput;
+  value: string;
+  setValue: Function;
+}): JSX.Element => (
+  <input
+    id={name}
+    name={name}
+    type={type}
+    value={value}
+    onChange={({ target: { value: newValue } }) => {
+      setValue(type === 'number' ? Number(newValue) : newValue);
+    }}
+    required={isOptional !== true}
+  />
+);
+
+const CheckboxInput = ({
+  property: { name, isOptional },
+  value,
+  setValue,
+}: {
+  property: CreatorInput;
+  value: string;
+  setValue: Function;
+}): JSX.Element => (
+  <input
+    id={name}
+    name={name}
+    type="checkbox"
+    value={value}
+    onChange={({ target: { value: checked } }) => {
+      setValue(checked);
+    }}
+    required={isOptional !== true}
+  />
+);
+
+const SelectInput = ({
+  property: { name, isOptional, options },
+  onChange,
+}: {
+  property: CreatorInput;
+  onChange: ChangeEventHandler<HTMLSelectElement>;
+}): JSX.Element => (
+  <select
+    id={name}
+    name={name}
+    onChange={onChange}
+    required={isOptional !== true}
+  >
+    {isOptional && <option value="">---None---</option>}
+    {options?.map(([optionKey, optionValue]) => (
+      <option key={optionKey} value={optionValue}>
+        {optionValue}
+      </option>
+    ))}
+  </select>
+);
 
 type CreatorProps = {
   onSubmit: Function;
@@ -38,25 +103,51 @@ const Creator = ({
         onSubmit(filterOutEmptyStrings(objectToCreate));
       }}
     >
-      {properties.map(({ name, label, type, isOptional }) => (
-        <div key={name}>
-          <label htmlFor={name}>{label}</label>
-          <input
-            id={name}
-            type={type}
-            value={objectToCreate[name].toString()}
-            onChange={({ target: { value, checked } }) => {
-              setObjectToCreate({
-                ...objectToCreate,
-                [name]: type !== 'checkbox' ? value : checked,
-              });
-            }}
-            required={isOptional !== true}
-          />
+      {properties.map((property) => (
+        <div key={property.name}>
+          <label htmlFor={property.name}>{property.label}</label>
+          {property.options ? (
+            <SelectInput
+              property={property}
+              onChange={({ target: { value } }) => {
+                setObjectToCreate({
+                  ...objectToCreate,
+                  [property.name]: value,
+                });
+              }}
+            />
+          ) : property.type === 'checkbox' ? (
+            <CheckboxInput
+              property={property}
+              value={objectToCreate[property.name].toString()}
+              setValue={(newValue: boolean) => {
+                setObjectToCreate({
+                  ...objectToCreate,
+                  [property.name]: newValue,
+                });
+              }}
+            />
+          ) : (
+            <DefaultInput
+              property={property}
+              value={objectToCreate[property.name].toString()}
+              setValue={(newValue: any) => {
+                setObjectToCreate({
+                  ...objectToCreate,
+                  [property.name]: newValue,
+                });
+              }}
+            />
+          )}
         </div>
       ))}
       <button type="submit">Submit</button>
-      <button type="button" onClick={() => onCancel()}>
+      <button
+        type="button"
+        onClick={() => {
+          onCancel();
+        }}
+      >
         Cancel
       </button>
     </form>
