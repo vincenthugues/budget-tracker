@@ -23,7 +23,7 @@ const Creator = ({
     {}
   );
   const [objectToCreate, setObjectToCreate] = useState<{
-    [key: string]: number | string;
+    [key: string]: number | string | boolean;
   }>(defaultObject);
 
   const filterOutEmptyStrings = (formObject: object) =>
@@ -44,9 +44,12 @@ const Creator = ({
           <input
             id={name}
             type={type}
-            value={objectToCreate[name]}
-            onChange={({ target: { value } }) => {
-              setObjectToCreate({ ...objectToCreate, [name]: value });
+            value={objectToCreate[name].toString()}
+            onChange={({ target: { value, checked } }) => {
+              setObjectToCreate({
+                ...objectToCreate,
+                [name]: type !== 'checkbox' ? value : checked,
+              });
             }}
             required={isOptional !== true}
           />
