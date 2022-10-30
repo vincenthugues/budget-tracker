@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react';
-import Creator from './Creator';
+import Creator, { CreatorInput } from './Creator';
+
+enum AccountType {
+  CHECKING = 'Checking',
+  SAVINGS = 'Savings',
+  OTHER = 'Other',
+}
 
 type Account = {
   _id: string;
   name: string;
+  externalId?: string;
+  type?: AccountType;
+  isClosed?: boolean;
+  balance?: number;
 };
 
 const Accounts = (): JSX.Element => {
@@ -19,8 +29,16 @@ const Accounts = (): JSX.Element => {
       body: JSON.stringify(accountToCreate),
     });
     const createdAccount = await response.json();
-    setItems([...items, createdAccount]);
 
+    if (createdAccount.error) {
+      console.error(
+        `Error (${createdAccount.statusCode}: ${createdAccount.error}) while creating the resource: `,
+        createdAccount.message.join(', ')
+      );
+      return;
+    }
+
+    setItems([...items, createdAccount]);
     setShowCreator(false);
   };
   const onCancel = () => {
@@ -32,8 +50,28 @@ const Accounts = (): JSX.Element => {
     });
     setItems(items.filter(({ _id }) => _id !== accountId));
   };
-  const accountCreatorProperties = [
+  const accountCreatorProperties: CreatorInput[] = [
     { name: 'name', label: 'Name', type: 'text' },
+    {
+      name: 'externalId',
+      label: 'External Id',
+      type: 'text',
+      isOptional: true,
+    },
+    {
+      name: 'type',
+      label: 'Type',
+      type: 'text',
+      isOptional: true,
+      options: Object.entries(AccountType),
+    },
+    {
+      name: 'isClosed',
+      label: 'Is closed',
+      type: 'checkbox',
+      isOptional: true,
+    },
+    { name: 'balance', label: 'Balance', type: 'number', isOptional: true },
   ];
 
   useEffect(() => {
@@ -74,22 +112,40 @@ const Accounts = (): JSX.Element => {
             ➕
           </button>
         )}
-        <ul>
-          {items.map(({ _id, name }) => (
-            <li key={_id}>
-              {name}
-              <button
-                onClick={() => {
-                  if (window.confirm(`Delete the account "${name}"?`)) {
-                    onDelete(_id);
-                  }
-                }}
-              >
-                ❌
-              </button>
-            </li>
-          ))}
-        </ul>
+        <table>
+          <tbody>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Balance</th>
+              <th>Is closed</th>
+              <th>External ID</th>
+              <th></th>
+            </tr>
+            {items.map(({ _id, name, externalId, type, isClosed, balance }) => (
+              <tr key={_id}>
+                <td>{_id}</td>
+                <td>{name}</td>
+                <td>{type}</td>
+                <td>{balance}</td>
+                <td>{isClosed ? 'Yes' : 'No'}</td>
+                <td>{externalId}</td>
+                <td>
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`Delete the account "${name}"?`)) {
+                        onDelete(_id);
+                      }
+                    }}
+                  >
+                    ❌
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </>
     );
   }
