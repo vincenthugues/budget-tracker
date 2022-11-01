@@ -2,4 +2,4 @@
 
 ## Description
 
-A budget tracking app written using [Nest](https://github.com/nestjs/nest).
+A budget tracking app written using Nest and React.

@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsMongoId, IsOptional, IsString } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class UpdateCategoryDto {

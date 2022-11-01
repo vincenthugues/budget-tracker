@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { AccountsService } from 'src/accounts/accounts.service';
 import { AccountType } from 'src/accounts/schemas/account.schema';

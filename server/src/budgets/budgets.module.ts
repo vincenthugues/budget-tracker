@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { BudgetsService } from './budgets.service';
-import { BudgetsController } from './budgets.controller';
 import { MongooseModule } from '@nestjs/mongoose';
+import { BudgetsController } from './budgets.controller';
+import { BudgetsService } from './budgets.service';
 import { Budget, BudgetSchema } from './schemas/budget.schema';
 
 @Module({

@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,

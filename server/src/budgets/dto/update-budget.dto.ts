@@ -1,9 +1,4 @@
-import {
-  IsDateString,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class UpdateBudgetDto {
   @IsString()
