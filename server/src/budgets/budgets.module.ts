@@ -10,5 +10,6 @@ import { Budget, BudgetSchema } from './schemas/budget.schema';
   ],
   controllers: [BudgetsController],
   providers: [BudgetsService],
+  exports: [BudgetsService],
 })
 export class BudgetsModule {}
