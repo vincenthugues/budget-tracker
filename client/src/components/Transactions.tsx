@@ -98,6 +98,7 @@ const Transactions = (): JSX.Element => {
         <table>
           <tbody>
             <tr>
+              <th>ID</th>
               <th>Date</th>
               <th>Account</th>
               <th>Category</th>
@@ -108,6 +109,7 @@ const Transactions = (): JSX.Element => {
             {items.map(
               ({ _id, date, amount, accountId, payeeId, categoryId }) => (
                 <tr key={_id}>
+                  <td>{_id}</td>
                   <td>{new Date(date).toLocaleDateString()}</td>
                   <td>{accountId}</td>
                   <td>{payeeId}</td>
