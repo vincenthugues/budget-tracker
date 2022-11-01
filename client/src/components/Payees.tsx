@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import Creator from './Creator';
+import Creator, { CreatorInput } from './Creator';
 
 type Payee = {
   _id: string;
   name: string;
+  externalId?: string;
 };
 
 const Payees = (): JSX.Element => {
@@ -19,8 +20,16 @@ const Payees = (): JSX.Element => {
       body: JSON.stringify(payeeToCreate),
     });
     const createdPayee = await response.json();
-    setItems([...items, createdPayee]);
 
+    if (createdPayee.error) {
+      console.error(
+        `Error (${createdPayee.statusCode}: ${createdPayee.error}) while creating the resource: `,
+        createdPayee.message.join(', ')
+      );
+      return;
+    }
+
+    setItems([...items, createdPayee]);
     setShowCreator(false);
   };
   const onCancel = () => {
@@ -32,8 +41,14 @@ const Payees = (): JSX.Element => {
     });
     setItems(items.filter(({ _id }) => _id !== payeeId));
   };
-  const payeeCreatorProperties = [
+  const payeeCreatorProperties: CreatorInput[] = [
     { name: 'name', label: 'Name', type: 'text' },
+    {
+      name: 'externalId',
+      label: 'External ID',
+      type: 'text',
+      isOptional: true,
+    },
   ];
 
   useEffect(() => {
@@ -74,22 +89,34 @@ const Payees = (): JSX.Element => {
             ➕
           </button>
         )}
-        <ul>
-          {items.map(({ _id, name }) => (
-            <li key={_id}>
-              {name}{' '}
-              <button
-                onClick={() => {
-                  if (window.confirm(`Delete the payee "${name}"?`)) {
-                    onDelete(_id);
-                  }
-                }}
-              >
-                ❌
-              </button>
-            </li>
-          ))}
-        </ul>
+        <table>
+          <tbody>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>External ID</th>
+              <th></th>
+            </tr>
+            {items.map(({ _id, name, externalId }) => (
+              <tr key={_id}>
+                <td>{_id}</td>
+                <td>{name}</td>
+                <td>{externalId}</td>
+                <td>
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`Delete the payee "${name}"?`)) {
+                        onDelete(_id);
+                      }
+                    }}
+                  >
+                    ❌
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </>
     );
   }
