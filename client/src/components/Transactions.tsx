@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import Creator, { CreatorInput } from './Creator';
 
-type Transaction = {
-  _id: string;
+type TransactionDraft = {
   date: Date;
   amount: number;
   accountId: string;
@@ -10,13 +9,15 @@ type Transaction = {
   categoryId: string;
 };
 
+type Transaction = TransactionDraft & { _id: string };
+
 const Transactions = (): JSX.Element => {
   const [items, setItems] = useState<Transaction[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (transactionToCreate: { name: string }) => {
+  const onSubmit = async (transactionToCreate: TransactionDraft) => {
     const response = await fetch('/transactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

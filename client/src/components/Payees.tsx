@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import Creator, { CreatorInput } from './Creator';
 
-type Payee = {
+type PayeeDraft = {
   _id: string;
   name: string;
   externalId?: string;
 };
+
+type Payee = PayeeDraft & { _id: string };
 
 const Payees = (): JSX.Element => {
   const [items, setItems] = useState<Payee[]>([]);
@@ -13,7 +15,7 @@ const Payees = (): JSX.Element => {
   const [error, setError] = useState<{ message: string } | null>(null);
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (payeeToCreate: { name: string }) => {
+  const onSubmit = async (payeeToCreate: PayeeDraft) => {
     const response = await fetch('/payees', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

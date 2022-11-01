@@ -15,7 +15,7 @@ const Budgets = (): JSX.Element => {
   const [error, setError] = useState<{ message: string } | null>(null);
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (budgetToCreate: { name: string }) => {
+  const onSubmit = async (budgetToCreate: BudgetDraft) => {
     const response = await fetch('/budgets', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

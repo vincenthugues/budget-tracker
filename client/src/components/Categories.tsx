@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Creator, { CreatorInput } from './Creator';
 
-type Category = {
+type CategoryDraft = {
   _id: string;
   name: string;
   parentCategoryId?: string;
@@ -10,13 +10,15 @@ type Category = {
   externalId?: string;
 };
 
+type Category = CategoryDraft & { _id: string };
+
 const Categories = (): JSX.Element => {
   const [items, setItems] = useState<Category[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (categoryToCreate: { name: string }) => {
+  const onSubmit = async (categoryToCreate: CategoryDraft) => {
     const response = await fetch('/categories', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

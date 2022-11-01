@@ -7,7 +7,7 @@ enum AccountType {
   OTHER = 'Other',
 }
 
-type Account = {
+type AccountDraft = {
   _id: string;
   name: string;
   externalId?: string;
@@ -16,13 +16,15 @@ type Account = {
   balance?: number;
 };
 
+type Account = AccountDraft & { _id: string };
+
 const Accounts = (): JSX.Element => {
   const [items, setItems] = useState<Account[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (accountToCreate: { name: string }) => {
+  const onSubmit = async (accountToCreate: AccountDraft) => {
     const response = await fetch('/accounts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
