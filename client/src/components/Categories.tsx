@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
-import Creator from './Creator';
+import Creator, { CreatorInput } from './Creator';
 
 type Category = {
   _id: string;
   name: string;
+  parentCategoryId?: string;
+  isHidden?: boolean;
+  isDeleted?: boolean;
+  externalId?: string;
 };
 
 const Categories = (): JSX.Element => {
@@ -19,8 +23,16 @@ const Categories = (): JSX.Element => {
       body: JSON.stringify(categoryToCreate),
     });
     const createdCategory = await response.json();
-    setItems([...items, createdCategory]);
 
+    if (createdCategory.error) {
+      console.error(
+        `Error (${createdCategory.statusCode}: ${createdCategory.error}) while creating the resource: `,
+        createdCategory.message.join(', ')
+      );
+      return;
+    }
+
+    setItems([...items, createdCategory]);
     setShowCreator(false);
   };
   const onCancel = () => {
@@ -32,8 +44,32 @@ const Categories = (): JSX.Element => {
     });
     setItems(items.filter(({ _id }) => _id !== categoryId));
   };
-  const categoryCreatorProperties = [
+  const categoryCreatorProperties: CreatorInput[] = [
     { name: 'name', label: 'Name', type: 'text' },
+    {
+      name: 'parentCategoryId',
+      label: 'Parent category ID',
+      type: 'text',
+      isOptional: true,
+    },
+    {
+      name: 'isHidden',
+      label: 'Is hidden',
+      type: 'checkbox',
+      isOptional: true,
+    },
+    {
+      name: 'isDeleted',
+      label: 'Is deleted',
+      type: 'checkbox',
+      isOptional: true,
+    },
+    {
+      name: 'externalId',
+      label: 'External ID',
+      type: 'text',
+      isOptional: true,
+    },
   ];
 
   useEffect(() => {
@@ -74,22 +110,49 @@ const Categories = (): JSX.Element => {
             ➕
           </button>
         )}
-        <ul>
-          {items.map(({ _id, name }) => (
-            <li key={_id}>
-              {name}{' '}
-              <button
-                onClick={() => {
-                  if (window.confirm(`Delete the category "${name}"?`)) {
-                    onDelete(_id);
-                  }
-                }}
-              >
-                ❌
-              </button>
-            </li>
-          ))}
-        </ul>
+        <table>
+          <tbody>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Parent category ID</th>
+              <th>Is hidden</th>
+              <th>Is deleted</th>
+              <th>External ID</th>
+              <th></th>
+            </tr>
+            {items.map(
+              ({
+                _id,
+                name,
+                parentCategoryId,
+                isHidden,
+                isDeleted,
+                externalId,
+              }) => (
+                <tr key={_id}>
+                  <td>{_id}</td>
+                  <td>{name}</td>
+                  <td>{parentCategoryId}</td>
+                  <td>{isHidden ? 'Yes' : 'No'}</td>
+                  <td>{isDeleted ? 'Yes' : 'No'}</td>
+                  <td>{externalId}</td>
+                  <td>
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`Delete the category "${name}"?`)) {
+                          onDelete(_id);
+                        }
+                      }}
+                    >
+                      ❌
+                    </button>
+                  </td>
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
       </>
     );
   }
