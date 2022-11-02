@@ -15,8 +15,8 @@ export class BudgetsService {
     return this.budgetModel.create(createBudgetDto);
   }
 
-  findAll(): Promise<BudgetDocument[]> {
-    return this.budgetModel.find().exec();
+  findAll(filters?: { externalId?: string }): Promise<BudgetDocument[]> {
+    return this.budgetModel.find(filters).exec();
   }
 
   async findOne(id: Types.ObjectId): Promise<BudgetDocument> {

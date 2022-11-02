@@ -97,5 +97,21 @@ describe('BudgetsController', () => {
 
       expect(await budgetsController.findAll()).toMatchObject([budgetPayload]);
     });
+
+    it('should return an array of budgets matching the filter', async () => {
+      const budgetPayload1 = {
+        name: 'Budget 1',
+        externalId: 'abc123',
+      };
+      const budgetPayload2 = {
+        name: 'Budget 2',
+        externalId: 'def456',
+      };
+      await budgetModel.create(budgetPayload1, budgetPayload2);
+
+      expect(
+        await budgetsController.findAll({ externalId: 'def456' }),
+      ).toMatchObject([budgetPayload2]);
+    });
   });
 });

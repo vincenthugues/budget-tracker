@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -16,6 +17,7 @@ import {
 import { Types } from 'mongoose';
 import { BudgetsService } from './budgets.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
+import { FilterBudgetDto } from './dto/filter-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
 import { Budget, BudgetDocument } from './schemas/budget.schema';
 
@@ -36,10 +38,10 @@ export class BudgetsController {
   @Get()
   @ApiOkResponse({
     type: [Budget],
-    description: 'Returns the list of budgets',
+    description: 'Returns the list of budgets matching the optional filters',
   })
-  findAll(): Promise<BudgetDocument[]> {
-    return this.budgetsService.findAll();
+  findAll(@Query() filters?: FilterBudgetDto): Promise<BudgetDocument[]> {
+    return this.budgetsService.findAll(filters);
   }
 
   @Get(':id')
