@@ -127,5 +127,21 @@ describe('AccountsController', () => {
         accountPayload,
       ]);
     });
+
+    it('should return an array of accounts matching the filter', async () => {
+      const accountPayload1 = {
+        name: 'Account 1',
+        externalId: 'abc123',
+      };
+      const accountPayload2 = {
+        name: 'Account 2',
+        externalId: 'def456',
+      };
+      await accountModel.create(accountPayload1, accountPayload2);
+
+      expect(
+        await accountsController.findAll({ externalId: 'def456' }),
+      ).toMatchObject([accountPayload2]);
+    });
   });
 });

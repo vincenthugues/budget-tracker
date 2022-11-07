@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { FilterAccountDto } from './dto/filter-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { Account, AccountDocument } from './schemas/account.schema';
 
@@ -15,8 +16,8 @@ export class AccountsService {
     return this.accountModel.create(createAccountDto);
   }
 
-  findAll(): Promise<AccountDocument[]> {
-    return this.accountModel.find().exec();
+  findAll(filters?: FilterAccountDto): Promise<AccountDocument[]> {
+    return this.accountModel.find(filters).exec();
   }
 
   async findOne(id: Types.ObjectId): Promise<AccountDocument> {

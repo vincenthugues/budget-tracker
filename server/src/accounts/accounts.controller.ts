@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -16,6 +17,7 @@ import {
 import { Types } from 'mongoose';
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { FilterAccountDto } from './dto/filter-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { Account, AccountDocument } from './schemas/account.schema';
 
@@ -36,10 +38,10 @@ export class AccountsController {
   @Get()
   @ApiOkResponse({
     type: [Account],
-    description: 'Returns the list of accounts',
+    description: 'Returns the list of accounts matching the optional filters',
   })
-  findAll(): Promise<AccountDocument[]> {
-    return this.accountsService.findAll();
+  findAll(@Query() filters?: FilterAccountDto): Promise<AccountDocument[]> {
+    return this.accountsService.findAll(filters);
   }
 
   @Get(':id')
