@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -16,6 +17,7 @@ import {
 import { Types } from 'mongoose';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { FilterCategoryDto } from './dto/filter-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category, CategoryDocument } from './schemas/category.schema';
 
@@ -38,10 +40,10 @@ export class CategoriesController {
   @Get()
   @ApiOkResponse({
     type: [Category],
-    description: 'Returns the list of categories',
+    description: 'Returns the list of categories matching the optional filters',
   })
-  findAll(): Promise<CategoryDocument[]> {
-    return this.categoriesService.findAll();
+  findAll(@Query() filters?: FilterCategoryDto): Promise<CategoryDocument[]> {
+    return this.categoriesService.findAll(filters);
   }
 
   @Get(':id')

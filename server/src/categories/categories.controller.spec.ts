@@ -139,6 +139,22 @@ describe('CategoriesController', () => {
         categoryPayload,
       ]);
     });
+
+    it('should return an array of categories matching the filter', async () => {
+      const categoryPayload1 = {
+        name: 'Category 1',
+        externalId: 'abc123',
+      };
+      const categoryPayload2 = {
+        name: 'Category 2',
+        externalId: 'def456',
+      };
+      await categoryModel.create(categoryPayload1, categoryPayload2);
+
+      expect(
+        await categoriesController.findAll({ externalId: 'def456' }),
+      ).toMatchObject([categoryPayload2]);
+    });
   });
 
   describe('[PATCH]', () => {
