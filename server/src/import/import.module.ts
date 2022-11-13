@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AccountsModule } from 'src/accounts/accounts.module';
-import { BudgetsModule } from 'src/budgets/budgets.module';
-import { CategoriesModule } from 'src/categories/categories.module';
+import { AccountsModule } from '../accounts/accounts.module';
+import { BudgetsModule } from '../budgets/budgets.module';
+import { CategoriesModule } from '../categories/categories.module';
 import { ImportController } from './import.controller';
 
 @Module({
