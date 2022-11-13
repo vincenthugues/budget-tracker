@@ -1,0 +1,14 @@
+{
+  "name": "budget-tracker",
+  "version": "0.1.0",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "client:start": "cd client/ && yarn start",
+    "server:start": "cd server/ && yarn start",
+    "server:start:dev": "cd server/ && yarn start:dev",
+    "server:db:dev": "mongod"
+  }
+}
