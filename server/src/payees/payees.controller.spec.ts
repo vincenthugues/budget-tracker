@@ -80,9 +80,25 @@ describe('PayeesController', () => {
         externalId: 'abc123',
       };
 
-      await new payeeModel(payeePayload).save();
+      await payeeModel.create(payeePayload);
 
       expect(await payeesController.findAll()).toMatchObject([payeePayload]);
+    });
+
+    it('should return an array of payees matching the filter', async () => {
+      const payeePayload1 = {
+        name: 'Payee 1',
+        externalId: 'abc123',
+      };
+      const payeePayload2 = {
+        name: 'Payee 2',
+        externalId: 'def456',
+      };
+      await payeeModel.create(payeePayload1, payeePayload2);
+
+      expect(
+        await payeesController.findAll({ externalId: 'def456' }),
+      ).toMatchObject([payeePayload2]);
     });
   });
 

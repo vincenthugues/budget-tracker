@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -15,6 +16,7 @@ import {
 } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreatePayeeDto } from './dto/create-payee.dto';
+import { FilterPayeeDto } from './dto/filter-payee.dto';
 import { UpdatePayeeDto } from './dto/update-payee.dto';
 import { PayeesService } from './payees.service';
 import { Payee, PayeeDocument } from './schemas/payee.schema';
@@ -36,10 +38,10 @@ export class PayeesController {
   @Get()
   @ApiOkResponse({
     type: [Payee],
-    description: 'Returns the list of payees',
+    description: 'Returns the list of payees matching the optional filters',
   })
-  findAll(): Promise<PayeeDocument[]> {
-    return this.payeesService.findAll();
+  findAll(@Query() filters?: FilterPayeeDto): Promise<PayeeDocument[]> {
+    return this.payeesService.findAll(filters);
   }
 
   @Get(':id')

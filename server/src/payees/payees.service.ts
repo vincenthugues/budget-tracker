@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreatePayeeDto } from './dto/create-payee.dto';
+import { FilterPayeeDto } from './dto/filter-payee.dto';
 import { UpdatePayeeDto } from './dto/update-payee.dto';
 import { Payee, PayeeDocument } from './schemas/payee.schema';
 
@@ -15,8 +16,8 @@ export class PayeesService {
     return this.payeeModel.create(createPayeeDto);
   }
 
-  findAll(): Promise<PayeeDocument[]> {
-    return this.payeeModel.find().exec();
+  findAll(filters?: FilterPayeeDto): Promise<PayeeDocument[]> {
+    return this.payeeModel.find(filters).exec();
   }
 
   async findOne(id: Types.ObjectId): Promise<PayeeDocument> {
