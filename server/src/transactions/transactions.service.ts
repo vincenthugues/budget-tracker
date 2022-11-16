@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { FilterTransactionDto } from './dto/filter-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 
@@ -18,8 +19,8 @@ export class TransactionsService {
     return this.transactionModel.create(createTransactionDto);
   }
 
-  findAll(): Promise<TransactionDocument[]> {
-    return this.transactionModel.find().exec();
+  findAll(filters?: FilterTransactionDto): Promise<TransactionDocument[]> {
+    return this.transactionModel.find(filters).exec();
   }
 
   async findOne(id: Types.ObjectId): Promise<TransactionDocument> {

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -15,6 +16,7 @@ import {
 } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { FilterTransactionDto } from './dto/filter-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 import { TransactionsService } from './transactions.service';
@@ -38,10 +40,13 @@ export class TransactionsController {
   @Get()
   @ApiOkResponse({
     type: [Transaction],
-    description: 'Returns the list of transactions',
+    description:
+      'Returns the list of transactions matching the optional filters',
   })
-  findAll(): Promise<TransactionDocument[]> {
-    return this.transactionsService.findAll();
+  findAll(
+    @Query() filters?: FilterTransactionDto,
+  ): Promise<TransactionDocument[]> {
+    return this.transactionsService.findAll(filters);
   }
 
   @Get(':id')

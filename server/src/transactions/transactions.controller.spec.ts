@@ -202,6 +202,24 @@ describe('TransactionsController', () => {
         expect.arrayContaining([expect.objectContaining({ notes: 'Test' })]),
       );
     });
+
+    it('should return an array of transactions matching the filter', async () => {
+      const transactionPayload1 = {
+        ...BASE_TRANSACTION_PAYLOAD,
+        notes: 'Transaction 1',
+        externalId: 'abc123',
+      };
+      const transactionPayload2 = {
+        ...BASE_TRANSACTION_PAYLOAD,
+        notes: 'Transaction 2',
+        externalId: 'def456',
+      };
+      await transactionModel.create(transactionPayload1, transactionPayload2);
+
+      expect(
+        await transactionsController.findAll({ externalId: 'def456' }),
+      ).toMatchObject([{ notes: 'Transaction 2' }]);
+    });
   });
 
   describe('[PATCH]', () => {
