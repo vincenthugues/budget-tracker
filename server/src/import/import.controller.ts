@@ -6,6 +6,8 @@ import {
 } from '@nestjs/swagger';
 import { Document } from 'mongoose';
 import { CategoryDocument } from 'src/categories/schemas/category.schema';
+import { PayeesService } from 'src/payees/payees.service';
+import { PayeeDocument } from 'src/payees/schemas/payee.schema';
 import { AccountsService } from '../accounts/accounts.service';
 import {
   AccountDocument,
@@ -23,6 +25,7 @@ export class ImportController {
     private readonly budgetsService: BudgetsService,
     private readonly accountsService: AccountsService,
     private readonly categoriesService: CategoriesService,
+    private readonly payeesService: PayeesService,
   ) {}
 
   createBudget({ id, name, first_month }): Promise<BudgetDocument> {
@@ -63,6 +66,13 @@ export class ImportController {
     return [parentCategory, ...subCategories];
   }
 
+  createPayee({ id, name }): Promise<PayeeDocument> {
+    return this.payeesService.create({
+      name,
+      externalId: id,
+    });
+  }
+
   @Post()
   @ApiCreatedResponse({
     type: [Document],
@@ -80,12 +90,13 @@ export class ImportController {
 
     const HandlerByResourceName: {
       [name: string]: ({}) => Promise<
-        BudgetDocument | AccountDocument | CategoryDocument[]
+        BudgetDocument | AccountDocument | CategoryDocument[] | PayeeDocument
       >;
     } = {
       budgets: this.createBudget,
       accounts: this.createAccount,
       category_groups: this.createCategories,
+      payees: this.createPayee,
     };
     let handler = HandlerByResourceName[resourceName];
 
