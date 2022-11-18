@@ -125,17 +125,15 @@ describe('TransactionsController', () => {
       );
     });
 
-    it('should fail if the categoryId is empty', async () => {
+    it('should work if the categoryId is empty', async () => {
       const transactionPayload = {
         ...BASE_TRANSACTION_PAYLOAD,
         categoryId: null,
       };
 
       expect(
-        transactionsController.create(transactionPayload),
-      ).rejects.toThrowError(
-        'Transaction validation failed: categoryId: Path `categoryId` is required',
-      );
+        await transactionsController.create(transactionPayload),
+      ).toMatchObject({ categoryId: null });
     });
 
     it('should work if isCleared is undefined; defaults to false', async () => {

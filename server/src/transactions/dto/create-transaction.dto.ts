@@ -27,8 +27,8 @@ export class CreateTransactionDto {
   readonly payeeId: string;
 
   @IsMongoId()
-  @IsNotEmpty()
-  readonly categoryId: string;
+  @IsOptional()
+  readonly categoryId?: string;
 
   @IsBoolean()
   @IsOptional()

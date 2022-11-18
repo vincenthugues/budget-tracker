@@ -34,13 +34,6 @@ export class Transaction {
   })
   payeeId: Types.ObjectId;
 
-  @Prop({
-    required: true,
-    type: SchemaTypes.ObjectId,
-    ref: Category.name,
-  })
-  categoryId: Types.ObjectId;
-
   @Prop({ required: true, default: false })
   @IsBoolean()
   isCleared: boolean;
@@ -48,6 +41,13 @@ export class Transaction {
   @Prop({ required: true, default: false })
   @IsBoolean()
   isDeleted: boolean;
+
+  @Prop({
+    type: SchemaTypes.ObjectId,
+    ref: Category.name,
+  })
+  @IsOptional()
+  categoryId?: Types.ObjectId;
 
   @Prop()
   @IsOptional()
