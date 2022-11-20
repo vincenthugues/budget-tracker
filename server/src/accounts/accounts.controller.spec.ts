@@ -66,6 +66,15 @@ describe('AccountsController', () => {
       );
     });
 
+    it('should work if the balance is negative', async () => {
+      const createdAccount = await accountsController.create({
+        ...BASE_ACCOUNT_PAYLOAD,
+        balance: -10_000_000,
+      });
+
+      expect(createdAccount).toMatchObject({ balance: -10_000_000 });
+    });
+
     it('should work if the externalId is undefined', async () => {
       const accountPayload = {
         ...BASE_ACCOUNT_PAYLOAD,
