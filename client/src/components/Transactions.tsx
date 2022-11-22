@@ -57,6 +57,13 @@ const Transactions = (): JSX.Element => {
     { name: 'payeeId', label: 'Payee ID', type: 'string' },
     { name: 'categoryId', label: 'Category ID', type: 'string' },
   ];
+  const getDisplayFormattedDate = (date: Date): string =>
+    new Date(date).toISOString().split('T')[0];
+  const getDisplayFormattedAmount = (amount: number): string =>
+    new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(amount / 100);
 
   useEffect(() => {
     fetch('/transactions')
@@ -111,11 +118,11 @@ const Transactions = (): JSX.Element => {
               ({ _id, date, amount, accountId, payeeId, categoryId }) => (
                 <tr key={_id}>
                   <td>{_id}</td>
-                  <td>{new Date(date).toLocaleDateString()}</td>
+                  <td>{getDisplayFormattedDate(date)}</td>
                   <td>{accountId}</td>
                   <td>{payeeId}</td>
                   <td>{categoryId}</td>
-                  <td>{amount}</td>
+                  <td>{getDisplayFormattedAmount(amount)}</td>
                   <td>
                     <button
                       onClick={() => {
