@@ -1,83 +1,67 @@
 import { useEffect, useState } from 'react';
 import Creator, { CreatorInput } from './Creator';
 
-enum AccountType {
-  CHECKING = 'Checking',
-  SAVINGS = 'Savings',
-  OTHER = 'Other',
-}
-
-type AccountDraft = {
-  _id: string;
+type BudgetDraft = {
   name: string;
   externalId?: string;
-  type?: AccountType;
-  isClosed?: boolean;
-  balance?: number;
+  startingDate?: Date;
 };
 
-type Account = AccountDraft & { _id: string };
+type Budget = BudgetDraft & { _id: string };
 
-const Accounts = (): JSX.Element => {
-  const [items, setItems] = useState<Account[]>([]);
+const BudgetsList = (): JSX.Element => {
+  const [items, setItems] = useState<Budget[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (accountToCreate: AccountDraft) => {
-    const response = await fetch('/accounts', {
+  const onSubmit = async (budgetToCreate: BudgetDraft) => {
+    const response = await fetch('/budgets', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(accountToCreate),
+      body: JSON.stringify(budgetToCreate),
     });
-    const createdAccount = await response.json();
+    const createdBudget = await response.json();
 
-    if (createdAccount.error) {
+    if (createdBudget.error) {
       console.error(
-        `Error (${createdAccount.statusCode}: ${createdAccount.error}) while creating the resource: `,
-        createdAccount.message.join(', ')
+        `Error (${createdBudget.statusCode}: ${createdBudget.error}) while creating the resource: `,
+        createdBudget.message.join(', ')
       );
       return;
     }
 
-    setItems([...items, createdAccount]);
+    setItems([...items, createdBudget]);
     setShowCreator(false);
   };
   const onCancel = () => {
     setShowCreator(false);
   };
-  const onDelete = async (accountId: string) => {
-    await fetch(`/accounts/${accountId}`, {
+  const onDelete = async (budgetId: string) => {
+    await fetch(`/budgets/${budgetId}`, {
       method: 'DELETE',
     });
-    setItems(items.filter(({ _id }) => _id !== accountId));
+    setItems(items.filter(({ _id }) => _id !== budgetId));
   };
-  const accountCreatorProperties: CreatorInput[] = [
+  const budgetCreatorProperties: CreatorInput[] = [
     { name: 'name', label: 'Name', type: 'text' },
     {
       name: 'externalId',
-      label: 'External Id',
+      label: 'External ID',
       type: 'text',
       isOptional: true,
     },
     {
-      name: 'type',
-      label: 'Type',
-      type: 'text',
-      isOptional: true,
-      options: Object.entries(AccountType),
-    },
-    {
-      name: 'isClosed',
-      label: 'Is closed',
-      type: 'checkbox',
+      name: 'startingDate',
+      label: 'Starting date',
+      type: 'date',
+      defaultValue: null,
       isOptional: true,
     },
-    { name: 'balance', label: 'Balance', type: 'number', isOptional: true },
   ];
 
   useEffect(() => {
-    fetch('/accounts')
+    fetch('/budgets')
       .then((res) => res.json())
       .then(
         (result) => {
@@ -92,7 +76,7 @@ const Accounts = (): JSX.Element => {
   }, []);
 
   if (error) {
-    console.error(`Error: ${error.message}`);
+    console.log(`Error: ${error.message}`);
     return <div>Error when fetching data</div>;
   } else if (!isLoaded) {
     return <div>Loading...</div>;
@@ -103,7 +87,7 @@ const Accounts = (): JSX.Element => {
           <Creator
             onSubmit={onSubmit}
             onCancel={onCancel}
-            properties={accountCreatorProperties}
+            properties={budgetCreatorProperties}
           />
         ) : (
           <button
@@ -119,24 +103,22 @@ const Accounts = (): JSX.Element => {
             <tr>
               <th>ID</th>
               <th>Name</th>
-              <th>Type</th>
-              <th>Balance</th>
-              <th>Is closed</th>
+              <th>Starting date</th>
               <th>External ID</th>
               <th></th>
             </tr>
-            {items.map(({ _id, name, externalId, type, isClosed, balance }) => (
+            {items.map(({ _id, name, externalId, startingDate }) => (
               <tr key={_id}>
                 <td>{_id}</td>
                 <td>{name}</td>
-                <td>{type}</td>
-                <td>{balance}</td>
-                <td>{isClosed ? 'Yes' : 'No'}</td>
+                <td>
+                  {startingDate && new Date(startingDate).toLocaleDateString()}
+                </td>
                 <td>{externalId}</td>
                 <td>
                   <button
                     onClick={() => {
-                      if (window.confirm(`Delete the account "${name}"?`)) {
+                      if (window.confirm(`Delete the budget "${name}"?`)) {
                         onDelete(_id);
                       }
                     }}
@@ -153,4 +135,4 @@ const Accounts = (): JSX.Element => {
   }
 };
 
-export default Accounts;
+export default BudgetsList;

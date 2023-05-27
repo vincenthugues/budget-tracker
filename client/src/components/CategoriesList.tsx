@@ -12,7 +12,7 @@ type CategoryDraft = {
 
 type Category = CategoryDraft & { _id: string };
 
-const Categories = (): JSX.Element => {
+const CategoriesList = (): JSX.Element => {
   const [items, setItems] = useState<Category[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
@@ -160,4 +160,4 @@ const Categories = (): JSX.Element => {
   }
 };
 
-export default Categories;
+export default CategoriesList;

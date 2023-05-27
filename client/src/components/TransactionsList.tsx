@@ -11,7 +11,7 @@ type TransactionDraft = {
 
 type Transaction = TransactionDraft & { _id: string };
 
-const Transactions = (): JSX.Element => {
+const TransactionsList = (): JSX.Element => {
   const [items, setItems] = useState<Transaction[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
@@ -163,4 +163,4 @@ const Transactions = (): JSX.Element => {
   }
 };
 
-export default Transactions;
+export default TransactionsList;

@@ -1,49 +1,49 @@
 import { useEffect, useState } from 'react';
 import Creator, { CreatorInput } from './Creator';
 
-type BudgetDraft = {
+type PayeeDraft = {
+  _id: string;
   name: string;
   externalId?: string;
-  startingDate?: Date;
 };
 
-type Budget = BudgetDraft & { _id: string };
+type Payee = PayeeDraft & { _id: string };
 
-const Budgets = (): JSX.Element => {
-  const [items, setItems] = useState<Budget[]>([]);
+const PayeesList = (): JSX.Element => {
+  const [items, setItems] = useState<Payee[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (budgetToCreate: BudgetDraft) => {
-    const response = await fetch('/budgets', {
+  const onSubmit = async (payeeToCreate: PayeeDraft) => {
+    const response = await fetch('/payees', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(budgetToCreate),
+      body: JSON.stringify(payeeToCreate),
     });
-    const createdBudget = await response.json();
+    const createdPayee = await response.json();
 
-    if (createdBudget.error) {
+    if (createdPayee.error) {
       console.error(
-        `Error (${createdBudget.statusCode}: ${createdBudget.error}) while creating the resource: `,
-        createdBudget.message.join(', ')
+        `Error (${createdPayee.statusCode}: ${createdPayee.error}) while creating the resource: `,
+        createdPayee.message.join(', ')
       );
       return;
     }
 
-    setItems([...items, createdBudget]);
+    setItems([...items, createdPayee]);
     setShowCreator(false);
   };
   const onCancel = () => {
     setShowCreator(false);
   };
-  const onDelete = async (budgetId: string) => {
-    await fetch(`/budgets/${budgetId}`, {
+  const onDelete = async (payeeId: string) => {
+    await fetch(`/payees/${payeeId}`, {
       method: 'DELETE',
     });
-    setItems(items.filter(({ _id }) => _id !== budgetId));
+    setItems(items.filter(({ _id }) => _id !== payeeId));
   };
-  const budgetCreatorProperties: CreatorInput[] = [
+  const payeeCreatorProperties: CreatorInput[] = [
     { name: 'name', label: 'Name', type: 'text' },
     {
       name: 'externalId',
@@ -51,17 +51,10 @@ const Budgets = (): JSX.Element => {
       type: 'text',
       isOptional: true,
     },
-    {
-      name: 'startingDate',
-      label: 'Starting date',
-      type: 'date',
-      defaultValue: null,
-      isOptional: true,
-    },
   ];
 
   useEffect(() => {
-    fetch('/budgets')
+    fetch('/payees')
       .then((res) => res.json())
       .then(
         (result) => {
@@ -87,7 +80,7 @@ const Budgets = (): JSX.Element => {
           <Creator
             onSubmit={onSubmit}
             onCancel={onCancel}
-            properties={budgetCreatorProperties}
+            properties={payeeCreatorProperties}
           />
         ) : (
           <button
@@ -103,22 +96,18 @@ const Budgets = (): JSX.Element => {
             <tr>
               <th>ID</th>
               <th>Name</th>
-              <th>Starting date</th>
               <th>External ID</th>
               <th></th>
             </tr>
-            {items.map(({ _id, name, externalId, startingDate }) => (
+            {items.map(({ _id, name, externalId }) => (
               <tr key={_id}>
                 <td>{_id}</td>
                 <td>{name}</td>
-                <td>
-                  {startingDate && new Date(startingDate).toLocaleDateString()}
-                </td>
                 <td>{externalId}</td>
                 <td>
                   <button
                     onClick={() => {
-                      if (window.confirm(`Delete the budget "${name}"?`)) {
+                      if (window.confirm(`Delete the payee "${name}"?`)) {
                         onDelete(_id);
                       }
                     }}
@@ -135,4 +124,4 @@ const Budgets = (): JSX.Element => {
   }
 };
 
-export default Budgets;
+export default PayeesList;

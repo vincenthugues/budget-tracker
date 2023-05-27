@@ -7,6 +7,7 @@ export type CreatorInput = {
   defaultValue?: any;
   isOptional?: boolean;
   options?: [key: string, value: string][];
+  // valueTransformer?: <Type>(arg: Type) => Type;
 };
 
 const DefaultInput = ({

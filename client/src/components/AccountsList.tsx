@@ -1,60 +1,83 @@
 import { useEffect, useState } from 'react';
 import Creator, { CreatorInput } from './Creator';
 
-type PayeeDraft = {
+enum AccountType {
+  CHECKING = 'Checking',
+  SAVINGS = 'Savings',
+  OTHER = 'Other',
+}
+
+type AccountDraft = {
   _id: string;
   name: string;
   externalId?: string;
+  type?: AccountType;
+  isClosed?: boolean;
+  balance?: number;
 };
 
-type Payee = PayeeDraft & { _id: string };
+type Account = AccountDraft & { _id: string };
 
-const Payees = (): JSX.Element => {
-  const [items, setItems] = useState<Payee[]>([]);
+const AccountsList = (): JSX.Element => {
+  const [items, setItems] = useState<Account[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (payeeToCreate: PayeeDraft) => {
-    const response = await fetch('/payees', {
+  const onSubmit = async (accountToCreate: AccountDraft) => {
+    const response = await fetch('/accounts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payeeToCreate),
+      body: JSON.stringify(accountToCreate),
     });
-    const createdPayee = await response.json();
+    const createdAccount = await response.json();
 
-    if (createdPayee.error) {
+    if (createdAccount.error) {
       console.error(
-        `Error (${createdPayee.statusCode}: ${createdPayee.error}) while creating the resource: `,
-        createdPayee.message.join(', ')
+        `Error (${createdAccount.statusCode}: ${createdAccount.error}) while creating the resource: `,
+        createdAccount.message.join(', ')
       );
       return;
     }
 
-    setItems([...items, createdPayee]);
+    setItems([...items, createdAccount]);
     setShowCreator(false);
   };
   const onCancel = () => {
     setShowCreator(false);
   };
-  const onDelete = async (payeeId: string) => {
-    await fetch(`/payees/${payeeId}`, {
+  const onDelete = async (accountId: string) => {
+    await fetch(`/accounts/${accountId}`, {
       method: 'DELETE',
     });
-    setItems(items.filter(({ _id }) => _id !== payeeId));
+    setItems(items.filter(({ _id }) => _id !== accountId));
   };
-  const payeeCreatorProperties: CreatorInput[] = [
+  const accountCreatorProperties: CreatorInput[] = [
     { name: 'name', label: 'Name', type: 'text' },
     {
       name: 'externalId',
-      label: 'External ID',
+      label: 'External Id',
       type: 'text',
       isOptional: true,
     },
+    {
+      name: 'type',
+      label: 'Type',
+      type: 'text',
+      isOptional: true,
+      options: Object.entries(AccountType),
+    },
+    {
+      name: 'isClosed',
+      label: 'Is closed',
+      type: 'checkbox',
+      isOptional: true,
+    },
+    { name: 'balance', label: 'Balance', type: 'number', isOptional: true },
   ];
 
   useEffect(() => {
-    fetch('/payees')
+    fetch('/accounts')
       .then((res) => res.json())
       .then(
         (result) => {
@@ -69,7 +92,7 @@ const Payees = (): JSX.Element => {
   }, []);
 
   if (error) {
-    console.log(`Error: ${error.message}`);
+    console.error(`Error: ${error.message}`);
     return <div>Error when fetching data</div>;
   } else if (!isLoaded) {
     return <div>Loading...</div>;
@@ -80,7 +103,7 @@ const Payees = (): JSX.Element => {
           <Creator
             onSubmit={onSubmit}
             onCancel={onCancel}
-            properties={payeeCreatorProperties}
+            properties={accountCreatorProperties}
           />
         ) : (
           <button
@@ -96,18 +119,24 @@ const Payees = (): JSX.Element => {
             <tr>
               <th>ID</th>
               <th>Name</th>
+              <th>Type</th>
+              <th>Balance</th>
+              <th>Is closed</th>
               <th>External ID</th>
               <th></th>
             </tr>
-            {items.map(({ _id, name, externalId }) => (
+            {items.map(({ _id, name, externalId, type, isClosed, balance }) => (
               <tr key={_id}>
                 <td>{_id}</td>
                 <td>{name}</td>
+                <td>{type}</td>
+                <td>{balance}</td>
+                <td>{isClosed ? 'Yes' : 'No'}</td>
                 <td>{externalId}</td>
                 <td>
                   <button
                     onClick={() => {
-                      if (window.confirm(`Delete the payee "${name}"?`)) {
+                      if (window.confirm(`Delete the account "${name}"?`)) {
                         onDelete(_id);
                       }
                     }}
@@ -124,4 +153,4 @@ const Payees = (): JSX.Element => {
   }
 };
 
-export default Payees;
+export default AccountsList;
