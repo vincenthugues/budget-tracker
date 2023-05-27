@@ -6,7 +6,7 @@ type TransactionDraft = {
   amount: number;
   accountId: string;
   payeeId: string;
-  categoryId: string;
+  categoryId?: string;
 };
 
 type Transaction = TransactionDraft & { _id: string };
@@ -55,7 +55,12 @@ const Transactions = (): JSX.Element => {
     { name: 'amount', label: 'Amount', type: 'number' },
     { name: 'accountId', label: 'Account ID', type: 'string' },
     { name: 'payeeId', label: 'Payee ID', type: 'string' },
-    { name: 'categoryId', label: 'Category ID', type: 'string' },
+    {
+      name: 'categoryId',
+      label: 'Category ID',
+      type: 'string',
+      isOptional: true,
+    },
   ];
   const getDisplayFormattedDate = (date: Date): string =>
     new Date(date).toISOString().split('T')[0];
