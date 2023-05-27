@@ -18,10 +18,20 @@ const Transactions = (): JSX.Element => {
   const [showCreator, setShowCreator] = useState(false);
 
   const onSubmit = async (transactionToCreate: TransactionDraft) => {
+    const convertTransactionAmountToCents = ({
+      amount,
+      ...otherProperties
+    }: TransactionDraft) => ({
+      amount: amount * 100,
+      ...otherProperties,
+    });
+
     const response = await fetch('/transactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(transactionToCreate),
+      body: JSON.stringify(
+        convertTransactionAmountToCents(transactionToCreate)
+      ),
     });
     const createdTransaction = await response.json();
 
