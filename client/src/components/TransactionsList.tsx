@@ -1,4 +1,9 @@
 import { useEffect, useState } from 'react';
+import {
+  getDisplayFormattedAmount,
+  getDisplayFormattedDate,
+  getInputCurrentDateTime,
+} from '../utils';
 import Creator, { CreatorInput } from './Creator';
 
 type TransactionDraft = {
@@ -23,7 +28,7 @@ const TransactionCreator = ({
       name: 'date',
       label: 'Date',
       type: 'datetime-local',
-      defaultValue: new Date().toISOString().split('.')[0],
+      defaultValue: getInputCurrentDateTime(),
     },
     { name: 'amount', label: 'Amount', type: 'number' },
     { name: 'accountId', label: 'Account ID', type: 'string' },
@@ -106,14 +111,6 @@ const TransactionsList = (): JSX.Element => {
     });
     setItems(items.filter(({ _id }) => _id !== transactionId));
   };
-
-  const getDisplayFormattedDate = (date: Date): string =>
-    new Date(date).toISOString().split('T')[0];
-  const getDisplayFormattedAmount = (amount: number): string =>
-    new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(amount / 100);
 
   useEffect(() => {
     fetch('/transactions')
