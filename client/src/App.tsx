@@ -8,6 +8,9 @@ const App = () => (
       <nav>
         <ul>
           <li>
+            <Link to="">Current Month</Link>
+          </li>
+          <li>
             <Link to="budgets">Budgets</Link>
           </li>
           <li>

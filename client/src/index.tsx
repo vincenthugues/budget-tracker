@@ -4,6 +4,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import AccountsList from './components/AccountsList';
 import BudgetsList from './components/BudgetsList';
 import CategoriesList from './components/CategoriesList';
+import MonthBudget from './components/MonthBudget';
 import PayeesList from './components/PayeesList';
 import TransactionsList from './components/TransactionsList';
 import ErrorPage from './error-page';
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        path: '',
+        element: <MonthBudget />,
+      },
       {
         path: 'accounts',
         element: <AccountsList />,
