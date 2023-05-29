@@ -18,40 +18,13 @@ type AccountDraft = {
 
 type Account = AccountDraft & { _id: string };
 
-const AccountsList = (): JSX.Element => {
-  const [items, setItems] = useState<Account[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
+const AccountCreator = ({
+  onAddAccount,
+}: {
+  onAddAccount: (account: Account) => void;
+}) => {
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (accountToCreate: AccountDraft) => {
-    const response = await fetch('/accounts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(accountToCreate),
-    });
-    const createdAccount = await response.json();
-
-    if (createdAccount.error) {
-      console.error(
-        `Error (${createdAccount.statusCode}: ${createdAccount.error}) while creating the resource: `,
-        createdAccount.message.join(', ')
-      );
-      return;
-    }
-
-    setItems([...items, createdAccount]);
-    setShowCreator(false);
-  };
-  const onCancel = () => {
-    setShowCreator(false);
-  };
-  const onDelete = async (accountId: string) => {
-    await fetch(`/accounts/${accountId}`, {
-      method: 'DELETE',
-    });
-    setItems(items.filter(({ _id }) => _id !== accountId));
-  };
   const accountCreatorProperties: CreatorInput[] = [
     { name: 'name', label: 'Name', type: 'text' },
     {
@@ -76,6 +49,66 @@ const AccountsList = (): JSX.Element => {
     { name: 'balance', label: 'Balance', type: 'number', isOptional: true },
   ];
 
+  const onSubmit = async (accountToCreate: AccountDraft) => {
+    const response = await fetch('/accounts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(accountToCreate),
+    });
+    const createdAccount = await response.json();
+
+    if (createdAccount.error) {
+      console.error(
+        `Error (${createdAccount.statusCode}: ${createdAccount.error}) while creating the resource: `,
+        createdAccount.message.join(', ')
+      );
+      return;
+    }
+
+    onAddAccount(createdAccount);
+    setShowCreator(false);
+  };
+  const onCancel = () => {
+    setShowCreator(false);
+  };
+
+  return (
+    <>
+      {showCreator ? (
+        <Creator
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+          properties={accountCreatorProperties}
+        />
+      ) : (
+        <button
+          onClick={() => {
+            setShowCreator(true);
+          }}
+        >
+          ➕
+        </button>
+      )}
+    </>
+  );
+};
+
+const AccountsList = (): JSX.Element => {
+  const [items, setItems] = useState<Account[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<{ message: string } | null>(null);
+
+  const addItem = (newItem: Account) => {
+    setItems([...items, newItem]);
+  };
+
+  const onDelete = async (accountId: string) => {
+    await fetch(`/accounts/${accountId}`, {
+      method: 'DELETE',
+    });
+    setItems(items.filter(({ _id }) => _id !== accountId));
+  };
+
   useEffect(() => {
     fetch('/accounts')
       .then((res) => res.json())
@@ -99,21 +132,7 @@ const AccountsList = (): JSX.Element => {
   } else {
     return (
       <>
-        {showCreator ? (
-          <Creator
-            onSubmit={onSubmit}
-            onCancel={onCancel}
-            properties={accountCreatorProperties}
-          />
-        ) : (
-          <button
-            onClick={() => {
-              setShowCreator(true);
-            }}
-          >
-            ➕
-          </button>
-        )}
+        <AccountCreator onAddAccount={addItem} />
         <table>
           <tbody>
             <tr>
