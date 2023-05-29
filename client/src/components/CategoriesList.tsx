@@ -12,40 +12,13 @@ type CategoryDraft = {
 
 type Category = CategoryDraft & { _id: string };
 
-const CategoriesList = (): JSX.Element => {
-  const [items, setItems] = useState<Category[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
+const CategoryCreator = ({
+  onAddCategory,
+}: {
+  onAddCategory: (category: Category) => void;
+}) => {
   const [showCreator, setShowCreator] = useState(false);
 
-  const onSubmit = async (categoryToCreate: CategoryDraft) => {
-    const response = await fetch('/categories', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(categoryToCreate),
-    });
-    const createdCategory = await response.json();
-
-    if (createdCategory.error) {
-      console.error(
-        `Error (${createdCategory.statusCode}: ${createdCategory.error}) while creating the resource: `,
-        createdCategory.message.join(', ')
-      );
-      return;
-    }
-
-    setItems([...items, createdCategory]);
-    setShowCreator(false);
-  };
-  const onCancel = () => {
-    setShowCreator(false);
-  };
-  const onDelete = async (categoryId: string) => {
-    await fetch(`/categories/${categoryId}`, {
-      method: 'DELETE',
-    });
-    setItems(items.filter(({ _id }) => _id !== categoryId));
-  };
   const categoryCreatorProperties: CreatorInput[] = [
     { name: 'name', label: 'Name', type: 'text' },
     {
@@ -74,6 +47,67 @@ const CategoriesList = (): JSX.Element => {
     },
   ];
 
+  const onSubmit = async (categoryToCreate: CategoryDraft) => {
+    const response = await fetch('/categories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(categoryToCreate),
+    });
+    const createdCategory = await response.json();
+
+    if (createdCategory.error) {
+      console.error(
+        `Error (${createdCategory.statusCode}: ${createdCategory.error}) while creating the resource: `,
+        createdCategory.message.join(', ')
+      );
+      return;
+    }
+
+    onAddCategory(createdCategory);
+    setShowCreator(false);
+  };
+
+  const onCancel = () => {
+    setShowCreator(false);
+  };
+
+  return (
+    <>
+      {showCreator ? (
+        <Creator
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+          properties={categoryCreatorProperties}
+        />
+      ) : (
+        <button
+          onClick={() => {
+            setShowCreator(true);
+          }}
+        >
+          ➕
+        </button>
+      )}
+    </>
+  );
+};
+
+const CategoriesList = (): JSX.Element => {
+  const [items, setItems] = useState<Category[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<{ message: string } | null>(null);
+
+  const addItem = (newItem: Category) => {
+    setItems([...items, newItem]);
+  };
+
+  const onDelete = async (categoryId: string) => {
+    await fetch(`/categories/${categoryId}`, {
+      method: 'DELETE',
+    });
+    setItems(items.filter(({ _id }) => _id !== categoryId));
+  };
+
   useEffect(() => {
     fetch('/categories')
       .then((res) => res.json())
@@ -97,21 +131,7 @@ const CategoriesList = (): JSX.Element => {
   } else {
     return (
       <>
-        {showCreator ? (
-          <Creator
-            onSubmit={onSubmit}
-            onCancel={onCancel}
-            properties={categoryCreatorProperties}
-          />
-        ) : (
-          <button
-            onClick={() => {
-              setShowCreator(true);
-            }}
-          >
-            ➕
-          </button>
-        )}
+        <CategoryCreator onAddCategory={addItem} />
         <table>
           <tbody>
             <tr>
