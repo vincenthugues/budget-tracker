@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getDisplayFormattedAmount } from '../utils';
 import Creator, { CreatorInput } from './Creator';
 
 enum AccountType {
@@ -149,7 +150,11 @@ const AccountsList = (): JSX.Element => {
                 <td>{_id}</td>
                 <td>{name}</td>
                 <td>{type}</td>
-                <td>{balance}</td>
+                <td>
+                  {balance !== undefined
+                    ? getDisplayFormattedAmount(balance)
+                    : ''}
+                </td>
                 <td>{isClosed ? 'Yes' : 'No'}</td>
                 <td>{externalId}</td>
                 <td>
