@@ -11,11 +11,30 @@ type TransactionDraft = {
 
 type Transaction = TransactionDraft & { _id: string };
 
-const TransactionsList = (): JSX.Element => {
-  const [items, setItems] = useState<Transaction[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
+const TransactionCreator = ({
+  onAddTransaction,
+}: {
+  onAddTransaction: (transaction: Transaction) => void;
+}) => {
   const [showCreator, setShowCreator] = useState(false);
+
+  const transactionCreatorProperties: CreatorInput[] = [
+    {
+      name: 'date',
+      label: 'Date',
+      type: 'datetime-local',
+      defaultValue: new Date().toISOString().split('.')[0],
+    },
+    { name: 'amount', label: 'Amount', type: 'number' },
+    { name: 'accountId', label: 'Account ID', type: 'string' },
+    { name: 'payeeId', label: 'Payee ID', type: 'string' },
+    {
+      name: 'categoryId',
+      label: 'Category ID',
+      type: 'string',
+      isOptional: true,
+    },
+  ];
 
   const onSubmit = async (transactionToCreate: TransactionDraft) => {
     const convertTransactionAmountToCents = ({
@@ -43,35 +62,51 @@ const TransactionsList = (): JSX.Element => {
       return;
     }
 
-    setItems([...items, createdTransaction]);
+    onAddTransaction(createdTransaction);
     setShowCreator(false);
   };
+
   const onCancel = () => {
     setShowCreator(false);
   };
+
+  return (
+    <>
+      {showCreator ? (
+        <Creator
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+          properties={transactionCreatorProperties}
+        />
+      ) : (
+        <button
+          onClick={() => {
+            setShowCreator(true);
+          }}
+        >
+          ➕
+        </button>
+      )}
+    </>
+  );
+};
+
+const TransactionsList = (): JSX.Element => {
+  const [items, setItems] = useState<Transaction[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<{ message: string } | null>(null);
+
+  const addItem = (newItem: Transaction) => {
+    setItems([...items, newItem]);
+  };
+
   const onDelete = async (transactionId: string) => {
     await fetch(`/transactions/${transactionId}`, {
       method: 'DELETE',
     });
     setItems(items.filter(({ _id }) => _id !== transactionId));
   };
-  const transactionCreatorProperties: CreatorInput[] = [
-    {
-      name: 'date',
-      label: 'Date',
-      type: 'datetime-local',
-      defaultValue: new Date().toISOString().split('.')[0],
-    },
-    { name: 'amount', label: 'Amount', type: 'number' },
-    { name: 'accountId', label: 'Account ID', type: 'string' },
-    { name: 'payeeId', label: 'Payee ID', type: 'string' },
-    {
-      name: 'categoryId',
-      label: 'Category ID',
-      type: 'string',
-      isOptional: true,
-    },
-  ];
+
   const getDisplayFormattedDate = (date: Date): string =>
     new Date(date).toISOString().split('T')[0];
   const getDisplayFormattedAmount = (amount: number): string =>
@@ -103,21 +138,7 @@ const TransactionsList = (): JSX.Element => {
   } else {
     return (
       <>
-        {showCreator ? (
-          <Creator
-            onSubmit={onSubmit}
-            onCancel={onCancel}
-            properties={transactionCreatorProperties}
-          />
-        ) : (
-          <button
-            onClick={() => {
-              setShowCreator(true);
-            }}
-          >
-            ➕
-          </button>
-        )}
+        <TransactionCreator onAddTransaction={addItem} />
         <table>
           <tbody>
             <tr>
