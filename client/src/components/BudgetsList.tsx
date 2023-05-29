@@ -9,11 +9,29 @@ type BudgetDraft = {
 
 type Budget = BudgetDraft & { _id: string };
 
-const BudgetsList = (): JSX.Element => {
-  const [items, setItems] = useState<Budget[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
+const BudgetCreator = ({
+  onAddBudget,
+}: {
+  onAddBudget: (budget: Budget) => void;
+}) => {
   const [showCreator, setShowCreator] = useState(false);
+
+  const budgetCreatorProperties: CreatorInput[] = [
+    { name: 'name', label: 'Name', type: 'text' },
+    {
+      name: 'externalId',
+      label: 'External ID',
+      type: 'text',
+      isOptional: true,
+    },
+    {
+      name: 'startingDate',
+      label: 'Starting date',
+      type: 'date',
+      defaultValue: null,
+      isOptional: true,
+    },
+  ];
 
   const onSubmit = async (budgetToCreate: BudgetDraft) => {
     const response = await fetch('/budgets', {
@@ -31,34 +49,50 @@ const BudgetsList = (): JSX.Element => {
       return;
     }
 
-    setItems([...items, createdBudget]);
+    onAddBudget(createdBudget);
     setShowCreator(false);
   };
+
   const onCancel = () => {
     setShowCreator(false);
   };
+
+  return (
+    <>
+      {showCreator ? (
+        <Creator
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+          properties={budgetCreatorProperties}
+        />
+      ) : (
+        <button
+          onClick={() => {
+            setShowCreator(true);
+          }}
+        >
+          ➕
+        </button>
+      )}
+    </>
+  );
+};
+
+const BudgetsList = (): JSX.Element => {
+  const [items, setItems] = useState<Budget[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<{ message: string } | null>(null);
+
+  const addItem = (newItem: Budget) => {
+    setItems([...items, newItem]);
+  };
+
   const onDelete = async (budgetId: string) => {
     await fetch(`/budgets/${budgetId}`, {
       method: 'DELETE',
     });
     setItems(items.filter(({ _id }) => _id !== budgetId));
   };
-  const budgetCreatorProperties: CreatorInput[] = [
-    { name: 'name', label: 'Name', type: 'text' },
-    {
-      name: 'externalId',
-      label: 'External ID',
-      type: 'text',
-      isOptional: true,
-    },
-    {
-      name: 'startingDate',
-      label: 'Starting date',
-      type: 'date',
-      defaultValue: null,
-      isOptional: true,
-    },
-  ];
 
   useEffect(() => {
     fetch('/budgets')
@@ -83,21 +117,7 @@ const BudgetsList = (): JSX.Element => {
   } else {
     return (
       <>
-        {showCreator ? (
-          <Creator
-            onSubmit={onSubmit}
-            onCancel={onCancel}
-            properties={budgetCreatorProperties}
-          />
-        ) : (
-          <button
-            onClick={() => {
-              setShowCreator(true);
-            }}
-          >
-            ➕
-          </button>
-        )}
+        <BudgetCreator onAddBudget={addItem} />
         <table>
           <tbody>
             <tr>
