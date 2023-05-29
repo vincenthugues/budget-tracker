@@ -9,11 +9,22 @@ type PayeeDraft = {
 
 type Payee = PayeeDraft & { _id: string };
 
-const PayeesList = (): JSX.Element => {
-  const [items, setItems] = useState<Payee[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
+const PayeeCreator = ({
+  onAddPayee,
+}: {
+  onAddPayee: (payee: Payee) => void;
+}) => {
   const [showCreator, setShowCreator] = useState(false);
+
+  const payeeCreatorProperties: CreatorInput[] = [
+    { name: 'name', label: 'Name', type: 'text' },
+    {
+      name: 'externalId',
+      label: 'External ID',
+      type: 'text',
+      isOptional: true,
+    },
+  ];
 
   const onSubmit = async (payeeToCreate: PayeeDraft) => {
     const response = await fetch('/payees', {
@@ -31,27 +42,50 @@ const PayeesList = (): JSX.Element => {
       return;
     }
 
-    setItems([...items, createdPayee]);
+    onAddPayee(createdPayee);
     setShowCreator(false);
   };
+
   const onCancel = () => {
     setShowCreator(false);
   };
+
+  return (
+    <>
+      {showCreator ? (
+        <Creator
+          onSubmit={onSubmit}
+          onCancel={onCancel}
+          properties={payeeCreatorProperties}
+        />
+      ) : (
+        <button
+          onClick={() => {
+            setShowCreator(true);
+          }}
+        >
+          ➕
+        </button>
+      )}
+    </>
+  );
+};
+
+const PayeesList = (): JSX.Element => {
+  const [items, setItems] = useState<Payee[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<{ message: string } | null>(null);
+
+  const addItem = (newItem: Payee) => {
+    setItems([...items, newItem]);
+  };
+
   const onDelete = async (payeeId: string) => {
     await fetch(`/payees/${payeeId}`, {
       method: 'DELETE',
     });
     setItems(items.filter(({ _id }) => _id !== payeeId));
   };
-  const payeeCreatorProperties: CreatorInput[] = [
-    { name: 'name', label: 'Name', type: 'text' },
-    {
-      name: 'externalId',
-      label: 'External ID',
-      type: 'text',
-      isOptional: true,
-    },
-  ];
 
   useEffect(() => {
     fetch('/payees')
@@ -76,21 +110,7 @@ const PayeesList = (): JSX.Element => {
   } else {
     return (
       <>
-        {showCreator ? (
-          <Creator
-            onSubmit={onSubmit}
-            onCancel={onCancel}
-            properties={payeeCreatorProperties}
-          />
-        ) : (
-          <button
-            onClick={() => {
-              setShowCreator(true);
-            }}
-          >
-            ➕
-          </button>
-        )}
+        <PayeeCreator onAddPayee={addItem} />
         <table>
           <tbody>
             <tr>
