@@ -1,41 +1,41 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import AccountsList from './components/AccountsList';
+import BudgetsList from './components/BudgetsList';
+import CategoriesList from './components/CategoriesList';
+import PayeesList from './components/PayeesList';
+import TransactionsList from './components/TransactionsList';
 import ErrorPage from './error-page';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import Accounts from './routes/accounts';
-import Budgets from './routes/budgets';
-import Categories from './routes/categories';
-import Payees from './routes/payees';
-import Root from './routes/root';
-import Transactions from './routes/transactions';
+import App from './App';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root />,
+    element: <App />,
     errorElement: <ErrorPage />,
     children: [
       {
         path: 'accounts',
-        element: <Accounts />,
+        element: <AccountsList />,
       },
       {
         path: 'budgets',
-        element: <Budgets />,
+        element: <BudgetsList />,
       },
       {
         path: 'categories',
-        element: <Categories />,
+        element: <CategoriesList />,
       },
       {
         path: 'payees',
-        element: <Payees />,
+        element: <PayeesList />,
       },
       {
         path: 'transactions',
-        element: <Transactions />,
+        element: <TransactionsList />,
       },
     ],
   },
