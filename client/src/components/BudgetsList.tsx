@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useFetchedResource, useResourcesHandler } from '../hooks';
 import Creator, { CreatorInput } from './Creator';
 
 type BudgetDraft = {
@@ -79,45 +80,27 @@ const BudgetCreator = ({
 };
 
 const BudgetsList = (): JSX.Element => {
-  const [items, setItems] = useState<Budget[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
-
-  const addItem = (newItem: Budget) => {
-    setItems([...items, newItem]);
-  };
+  const [fetchedBudgets, isLoading, errorMessage] =
+    useFetchedResource<Budget>('budgets');
+  const [budgets, addBudget, removeBudgetById] =
+    useResourcesHandler(fetchedBudgets);
 
   const onDelete = async (budgetId: string) => {
     await fetch(`/budgets/${budgetId}`, {
       method: 'DELETE',
     });
-    setItems(items.filter(({ _id }) => _id !== budgetId));
+    removeBudgetById(budgetId);
   };
 
-  useEffect(() => {
-    fetch('/budgets')
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setItems(result);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-  }, []);
-
-  if (error) {
-    console.log(`Error: ${error.message}`);
+  if (errorMessage) {
+    console.log(`Error: ${errorMessage}`);
     return <div>Error when fetching data</div>;
-  } else if (!isLoaded) {
+  } else if (isLoading) {
     return <div>Loading...</div>;
   } else {
     return (
       <>
-        <BudgetCreator onAddBudget={addItem} />
+        <BudgetCreator onAddBudget={addBudget} />
         <table>
           <tbody>
             <tr>
@@ -127,7 +110,7 @@ const BudgetsList = (): JSX.Element => {
               <th>External ID</th>
               <th></th>
             </tr>
-            {items.map(({ _id, name, externalId, startingDate }) => (
+            {budgets.map(({ _id, name, externalId, startingDate }) => (
               <tr key={_id}>
                 <td>{_id}</td>
                 <td>{name}</td>
