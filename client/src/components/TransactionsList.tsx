@@ -5,6 +5,7 @@ import {
   getInputCurrentDateTime,
 } from '../utils';
 import Creator, { CreatorInput } from './Creator';
+import { useFetchedResource, useResourcesHandler } from '../hooks';
 
 type TransactionDraft = {
   date: Date;
@@ -97,45 +98,27 @@ const TransactionCreator = ({
 };
 
 const TransactionsList = (): JSX.Element => {
-  const [items, setItems] = useState<Transaction[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
-
-  const addItem = (newItem: Transaction) => {
-    setItems([...items, newItem]);
-  };
+  const [fetchedTransactions, isLoading, errorMessage] =
+    useFetchedResource<Transaction>('transactions');
+  const [transactions, addTransaction, removeTransactionById] =
+    useResourcesHandler(fetchedTransactions);
 
   const onDelete = async (transactionId: string) => {
     await fetch(`/transactions/${transactionId}`, {
       method: 'DELETE',
     });
-    setItems(items.filter(({ _id }) => _id !== transactionId));
+    removeTransactionById(transactionId);
   };
 
-  useEffect(() => {
-    fetch('/transactions')
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setItems(result);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-  }, []);
-
-  if (error) {
-    console.log(`Error: ${error.message}`);
+  if (errorMessage) {
+    console.log(`Error: ${errorMessage}`);
     return <div>Error when fetching data</div>;
-  } else if (!isLoaded) {
+  } else if (isLoading) {
     return <div>Loading...</div>;
   } else {
     return (
       <>
-        <TransactionCreator onAddTransaction={addItem} />
+        <TransactionCreator onAddTransaction={addTransaction} />
         <table>
           <tbody>
             <tr>
@@ -147,7 +130,7 @@ const TransactionsList = (): JSX.Element => {
               <th>Amount</th>
               <th></th>
             </tr>
-            {items.map(
+            {transactions.map(
               ({ _id, date, amount, accountId, payeeId, categoryId }) => (
                 <tr key={_id}>
                   <td>{_id}</td>
