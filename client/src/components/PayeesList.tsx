@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useFetchedResource, useResourcesHandler } from '../hooks';
 import Creator, { CreatorInput } from './Creator';
 
 type PayeeDraft = {
@@ -72,45 +73,28 @@ const PayeeCreator = ({
 };
 
 const PayeesList = (): JSX.Element => {
-  const [items, setItems] = useState<Payee[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
-
-  const addItem = (newItem: Payee) => {
-    setItems([...items, newItem]);
-  };
+  const [fetchedPayees, isLoading, errorMessage] =
+    useFetchedResource<Payee>('payees');
+  const [payees, addPayee, removePayeeById] =
+    useResourcesHandler(fetchedPayees);
 
   const onDelete = async (payeeId: string) => {
     await fetch(`/payees/${payeeId}`, {
       method: 'DELETE',
     });
-    setItems(items.filter(({ _id }) => _id !== payeeId));
+
+    removePayeeById(payeeId);
   };
 
-  useEffect(() => {
-    fetch('/payees')
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setItems(result);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-  }, []);
-
-  if (error) {
-    console.log(`Error: ${error.message}`);
+  if (errorMessage) {
+    console.log(`Error: ${errorMessage}`);
     return <div>Error when fetching data</div>;
-  } else if (!isLoaded) {
+  } else if (isLoading) {
     return <div>Loading...</div>;
   } else {
     return (
       <>
-        <PayeeCreator onAddPayee={addItem} />
+        <PayeeCreator onAddPayee={addPayee} />
         <table>
           <tbody>
             <tr>
@@ -119,7 +103,7 @@ const PayeesList = (): JSX.Element => {
               <th>External ID</th>
               <th></th>
             </tr>
-            {items.map(({ _id, name, externalId }) => (
+            {payees.map(({ _id, name, externalId }) => (
               <tr key={_id}>
                 <td>{_id}</td>
                 <td>{name}</td>
