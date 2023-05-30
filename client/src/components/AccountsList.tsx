@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useFetchedResource, useResourcesHandler } from '../hooks';
 import { getDisplayFormattedAmount } from '../utils';
 import Creator, { CreatorInput } from './Creator';
 
@@ -95,45 +96,27 @@ const AccountCreator = ({
 };
 
 const AccountsList = (): JSX.Element => {
-  const [items, setItems] = useState<Account[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
-
-  const addItem = (newItem: Account) => {
-    setItems([...items, newItem]);
-  };
+  const [fetchedAccounts, isLoading, errorMessage] =
+    useFetchedResource<Account>('accounts');
+  const [accounts, addAccount, removeAccountById] =
+    useResourcesHandler(fetchedAccounts);
 
   const onDelete = async (accountId: string) => {
     await fetch(`/accounts/${accountId}`, {
       method: 'DELETE',
     });
-    setItems(items.filter(({ _id }) => _id !== accountId));
+    removeAccountById(accountId);
   };
 
-  useEffect(() => {
-    fetch('/accounts')
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setItems(result);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-  }, []);
-
-  if (error) {
-    console.error(`Error: ${error.message}`);
+  if (errorMessage) {
+    console.error(`Error: ${errorMessage}`);
     return <div>Error when fetching data</div>;
-  } else if (!isLoaded) {
+  } else if (isLoading) {
     return <div>Loading...</div>;
   } else {
     return (
       <>
-        <AccountCreator onAddAccount={addItem} />
+        <AccountCreator onAddAccount={addAccount} />
         <table>
           <tbody>
             <tr>
@@ -145,31 +128,32 @@ const AccountsList = (): JSX.Element => {
               <th>External ID</th>
               <th></th>
             </tr>
-            {items.map(({ _id, name, externalId, type, isClosed, balance }) => (
-              <tr key={_id}>
-                <td>{_id}</td>
-                <td>{name}</td>
-                <td>{type}</td>
-                <td>
-                  {balance !== undefined
-                    ? getDisplayFormattedAmount(balance)
-                    : ''}
-                </td>
-                <td>{isClosed ? 'Yes' : 'No'}</td>
-                <td>{externalId}</td>
-                <td>
-                  <button
-                    onClick={() => {
-                      if (window.confirm(`Delete the account "${name}"?`)) {
-                        onDelete(_id);
-                      }
-                    }}
-                  >
-                    ❌
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {accounts.map(
+              ({ _id, name, externalId, type, isClosed, balance }) => (
+                <tr key={_id}>
+                  <td>{_id}</td>
+                  <td>{name}</td>
+                  <td>{type}</td>
+                  <td>
+                    {balance !== undefined &&
+                      getDisplayFormattedAmount(balance)}
+                  </td>
+                  <td>{isClosed ? 'Yes' : 'No'}</td>
+                  <td>{externalId}</td>
+                  <td>
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`Delete the account "${name}"?`)) {
+                          onDelete(_id);
+                        }
+                      }}
+                    >
+                      ❌
+                    </button>
+                  </td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </>
