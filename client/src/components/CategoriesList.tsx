@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useFetchedResource, useResourcesHandler } from '../hooks';
 import Creator, { CreatorInput } from './Creator';
 
 type CategoryDraft = {
@@ -93,45 +94,27 @@ const CategoryCreator = ({
 };
 
 const CategoriesList = (): JSX.Element => {
-  const [items, setItems] = useState<Category[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
-
-  const addItem = (newItem: Category) => {
-    setItems([...items, newItem]);
-  };
+  const [fetchedCategories, isLoading, errorMessage] =
+    useFetchedResource<Category>('categories');
+  const [categories, addCategory, removeCategoryById] =
+    useResourcesHandler(fetchedCategories);
 
   const onDelete = async (categoryId: string) => {
     await fetch(`/categories/${categoryId}`, {
       method: 'DELETE',
     });
-    setItems(items.filter(({ _id }) => _id !== categoryId));
+    removeCategoryById(categoryId);
   };
 
-  useEffect(() => {
-    fetch('/categories')
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setItems(result);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-  }, []);
-
-  if (error) {
-    console.log(`Error: ${error.message}`);
+  if (errorMessage) {
+    console.log(`Error: ${errorMessage}`);
     return <div>Error when fetching data</div>;
-  } else if (!isLoaded) {
+  } else if (isLoading) {
     return <div>Loading...</div>;
   } else {
     return (
       <>
-        <CategoryCreator onAddCategory={addItem} />
+        <CategoryCreator onAddCategory={addCategory} />
         <table>
           <tbody>
             <tr>
@@ -143,7 +126,7 @@ const CategoriesList = (): JSX.Element => {
               <th>External ID</th>
               <th></th>
             </tr>
-            {items.map(
+            {categories.map(
               ({
                 _id,
                 name,
