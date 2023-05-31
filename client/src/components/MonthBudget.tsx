@@ -1,4 +1,7 @@
 import { useFetchedResource } from '../hooks';
+import { Account } from '../types/Account';
+import { Category } from '../types/Category';
+import { Payee } from '../types/Payee';
 import { Transaction } from '../types/Transaction';
 import { getDisplayFormattedAmount, getDisplayFormattedDate } from '../utils';
 
@@ -34,10 +37,38 @@ const getMonthNameFromDate = (date: Date): string => {
 };
 
 const MonthBudget = (): JSX.Element => {
-  const [transactions, isLoading, errorMessage] =
+  const [accounts, accountsIsLoading, accountsErrorMessage] =
+    useFetchedResource<Account>('accounts');
+  const [categories, categoriesIsLoading, categoriesErrorMessage] =
+    useFetchedResource<Category>('categories');
+  const [payees, payeesIsLoading, payeesErrorMessage] =
+    useFetchedResource<Payee>('payees');
+  const [transactions, transactionsIsLoading, transactionsErrorMessage] =
     useFetchedResource<Transaction>('transactions');
-  sortByDate(transactions);
 
+  const errorMessages = [
+    accountsErrorMessage,
+    categoriesErrorMessage,
+    payeesErrorMessage,
+    transactionsErrorMessage,
+  ].filter(Boolean);
+  const isLoading =
+    accountsIsLoading ||
+    categoriesIsLoading ||
+    payeesIsLoading ||
+    transactionsIsLoading;
+
+  if (errorMessages.length) {
+    errorMessages.forEach((errorMessage) => {
+      console.log(`Error: ${errorMessage}`);
+    });
+
+    return <div>Error when fetching data</div>;
+  } else if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  sortByDate(transactions);
   const [targetYear, targetMonth] = getLastTransactionYearMonth(transactions);
   const lastMonthTransactions =
     targetYear && targetMonth
@@ -48,42 +79,37 @@ const MonthBudget = (): JSX.Element => {
     ? getMonthNameFromDate(new Date(lastMonthTransactions[0].date))
     : null;
 
-  if (errorMessage) {
-    console.log(`Error: ${errorMessage}`);
-    return <div>Error when fetching data</div>;
-  } else if (isLoading) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <>
-        <h2>
-          {targetMonthName} {targetYear}
-        </h2>
-        <table>
-          <tbody>
-            <tr>
-              <th>Date</th>
-              <th>Account</th>
-              <th>Category</th>
-              <th>Payee</th>
-              <th>Amount</th>
-            </tr>
-            {lastMonthTransactions.map(
-              ({ _id, date, amount, accountId, payeeId, categoryId }) => (
-                <tr key={_id}>
-                  <td>{getDisplayFormattedDate(date)}</td>
-                  <td>{accountId}</td>
-                  <td>{payeeId}</td>
-                  <td>{categoryId}</td>
-                  <td>{getDisplayFormattedAmount(amount)}</td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
-      </>
-    );
-  }
+  return (
+    <>
+      <h2>
+        {targetMonthName} {targetYear}
+      </h2>
+      <table>
+        <tbody>
+          <tr>
+            <th>Date</th>
+            <th>Account</th>
+            <th>Payee</th>
+            <th>Category</th>
+            <th>Amount</th>
+          </tr>
+          {lastMonthTransactions.map(
+            ({ _id, date, amount, accountId, payeeId, categoryId }) => (
+              <tr key={_id}>
+                <td>{getDisplayFormattedDate(date)}</td>
+                <td>{accounts.find(({ _id }) => _id === accountId)?.name}</td>
+                <td>{payees.find(({ _id }) => _id === payeeId)?.name}</td>
+                <td>
+                  {categories.find(({ _id }) => _id === categoryId)?.name}
+                </td>
+                <td>{getDisplayFormattedAmount(amount)}</td>
+              </tr>
+            )
+          )}
+        </tbody>
+      </table>
+    </>
+  );
 };
 
 export default MonthBudget;
