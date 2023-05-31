@@ -1,15 +1,6 @@
 import { useFetchedResource } from '../hooks';
+import { Transaction } from '../types/Transaction';
 import { getDisplayFormattedAmount, getDisplayFormattedDate } from '../utils';
-
-type TransactionDraft = {
-  date: Date;
-  amount: number;
-  accountId: string;
-  payeeId: string;
-  categoryId?: string;
-};
-
-type Transaction = TransactionDraft & { _id: string };
 
 const getLastTransactionYearMonth = (
   transactions: Transaction[]

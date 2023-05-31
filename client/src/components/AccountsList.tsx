@@ -1,24 +1,9 @@
 import { useState } from 'react';
 import { useFetchedResource, useResourcesHandler } from '../hooks';
+import { Account, AccountDraft, AccountType } from '../types/Account';
+import { CreatorInput } from '../types/Creator';
 import { getDisplayFormattedAmount } from '../utils';
-import Creator, { CreatorInput } from './Creator';
-
-enum AccountType {
-  CHECKING = 'Checking',
-  SAVINGS = 'Savings',
-  OTHER = 'Other',
-}
-
-type AccountDraft = {
-  _id: string;
-  name: string;
-  externalId?: string;
-  type?: AccountType;
-  isClosed?: boolean;
-  balance?: number;
-};
-
-type Account = AccountDraft & { _id: string };
+import Creator from './Creator';
 
 const AccountCreator = ({
   onAddAccount,

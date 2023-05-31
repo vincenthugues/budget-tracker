@@ -1,17 +1,8 @@
 import { useState } from 'react';
 import { useFetchedResource, useResourcesHandler } from '../hooks';
-import Creator, { CreatorInput } from './Creator';
-
-type CategoryDraft = {
-  _id: string;
-  name: string;
-  parentCategoryId?: string;
-  isHidden?: boolean;
-  isDeleted?: boolean;
-  externalId?: string;
-};
-
-type Category = CategoryDraft & { _id: string };
+import { Category, CategoryDraft } from '../types/Category';
+import { CreatorInput } from '../types/Creator';
+import Creator from './Creator';
 
 const CategoryCreator = ({
   onAddCategory,

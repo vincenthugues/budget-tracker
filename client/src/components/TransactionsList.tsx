@@ -1,21 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useFetchedResource, useResourcesHandler } from '../hooks';
+import { CreatorInput } from '../types/Creator';
+import { Transaction, TransactionDraft } from '../types/Transaction';
 import {
   getDisplayFormattedAmount,
   getDisplayFormattedDate,
   getInputCurrentDateTime,
 } from '../utils';
-import Creator, { CreatorInput } from './Creator';
-import { useFetchedResource, useResourcesHandler } from '../hooks';
-
-type TransactionDraft = {
-  date: Date;
-  amount: number;
-  accountId: string;
-  payeeId: string;
-  categoryId?: string;
-};
-
-type Transaction = TransactionDraft & { _id: string };
+import Creator from './Creator';
 
 const TransactionCreator = ({
   onAddTransaction,

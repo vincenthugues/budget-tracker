@@ -1,14 +1,8 @@
 import { useState } from 'react';
 import { useFetchedResource, useResourcesHandler } from '../hooks';
-import Creator, { CreatorInput } from './Creator';
-
-type PayeeDraft = {
-  _id: string;
-  name: string;
-  externalId?: string;
-};
-
-type Payee = PayeeDraft & { _id: string };
+import { CreatorInput } from '../types/Creator';
+import { Payee, PayeeDraft } from '../types/Payee';
+import Creator from './Creator';
 
 const PayeeCreator = ({
   onAddPayee,

@@ -1,14 +1,8 @@
 import { useState } from 'react';
 import { useFetchedResource, useResourcesHandler } from '../hooks';
-import Creator, { CreatorInput } from './Creator';
-
-type BudgetDraft = {
-  name: string;
-  externalId?: string;
-  startingDate?: Date;
-};
-
-type Budget = BudgetDraft & { _id: string };
+import { Budget, BudgetDraft } from '../types/Budget';
+import { CreatorInput } from '../types/Creator';
+import Creator from './Creator';
 
 const BudgetCreator = ({
   onAddBudget,

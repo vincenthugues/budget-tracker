@@ -1,14 +1,5 @@
-import { ChangeEventHandler, HTMLInputTypeAttribute, useState } from 'react';
-
-export type CreatorInput = {
-  name: string;
-  label: string;
-  type: HTMLInputTypeAttribute;
-  defaultValue?: any;
-  isOptional?: boolean;
-  options?: [key: string, value: string][];
-  // valueTransformer?: <Type>(arg: Type) => Type;
-};
+import { ChangeEventHandler, useState } from 'react';
+import { CreatorInput } from '../types/Creator';
 
 const DefaultInput = ({
   property: { name, type, isOptional },
