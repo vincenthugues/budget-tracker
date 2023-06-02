@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import { Category } from './types/Category';
+import { Account } from './types/Account';
+import { Payee } from './types/Payee';
 
 export function useFetchedResource<ResourceType>(
   url: string
 ): [
-  fetchedResources: ResourceType[],
+  fetchedResource: ResourceType[],
   isLoading: boolean,
   errorMessage?: string
 ] {
@@ -21,7 +24,7 @@ export function useFetchedResource<ResourceType>(
         },
         (error) => {
           setIsLoading(false);
-          setErrorMessage(error.message);
+          setErrorMessage(`fetch "${url}": ${error.message}`);
         }
       );
   }, [url]);
@@ -51,4 +54,61 @@ export function useResourcesHandler<T extends { _id: string }>(
   };
 
   return [resources, addItem, removeItemById];
+}
+
+export const CategoriesContext = createContext<{
+  categories?: Category[];
+  setCategories?: Function;
+}>({});
+
+export function useFetchedCategories(): [
+  categories?: Category[],
+  setCategories?: (categories: Category[]) => void
+] {
+  const [categories, setCategories] = useState<Category[]>();
+  const [fetchedCategories] = useFetchedResource<Category>('categories');
+
+  useEffect(() => {
+    setCategories(fetchedCategories);
+  }, [fetchedCategories]);
+
+  return [categories, setCategories];
+}
+
+export const AccountsContext = createContext<{
+  accounts?: Account[];
+  setAccounts?: Function;
+}>({});
+
+export function useFetchedAccounts(): [
+  accounts?: Account[],
+  setAccounts?: (accounts: Account[]) => void
+] {
+  const [accounts, setAccounts] = useState<Account[]>();
+  const [fetchedAccounts] = useFetchedResource<Account>('accounts');
+
+  useEffect(() => {
+    setAccounts(fetchedAccounts);
+  }, [fetchedAccounts]);
+
+  return [accounts, setAccounts];
+}
+
+export const PayeesContext = createContext<{
+  payees?: Payee[];
+  setPayees?: Function;
+}>({});
+
+export function useFetchedPayees(): [
+  payees?: Payee[],
+  setPayees?: (payees: Payee[]) => void
+] {
+  const [payees, setPayees] = useState<Payee[]>();
+  const [fetchedPayees] = useFetchedResource<Payee>('payees');
+
+  useEffect(() => {
+    setPayees(fetchedPayees);
+  }, [fetchedPayees]);
+
+  return [payees, setPayees];
 }

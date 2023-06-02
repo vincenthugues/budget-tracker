@@ -1,7 +1,10 @@
-import { useFetchedResource } from '../hooks';
-import { Account } from '../types/Account';
-import { Category } from '../types/Category';
-import { Payee } from '../types/Payee';
+import { useContext } from 'react';
+import {
+  AccountsContext,
+  CategoriesContext,
+  PayeesContext,
+  useFetchedResource,
+} from '../hooks';
 import { Transaction } from '../types/Transaction';
 import { getDisplayFormattedAmount, getDisplayFormattedDate } from '../utils';
 
@@ -37,34 +40,26 @@ const getMonthNameFromDate = (date: Date): string => {
 };
 
 const MonthBudget = (): JSX.Element => {
-  const [accounts, accountsIsLoading, accountsErrorMessage] =
-    useFetchedResource<Account>('accounts');
-  const [categories, categoriesIsLoading, categoriesErrorMessage] =
-    useFetchedResource<Category>('categories');
-  const [payees, payeesIsLoading, payeesErrorMessage] =
-    useFetchedResource<Payee>('payees');
+  const { accounts } = useContext(AccountsContext);
+  const { categories } = useContext(CategoriesContext);
+  const { payees } = useContext(PayeesContext);
+  // const [payees, payeesIsLoading, payeesErrorMessage] =
+  //   useFetchedResource<Payee>('payees');
   const [transactions, transactionsIsLoading, transactionsErrorMessage] =
     useFetchedResource<Transaction>('transactions');
 
-  const errorMessages = [
-    accountsErrorMessage,
-    categoriesErrorMessage,
-    payeesErrorMessage,
-    transactionsErrorMessage,
-  ].filter(Boolean);
+  // const errorMessages = [payeesErrorMessage, transactionsErrorMessage].filter(
+  //   Boolean
+  // );
   const isLoading =
-    accountsIsLoading ||
-    categoriesIsLoading ||
-    payeesIsLoading ||
-    transactionsIsLoading;
+    !accounts || !categories || !payees || transactionsIsLoading;
 
-  if (errorMessages.length) {
-    errorMessages.forEach((errorMessage) => {
-      console.log(`Error: ${errorMessage}`);
-    });
-
+  if (transactionsErrorMessage) {
+    console.log(`Error: ${transactionsErrorMessage}`);
     return <div>Error when fetching data</div>;
-  } else if (isLoading) {
+  }
+
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 

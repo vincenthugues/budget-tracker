@@ -1,5 +1,45 @@
+import { ReactElement } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import './App.css';
+import {
+  AccountsContext,
+  CategoriesContext,
+  PayeesContext,
+  useFetchedAccounts,
+  useFetchedCategories,
+  useFetchedPayees,
+} from './hooks';
+
+const Providers = ({ children }: { children: ReactElement }) => {
+  const [accounts, setAccounts] = useFetchedAccounts();
+  const [categories, setCategories] = useFetchedCategories();
+  const [payees, setPayees] = useFetchedPayees();
+
+  return (
+    <CategoriesContext.Provider
+      value={{
+        categories,
+        setCategories,
+      }}
+    >
+      <AccountsContext.Provider
+        value={{
+          accounts,
+          setAccounts,
+        }}
+      >
+        <PayeesContext.Provider
+          value={{
+            payees,
+            setPayees,
+          }}
+        >
+          {children}
+        </PayeesContext.Provider>
+      </AccountsContext.Provider>
+    </CategoriesContext.Provider>
+  );
+};
 
 const App = () => (
   <div id="App">
@@ -29,7 +69,9 @@ const App = () => (
       </nav>
     </header>
     <div id="App-content">
-      <Outlet />
+      <Providers>
+        <Outlet />
+      </Providers>
     </div>
   </div>
 );
