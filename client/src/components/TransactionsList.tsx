@@ -9,7 +9,7 @@ import {
 import { CreatorInput } from '../types/Creator';
 import { Transaction, TransactionDraft } from '../types/Transaction';
 import {
-  Order,
+  SortingOrder,
   getDisplayFormattedAmount,
   getDisplayFormattedDate,
   getInputCurrentDateTime,
@@ -106,7 +106,7 @@ const TransactionsList = (): JSX.Element => {
     useFetchedResource<Transaction>('transactions');
   const [transactions, addTransaction, removeTransactionById] =
     useResourcesHandler(fetchedTransactions);
-  sortByDate(transactions, Order.DESC);
+  sortByDate(transactions, SortingOrder.DESC);
 
   const getAccountNameById = (accountId: string): string | undefined =>
     accounts?.find(({ _id }) => _id === accountId)?.name;

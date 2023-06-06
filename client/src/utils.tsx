@@ -10,20 +10,20 @@ export const getDisplayFormattedAmount = (amount: number): string =>
 export const getInputCurrentDateTime = () =>
   new Date().toISOString().split('.')[0];
 
-export enum Order {
+export enum SortingOrder {
   ASC,
   DESC,
 }
 
 export const sortByDate = (
   arr: { date: Date | string }[],
-  order: Order = Order.ASC
+  order: SortingOrder = SortingOrder.ASC
 ): { date: Date | string }[] => {
   arr.sort((a, b) => {
     const dateA = new Date(a.date).getTime();
     const dateB = new Date(b.date).getTime();
 
-    return order === Order.ASC ? dateA - dateB : dateB - dateA;
+    return order === SortingOrder.ASC ? dateA - dateB : dateB - dateA;
   });
   return arr;
 };

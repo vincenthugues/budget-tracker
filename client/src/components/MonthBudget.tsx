@@ -7,7 +7,7 @@ import {
 } from '../hooks';
 import { Transaction } from '../types/Transaction';
 import {
-  Order,
+  SortingOrder,
   getDisplayFormattedAmount,
   getDisplayFormattedDate,
   sortByDate,
@@ -62,7 +62,7 @@ const MonthBudget = (): JSX.Element => {
     targetYear && targetMonth
       ? filterByYearAndMonth(transactions, targetYear, targetMonth)
       : [];
-  sortByDate(lastMonthTransactions, Order.DESC);
+  sortByDate(lastMonthTransactions, SortingOrder.DESC);
   const targetMonthName = lastMonthTransactions[0]
     ? getMonthNameFromDate(new Date(lastMonthTransactions[0].date))
     : null;
