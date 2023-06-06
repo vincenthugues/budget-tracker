@@ -3,6 +3,7 @@ import { useFetchedResource, useResourcesHandler } from '../hooks';
 import { Category, CategoryDraft } from '../types/Category';
 import { CreatorInput } from '../types/Creator';
 import Creator from './Creator';
+import DeleteButton from './DeleteButton';
 
 const CategoryCreator = ({
   onAddCategory,
@@ -132,15 +133,10 @@ const CategoriesList = (): JSX.Element => {
                   <td>{isDeleted ? 'Yes' : 'No'}</td>
                   <td>{externalId}</td>
                   <td>
-                    <button
-                      onClick={() => {
-                        if (window.confirm(`Delete the category "${name}"?`)) {
-                          onDelete(_id);
-                        }
-                      }}
-                    >
-                      ❌
-                    </button>
+                    <DeleteButton
+                      confirmationMessage={`Delete the category "${name}"?`}
+                      onDelete={() => onDelete(_id)}
+                    />
                   </td>
                 </tr>
               )

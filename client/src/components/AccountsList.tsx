@@ -4,6 +4,7 @@ import { Account, AccountDraft, AccountType } from '../types/Account';
 import { CreatorInput } from '../types/Creator';
 import { getDisplayFormattedAmount } from '../utils';
 import Creator from './Creator';
+import DeleteButton from './DeleteButton';
 
 const AccountCreator = ({
   onAddAccount,
@@ -124,15 +125,10 @@ const AccountsList = (): JSX.Element => {
                   <td>{isClosed ? 'Yes' : 'No'}</td>
                   <td>{externalId}</td>
                   <td>
-                    <button
-                      onClick={() => {
-                        if (window.confirm(`Delete the account "${name}"?`)) {
-                          onDelete(_id);
-                        }
-                      }}
-                    >
-                      ❌
-                    </button>
+                    <DeleteButton
+                      confirmationMessage={`Delete the account "${name}"?`}
+                      onDelete={() => onDelete(_id)}
+                    />
                   </td>
                 </tr>
               )

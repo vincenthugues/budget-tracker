@@ -3,6 +3,7 @@ import { useFetchedResource, useResourcesHandler } from '../hooks';
 import { CreatorInput } from '../types/Creator';
 import { Payee, PayeeDraft } from '../types/Payee';
 import Creator from './Creator';
+import DeleteButton from './DeleteButton';
 
 const PayeeCreator = ({
   onAddPayee,
@@ -101,15 +102,10 @@ const PayeesList = (): JSX.Element => {
                 <td>{name}</td>
                 <td>{externalId}</td>
                 <td>
-                  <button
-                    onClick={() => {
-                      if (window.confirm(`Delete the payee "${name}"?`)) {
-                        onDelete(_id);
-                      }
-                    }}
-                  >
-                    ❌
-                  </button>
+                  <DeleteButton
+                    confirmationMessage={`Delete the payee "${name}"?`}
+                    onDelete={() => onDelete(_id)}
+                  />
                 </td>
               </tr>
             ))}

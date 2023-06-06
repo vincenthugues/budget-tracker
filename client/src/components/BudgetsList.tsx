@@ -3,6 +3,7 @@ import { useFetchedResource, useResourcesHandler } from '../hooks';
 import { Budget, BudgetDraft } from '../types/Budget';
 import { CreatorInput } from '../types/Creator';
 import Creator from './Creator';
+import DeleteButton from './DeleteButton';
 
 const BudgetCreator = ({
   onAddBudget,
@@ -111,15 +112,10 @@ const BudgetsList = (): JSX.Element => {
                 </td>
                 <td>{externalId}</td>
                 <td>
-                  <button
-                    onClick={() => {
-                      if (window.confirm(`Delete the budget "${name}"?`)) {
-                        onDelete(_id);
-                      }
-                    }}
-                  >
-                    ❌
-                  </button>
+                  <DeleteButton
+                    confirmationMessage={`Delete the budget "${name}"?`}
+                    onDelete={() => onDelete(_id)}
+                  />
                 </td>
               </tr>
             ))}
