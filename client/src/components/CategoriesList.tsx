@@ -109,13 +109,12 @@ const CategoriesList = (): JSX.Element => {
         <table>
           <tbody>
             <tr>
-              <th>ID</th>
               <th>Name</th>
               <th>Parent category ID</th>
               <th>Is hidden</th>
               <th>Is deleted</th>
               <th>External ID</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
             {categories.map(
               ({
@@ -127,7 +126,6 @@ const CategoriesList = (): JSX.Element => {
                 externalId,
               }) => (
                 <tr key={_id}>
-                  <td>{_id}</td>
                   <td>{name}</td>
                   <td>{parentCategoryId}</td>
                   <td>{isHidden ? 'Yes' : 'No'}</td>

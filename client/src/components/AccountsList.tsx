@@ -105,18 +105,16 @@ const AccountsList = (): JSX.Element => {
         <table>
           <tbody>
             <tr>
-              <th>ID</th>
               <th>Name</th>
               <th>Type</th>
               <th>Balance</th>
               <th>Is closed</th>
               <th>External ID</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
             {accounts.map(
               ({ _id, name, externalId, type, isClosed, balance }) => (
                 <tr key={_id}>
-                  <td>{_id}</td>
                   <td>{name}</td>
                   <td>{type}</td>
                   <td>

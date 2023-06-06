@@ -92,14 +92,12 @@ const PayeesList = (): JSX.Element => {
         <table>
           <tbody>
             <tr>
-              <th>ID</th>
               <th>Name</th>
               <th>External ID</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
             {payees.map(({ _id, name, externalId }) => (
               <tr key={_id}>
-                <td>{_id}</td>
                 <td>{name}</td>
                 <td>{externalId}</td>
                 <td>

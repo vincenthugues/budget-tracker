@@ -98,15 +98,13 @@ const BudgetsList = (): JSX.Element => {
         <table>
           <tbody>
             <tr>
-              <th>ID</th>
               <th>Name</th>
               <th>Starting date</th>
               <th>External ID</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
             {budgets.map(({ _id, name, externalId, startingDate }) => (
               <tr key={_id}>
-                <td>{_id}</td>
                 <td>{name}</td>
                 <td>
                   {startingDate && new Date(startingDate).toLocaleDateString()}
