@@ -100,7 +100,7 @@ const PayeesList = (): JSX.Element => {
             {payees.map(({ _id, name, externalId }) => (
               <tr key={_id}>
                 <td>{name}</td>
-                <td>{externalId}</td>
+                <td className="ellipsisCell">{externalId}</td>
                 <td>
                   <DeleteButton
                     confirmationMessage={`Delete the payee "${name}"?`}

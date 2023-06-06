@@ -110,7 +110,7 @@ const BudgetsList = (): JSX.Element => {
                 <td>
                   {startingDate && new Date(startingDate).toLocaleDateString()}
                 </td>
-                <td>{externalId}</td>
+                <td className="ellipsisCell">{externalId}</td>
                 <td>
                   <DeleteButton
                     confirmationMessage={`Delete the budget "${name}"?`}

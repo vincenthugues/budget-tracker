@@ -123,7 +123,7 @@ const AccountsList = (): JSX.Element => {
                       getDisplayFormattedAmount(balance)}
                   </td>
                   <td>{isClosed ? 'Yes' : 'No'}</td>
-                  <td>{externalId}</td>
+                  <td className="ellipsisCell">{externalId}</td>
                   <td>
                     <DeleteButton
                       confirmationMessage={`Delete the account "${name}"?`}

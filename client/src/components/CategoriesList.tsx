@@ -131,7 +131,7 @@ const CategoriesList = (): JSX.Element => {
                   <td>{parentCategoryId}</td>
                   <td>{isHidden ? 'Yes' : 'No'}</td>
                   <td>{isDeleted ? 'Yes' : 'No'}</td>
-                  <td>{externalId}</td>
+                  <td className="ellipsisCell">{externalId}</td>
                   <td>
                     <DeleteButton
                       confirmationMessage={`Delete the category "${name}"?`}
