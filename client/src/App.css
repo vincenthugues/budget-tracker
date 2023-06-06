@@ -47,3 +47,10 @@ td {
   border: 1px solid;
   padding: .2em .4em;
 }
+
+.ellipsisCell {
+  max-width: 8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

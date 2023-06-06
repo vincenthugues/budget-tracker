@@ -1,11 +1,19 @@
-import { useState } from 'react';
-import { useFetchedResource, useResourcesHandler } from '../hooks';
+import { useContext, useState } from 'react';
+import {
+  AccountsContext,
+  CategoriesContext,
+  PayeesContext,
+  useFetchedResource,
+  useResourcesHandler,
+} from '../hooks';
 import { CreatorInput } from '../types/Creator';
 import { Transaction, TransactionDraft } from '../types/Transaction';
 import {
+  Order,
   getDisplayFormattedAmount,
   getDisplayFormattedDate,
   getInputCurrentDateTime,
+  sortByDate,
 } from '../utils';
 import Creator from './Creator';
 
@@ -38,7 +46,7 @@ const TransactionCreator = ({
     const convertTransactionAmountToCents = ({
       amount,
       ...otherProperties
-    }: TransactionDraft) => ({
+    }: TransactionDraft): TransactionDraft => ({
       amount: amount * 100,
       ...otherProperties,
     });
@@ -89,11 +97,40 @@ const TransactionCreator = ({
   );
 };
 
+const DeleteTransactionButton = ({
+  transaction: { date, amount },
+  onDelete,
+}: {
+  transaction: Transaction;
+  onDelete: Function;
+}): JSX.Element => (
+  <button
+    onClick={() => {
+      if (window.confirm(`Delete the transaction "[${date}] ${amount}"?`)) {
+        onDelete();
+      }
+    }}
+  >
+    ❌
+  </button>
+);
+
 const TransactionsList = (): JSX.Element => {
+  const { accounts } = useContext(AccountsContext);
+  const { categories } = useContext(CategoriesContext);
+  const { payees } = useContext(PayeesContext);
   const [fetchedTransactions, isLoading, errorMessage] =
     useFetchedResource<Transaction>('transactions');
   const [transactions, addTransaction, removeTransactionById] =
     useResourcesHandler(fetchedTransactions);
+  sortByDate(transactions, Order.DESC);
+
+  const getAccountNameById = (accountId: string): string | undefined =>
+    accounts?.find(({ _id }) => _id === accountId)?.name;
+  const getCategoryNameById = (categoryId: string): string | undefined =>
+    categories?.find(({ _id }) => _id === categoryId)?.name;
+  const getPayeeNameById = (payeeId: string): string | undefined =>
+    payees?.find(({ _id }) => _id === payeeId)?.name;
 
   const onDelete = async (transactionId: string) => {
     await fetch(`/transactions/${transactionId}`, {
@@ -105,7 +142,7 @@ const TransactionsList = (): JSX.Element => {
   if (errorMessage) {
     console.log(`Error: ${errorMessage}`);
     return <div>Error when fetching data</div>;
-  } else if (isLoading) {
+  } else if (isLoading || !accounts || !categories || !payees) {
     return <div>Loading...</div>;
   } else {
     return (
@@ -114,41 +151,41 @@ const TransactionsList = (): JSX.Element => {
         <table>
           <tbody>
             <tr>
-              <th>ID</th>
               <th>Date</th>
               <th>Account</th>
               <th>Category</th>
               <th>Payee</th>
               <th>Amount</th>
-              <th></th>
+              <th>External ID</th>
+              <th>Actions</th>
             </tr>
-            {transactions.map(
-              ({ _id, date, amount, accountId, payeeId, categoryId }) => (
+            {transactions.map((transaction) => {
+              const {
+                _id,
+                date,
+                amount,
+                accountId,
+                payeeId,
+                categoryId,
+                externalId,
+              } = transaction;
+              return (
                 <tr key={_id}>
-                  <td>{_id}</td>
                   <td>{getDisplayFormattedDate(date)}</td>
-                  <td>{accountId}</td>
-                  <td>{payeeId}</td>
-                  <td>{categoryId}</td>
+                  <td>{getAccountNameById(accountId)}</td>
+                  <td>{categoryId && getCategoryNameById(categoryId)}</td>
+                  <td>{getPayeeNameById(payeeId)}</td>
                   <td>{getDisplayFormattedAmount(amount)}</td>
+                  <td className="ellipsisCell">{externalId}</td>
                   <td>
-                    <button
-                      onClick={() => {
-                        if (
-                          window.confirm(
-                            `Delete the transaction "[${date}] ${amount}"?`
-                          )
-                        ) {
-                          onDelete(_id);
-                        }
-                      }}
-                    >
-                      ❌
-                    </button>
+                    <DeleteTransactionButton
+                      transaction={transaction}
+                      onDelete={() => onDelete(_id)}
+                    />
                   </td>
                 </tr>
-              )
-            )}
+              );
+            })}
           </tbody>
         </table>
       </>

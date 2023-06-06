@@ -4,6 +4,7 @@ export type TransactionDraft = {
   accountId: string;
   payeeId: string;
   categoryId?: string;
+  externalId?: string;
 };
 
 export type Transaction = TransactionDraft & { _id: string };
