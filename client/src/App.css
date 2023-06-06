@@ -43,6 +43,10 @@ th {
   padding: .2em .4em;
 }
 
+tbody tr:nth-child(even) {
+  background-color: #C9D3D7;
+}
+
 td {
   border: 1px solid;
   padding: .2em .4em;
