@@ -16,6 +16,7 @@ import {
   sortByDate,
 } from '../utils';
 import Creator from './Creator';
+import DeleteButton from './DeleteButton';
 
 const TransactionCreator = ({
   onAddTransaction,
@@ -97,24 +98,6 @@ const TransactionCreator = ({
   );
 };
 
-const DeleteTransactionButton = ({
-  transaction: { date, amount },
-  onDelete,
-}: {
-  transaction: Transaction;
-  onDelete: Function;
-}): JSX.Element => (
-  <button
-    onClick={() => {
-      if (window.confirm(`Delete the transaction "[${date}] ${amount}"?`)) {
-        onDelete();
-      }
-    }}
-  >
-    ❌
-  </button>
-);
-
 const TransactionsList = (): JSX.Element => {
   const { accounts } = useContext(AccountsContext);
   const { categories } = useContext(CategoriesContext);
@@ -178,8 +161,12 @@ const TransactionsList = (): JSX.Element => {
                   <td>{getDisplayFormattedAmount(amount)}</td>
                   <td className="ellipsisCell">{externalId}</td>
                   <td>
-                    <DeleteTransactionButton
-                      transaction={transaction}
+                    <DeleteButton
+                      confirmationMessage={`Delete the transaction "[${getDisplayFormattedDate(
+                        date
+                      )}] ${getPayeeNameById(
+                        payeeId
+                      )} ${getDisplayFormattedAmount(amount)}"?`}
                       onDelete={() => onDelete(_id)}
                     />
                   </td>
