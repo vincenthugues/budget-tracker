@@ -7,8 +7,13 @@ export const getDisplayFormattedAmount = (amount: number): string =>
     { style: 'currency', currency: 'EUR' }
   ).format(amount / 100);
 
-export const getInputCurrentDateTime = () =>
-  new Date().toISOString().split('.')[0];
+export const getInputCurrentDateTime = () => {
+  const datetime = new Date();
+  datetime.setMinutes(datetime.getMinutes() - datetime.getTimezoneOffset());
+  datetime.setMilliseconds(0);
+
+  return datetime.toISOString().slice(0, -1);
+};
 
 export enum SortingOrder {
   ASC,
