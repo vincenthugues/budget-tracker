@@ -91,6 +91,9 @@ const CategoriesList = (): JSX.Element => {
   const [categories, addCategory, removeCategoryById] =
     useResourcesHandler(fetchedCategories);
 
+  const getCategoryNameById = (categoryId: string): string | undefined =>
+    categories?.find(({ _id }) => _id === categoryId)?.name;
+
   const onDelete = async (categoryId: string) => {
     await fetch(`/categories/${categoryId}`, {
       method: 'DELETE',
@@ -128,7 +131,11 @@ const CategoriesList = (): JSX.Element => {
               }) => (
                 <tr key={_id}>
                   <td>{name}</td>
-                  <td>{parentCategoryId}</td>
+                  <td>
+                    {parentCategoryId
+                      ? getCategoryNameById(parentCategoryId)
+                      : '-'}
+                  </td>
                   <td>{isHidden ? 'Yes' : 'No'}</td>
                   <td>{isDeleted ? 'Yes' : 'No'}</td>
                   <td className="ellipsisCell">{externalId}</td>
