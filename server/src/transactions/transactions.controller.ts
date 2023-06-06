@@ -43,10 +43,21 @@ export class TransactionsController {
     description:
       'Returns the list of transactions matching the optional filters',
   })
-  findAll(
+  async findAll(
     @Query() filters?: FilterTransactionDto,
   ): Promise<TransactionDocument[]> {
-    return this.transactionsService.findAll(filters);
+    const fixLegacyTransactionAmount = (
+      transaction: TransactionDocument,
+    ): TransactionDocument => {
+      const isLegacyTransaction = !!transaction.externalId;
+      if (isLegacyTransaction) {
+        transaction.amount /= 10;
+      }
+      return transaction;
+    };
+    const transactions = await this.transactionsService.findAll(filters);
+
+    return transactions.map(fixLegacyTransactionAmount);
   }
 
   @Get(':id')
