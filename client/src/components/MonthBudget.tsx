@@ -6,7 +6,12 @@ import {
   useFetchedResource,
 } from '../hooks';
 import { Transaction } from '../types/Transaction';
-import { getDisplayFormattedAmount, getDisplayFormattedDate } from '../utils';
+import {
+  Order,
+  getDisplayFormattedAmount,
+  getDisplayFormattedDate,
+  sortByDate,
+} from '../utils';
 
 const getLastTransactionYearMonth = (
   transactions: Transaction[]
@@ -16,13 +21,6 @@ const getLastTransactionYearMonth = (
   const lastTransaction = transactions[transactions.length - 1];
   const lastDate = new Date(lastTransaction.date);
   return [lastDate.getFullYear(), lastDate.getMonth() + 1];
-};
-
-const sortByDate = (
-  arr: { date: Date | string }[]
-): { date: Date | string }[] => {
-  arr.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  return arr;
 };
 
 const filterByYearAndMonth = (
@@ -43,14 +41,9 @@ const MonthBudget = (): JSX.Element => {
   const { accounts } = useContext(AccountsContext);
   const { categories } = useContext(CategoriesContext);
   const { payees } = useContext(PayeesContext);
-  // const [payees, payeesIsLoading, payeesErrorMessage] =
-  //   useFetchedResource<Payee>('payees');
   const [transactions, transactionsIsLoading, transactionsErrorMessage] =
     useFetchedResource<Transaction>('transactions');
 
-  // const errorMessages = [payeesErrorMessage, transactionsErrorMessage].filter(
-  //   Boolean
-  // );
   const isLoading =
     !accounts || !categories || !payees || transactionsIsLoading;
 
@@ -69,7 +62,7 @@ const MonthBudget = (): JSX.Element => {
     targetYear && targetMonth
       ? filterByYearAndMonth(transactions, targetYear, targetMonth)
       : [];
-  sortByDate(lastMonthTransactions);
+  sortByDate(lastMonthTransactions, Order.DESC);
   const targetMonthName = lastMonthTransactions[0]
     ? getMonthNameFromDate(new Date(lastMonthTransactions[0].date))
     : null;
