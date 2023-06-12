@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useFetchedResource, useResourcesHandler } from '../hooks';
+import { useBudgets } from '../hooks/useBudgets';
+import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { Budget, BudgetDraft } from '../types/Budget';
 import { CreatorInput } from '../types/Creator';
 import Creator from './Creator';
@@ -75,10 +76,10 @@ const BudgetCreator = ({
 };
 
 const BudgetsList = (): JSX.Element => {
-  const [fetchedBudgets, isLoading, errorMessage] =
-    useFetchedResource<Budget>('budgets');
-  const [budgets, addBudget, removeBudgetById] =
-    useResourcesHandler(fetchedBudgets);
+  const { budgets: fetchedBudgets, isLoading, error } = useBudgets();
+  const [budgets, addBudget, removeBudgetById] = useResourcesHandler(
+    fetchedBudgets || []
+  );
 
   const onDelete = async (budgetId: string) => {
     await fetch(`/budgets/${budgetId}`, {
@@ -87,43 +88,45 @@ const BudgetsList = (): JSX.Element => {
     removeBudgetById(budgetId);
   };
 
-  if (errorMessage) {
-    console.log(`Error: ${errorMessage}`);
+  if (error) {
+    console.log(`Error: ${error}`);
     return <div>Error when fetching data</div>;
-  } else if (isLoading) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <>
-        <BudgetCreator onAddBudget={addBudget} />
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th>
-              <th>Starting date</th>
-              <th>External ID</th>
-              <th>Actions</th>
-            </tr>
-            {budgets.map(({ _id, name, externalId, startingDate }) => (
-              <tr key={_id}>
-                <td>{name}</td>
-                <td>
-                  {startingDate && new Date(startingDate).toLocaleDateString()}
-                </td>
-                <td className="ellipsisCell">{externalId}</td>
-                <td>
-                  <DeleteButton
-                    confirmationMessage={`Delete the budget "${name}"?`}
-                    onDelete={() => onDelete(_id)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </>
-    );
   }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <>
+      <BudgetCreator onAddBudget={addBudget} />
+      <table>
+        <tbody>
+          <tr>
+            <th>Name</th>
+            <th>Starting date</th>
+            <th>External ID</th>
+            <th>Actions</th>
+          </tr>
+          {budgets.map(({ _id, name, externalId, startingDate }) => (
+            <tr key={_id}>
+              <td>{name}</td>
+              <td>
+                {startingDate && new Date(startingDate).toLocaleDateString()}
+              </td>
+              <td className="ellipsisCell">{externalId}</td>
+              <td>
+                <DeleteButton
+                  confirmationMessage={`Delete the budget "${name}"?`}
+                  onDelete={() => onDelete(_id)}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
 };
 
 export default BudgetsList;

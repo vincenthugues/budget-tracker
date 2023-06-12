@@ -1,10 +1,7 @@
 import { useContext } from 'react';
-import {
-  AccountsContext,
-  CategoriesContext,
-  PayeesContext,
-  useFetchedResource,
-} from '../hooks';
+import { CategoriesContext, PayeesContext } from '../contexts';
+import { useAccounts } from '../hooks/useAccounts';
+import { useFetchedResource } from '../hooks/useFetchedResource';
 import { Transaction } from '../types/Transaction';
 import {
   SortingOrder,
@@ -38,16 +35,20 @@ const getMonthNameFromDate = (date: Date): string => {
 };
 
 const MonthBudget = (): JSX.Element => {
-  const { accounts } = useContext(AccountsContext);
+  const {
+    accounts,
+    isLoading: accountsIsLoading,
+    error: accountsError,
+  } = useAccounts();
   const { categories } = useContext(CategoriesContext);
   const { payees } = useContext(PayeesContext);
   const [transactions, transactionsIsLoading, transactionsErrorMessage] =
     useFetchedResource<Transaction>('transactions');
 
   const isLoading =
-    !accounts || !categories || !payees || transactionsIsLoading;
+    accountsIsLoading || !categories || !payees || transactionsIsLoading;
 
-  if (transactionsErrorMessage) {
+  if (accountsError || transactionsErrorMessage) {
     console.log(`Error: ${transactionsErrorMessage}`);
     return <div>Error when fetching data</div>;
   }
@@ -85,7 +86,7 @@ const MonthBudget = (): JSX.Element => {
             ({ _id, date, amount, accountId, payeeId, categoryId }) => (
               <tr key={_id}>
                 <td>{getDisplayFormattedDate(date)}</td>
-                <td>{accounts.find(({ _id }) => _id === accountId)?.name}</td>
+                <td>{accounts?.find(({ _id }) => _id === accountId)?.name}</td>
                 <td>{payees.find(({ _id }) => _id === payeeId)?.name}</td>
                 <td>
                   {categories.find(({ _id }) => _id === categoryId)?.name}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useFetchedResource, useResourcesHandler } from '../hooks';
+import { useFetchedResource } from '../hooks/useFetchedResource';
+import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { Account, AccountDraft, AccountType } from '../types/Account';
 import { CreatorInput } from '../types/Creator';
 import { getDisplayFormattedAmount } from '../utils';

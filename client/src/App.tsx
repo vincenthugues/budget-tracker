@@ -2,14 +2,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactElement } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import './App.css';
-import {
-  AccountsContext,
-  CategoriesContext,
-  PayeesContext,
-  useFetchedAccounts,
-  useFetchedCategories,
-  useFetchedPayees,
-} from './hooks';
+import { AccountsContext, CategoriesContext, PayeesContext } from './contexts';
+import { useFetchedAccounts } from './hooks/useFetchedAccounts';
+import { useFetchedCategories } from './hooks/useFetchedCategories';
+import { useFetchedPayees } from './hooks/useFetchedPayees';
 
 const queryClient = new QueryClient();
 

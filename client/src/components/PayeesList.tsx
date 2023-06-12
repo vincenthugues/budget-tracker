@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useFetchedResource, useResourcesHandler } from '../hooks';
+import { useFetchedResource } from '../hooks/useFetchedResource';
+import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { CreatorInput } from '../types/Creator';
 import { Payee, PayeeDraft } from '../types/Payee';
 import Creator from './Creator';

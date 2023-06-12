@@ -1,11 +1,7 @@
 import { useContext, useState } from 'react';
-import {
-  AccountsContext,
-  CategoriesContext,
-  PayeesContext,
-  useFetchedResource,
-  useResourcesHandler,
-} from '../hooks';
+import { AccountsContext, CategoriesContext, PayeesContext } from '../contexts';
+import { useFetchedResource } from '../hooks/useFetchedResource';
+import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { CreatorInput } from '../types/Creator';
 import { Transaction, TransactionDraft } from '../types/Transaction';
 import {
