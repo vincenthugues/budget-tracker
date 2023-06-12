@@ -3,12 +3,9 @@ import { useCategories } from '../hooks/useCategories';
 import { usePayees } from '../hooks/usePayees';
 import { useTransactions } from '../hooks/useTransactions';
 import { Transaction } from '../types/Transaction';
-import {
-  SortingOrder,
-  getDisplayFormattedAmount,
-  getDisplayFormattedDate,
-  sortByDate,
-} from '../utils';
+import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
+import { getDisplayFormattedDate } from '../utils/getDisplayFormattedDate';
+import { SortingOrder, sortByDate } from '../utils/sortByDate';
 
 const getLastTransactionYearMonth = (
   transactions: Transaction[]

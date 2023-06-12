@@ -3,7 +3,7 @@ import { useFetchedResource } from '../hooks/useFetchedResource';
 import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { Account, AccountDraft, AccountType } from '../types/Account';
 import { CreatorInput } from '../types/Creator';
-import { getDisplayFormattedAmount } from '../utils';
+import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
 import Creator from './Creator';
 import DeleteButton from './DeleteButton';
 
