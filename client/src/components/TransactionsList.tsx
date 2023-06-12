@@ -1,7 +1,9 @@
-import { useContext, useState } from 'react';
-import { AccountsContext, CategoriesContext, PayeesContext } from '../contexts';
-import { useFetchedResource } from '../hooks/useFetchedResource';
+import { useState } from 'react';
+import { useAccounts } from '../hooks/useAccounts';
+import { useCategories } from '../hooks/useCategories';
+import { usePayees } from '../hooks/usePayees';
 import { useResourcesHandler } from '../hooks/useResourcesHandler';
+import { useTransactions } from '../hooks/useTransactions';
 import { Account } from '../types/Account';
 import { Category } from '../types/Category';
 import { CreatorInput } from '../types/Creator';
@@ -94,6 +96,48 @@ const TransactionCreator = ({
   );
 };
 
+const useTransactionsListsData = () => {
+  const {
+    accounts = [],
+    isLoading: accountsIsLoading,
+    error: accountsError,
+  } = useAccounts();
+  const {
+    categories = [],
+    isLoading: categoriesIsLoading,
+    error: categoriesError,
+  } = useCategories();
+  const {
+    payees = [],
+    isLoading: payeesIsLoading,
+    error: payeesError,
+  } = usePayees();
+  const {
+    transactions = [],
+    isLoading: transactionsIsLoading,
+    error: transactionsError,
+  } = useTransactions();
+
+  const isLoading =
+    accountsIsLoading ||
+    categoriesIsLoading ||
+    payeesIsLoading ||
+    transactionsIsLoading;
+
+  const errors = [
+    accountsError,
+    categoriesError,
+    payeesError,
+    transactionsError,
+  ].filter(Boolean);
+
+  return {
+    data: { accounts, categories, payees, transactions },
+    isLoading,
+    errors,
+  };
+};
+
 function getResourceNameById<T extends { _id: string; name: string }>(
   resources: T[]
 ) {
@@ -102,11 +146,11 @@ function getResourceNameById<T extends { _id: string; name: string }>(
 }
 
 const TransactionsList = (): JSX.Element => {
-  const { accounts } = useContext(AccountsContext);
-  const { categories } = useContext(CategoriesContext);
-  const { payees } = useContext(PayeesContext);
-  const [fetchedTransactions, isLoading, errorMessage] =
-    useFetchedResource<Transaction>('transactions');
+  const {
+    data: { accounts, categories, payees, transactions: fetchedTransactions },
+    isLoading,
+    errors,
+  } = useTransactionsListsData();
   const [transactions, addTransaction, removeTransactionById] =
     useResourcesHandler(fetchedTransactions);
   sortByDate(transactions, SortingOrder.DESC);
@@ -118,12 +162,12 @@ const TransactionsList = (): JSX.Element => {
     removeTransactionById(transactionId);
   };
 
-  if (errorMessage) {
-    console.log(`Error: ${errorMessage}`);
+  if (errors.length) {
+    console.log(`Error: ${errors.join('; ')}`);
     return <div>Error when fetching data</div>;
   }
 
-  if (isLoading || !accounts || !categories || !payees) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
