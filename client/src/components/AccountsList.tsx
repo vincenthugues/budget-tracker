@@ -40,7 +40,17 @@ const AccountCreator = ({
   ];
 
   const onSubmit = async (accountToCreate: AccountDraft) => {
-    const createdAccount = await createAccount(accountToCreate);
+    const convertAccountBalanceToCents = ({
+      balance,
+      ...otherProperties
+    }: AccountDraft): AccountDraft => ({
+      balance: (balance || 0) * 100,
+      ...otherProperties,
+    });
+
+    const createdAccount = await createAccount(
+      convertAccountBalanceToCents(accountToCreate)
+    );
 
     if (createdAccount.message) {
       console.error(
