@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useFetchedResource } from '../hooks/useFetchedResource';
+import { useAccounts } from '../hooks/useAccounts';
 import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { Account, AccountDraft, AccountType } from '../types/Account';
 import { CreatorInput } from '../types/Creator';
@@ -61,30 +61,29 @@ const AccountCreator = ({
     setShowCreator(false);
   };
 
+  if (showCreator) {
+    return (
+      <Creator
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        properties={accountCreatorProperties}
+      />
+    );
+  }
+
   return (
-    <>
-      {showCreator ? (
-        <Creator
-          onSubmit={onSubmit}
-          onCancel={onCancel}
-          properties={accountCreatorProperties}
-        />
-      ) : (
-        <button
-          onClick={() => {
-            setShowCreator(true);
-          }}
-        >
-          ➕
-        </button>
-      )}
-    </>
+    <button
+      onClick={() => {
+        setShowCreator(true);
+      }}
+    >
+      ➕
+    </button>
   );
 };
 
 const AccountsList = (): JSX.Element => {
-  const [fetchedAccounts, isLoading, errorMessage] =
-    useFetchedResource<Account>('accounts');
+  const { accounts: fetchedAccounts = [], isLoading, error } = useAccounts();
   const [accounts, addAccount, removeAccountById] =
     useResourcesHandler(fetchedAccounts);
 
@@ -95,50 +94,51 @@ const AccountsList = (): JSX.Element => {
     removeAccountById(accountId);
   };
 
-  if (errorMessage) {
-    console.error(`Error: ${errorMessage}`);
+  if (error) {
+    console.error(`Error: ${error}`);
     return <div>Error when fetching data</div>;
-  } else if (isLoading) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <>
-        <AccountCreator onAddAccount={addAccount} />
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Balance</th>
-              <th>Is closed</th>
-              <th>External ID</th>
-              <th>Actions</th>
-            </tr>
-            {accounts.map(
-              ({ _id, name, externalId, type, isClosed, balance }) => (
-                <tr key={_id}>
-                  <td>{name}</td>
-                  <td>{type}</td>
-                  <td>
-                    {balance !== undefined &&
-                      getDisplayFormattedAmount(balance)}
-                  </td>
-                  <td>{isClosed ? 'Yes' : 'No'}</td>
-                  <td className="ellipsisCell">{externalId}</td>
-                  <td>
-                    <DeleteButton
-                      confirmationMessage={`Delete the account "${name}"?`}
-                      onDelete={() => onDelete(_id)}
-                    />
-                  </td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
-      </>
-    );
   }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <>
+      <AccountCreator onAddAccount={addAccount} />
+      <table>
+        <tbody>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Balance</th>
+            <th>Is closed</th>
+            <th>External ID</th>
+            <th>Actions</th>
+          </tr>
+          {accounts.map(
+            ({ _id, name, externalId, type, isClosed, balance }) => (
+              <tr key={_id}>
+                <td>{name}</td>
+                <td>{type}</td>
+                <td>
+                  {balance !== undefined && getDisplayFormattedAmount(balance)}
+                </td>
+                <td>{isClosed ? 'Yes' : 'No'}</td>
+                <td className="ellipsisCell">{externalId}</td>
+                <td>
+                  <DeleteButton
+                    confirmationMessage={`Delete the account "${name}"?`}
+                    onDelete={() => onDelete(_id)}
+                  />
+                </td>
+              </tr>
+            )
+          )}
+        </tbody>
+      </table>
+    </>
+  );
 };
 
 export default AccountsList;
