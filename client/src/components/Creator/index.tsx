@@ -1,5 +1,5 @@
 import { ChangeEventHandler, useState } from 'react';
-import { CreatorInput } from '../types/Creator';
+import { CreatorInput } from '../../types/Creator';
 
 const DefaultInput = ({
   property: { name, type, isOptional },

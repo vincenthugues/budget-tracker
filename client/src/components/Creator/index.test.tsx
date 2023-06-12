@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import Creator from './Creator';
+import Creator from '.';
 
 it('renders the Creator with Submit and Cancel buttons', () => {
   render(<Creator onSubmit={() => {}} onCancel={() => {}} properties={[]} />);
