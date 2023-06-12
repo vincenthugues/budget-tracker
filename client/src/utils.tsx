@@ -24,11 +24,10 @@ export const sortByDate = (
   arr: { date: Date | string }[],
   order: SortingOrder = SortingOrder.ASC
 ): { date: Date | string }[] => {
-  arr.sort((a, b) => {
+  return [...arr].sort((a, b) => {
     const dateA = new Date(a.date).getTime();
     const dateB = new Date(b.date).getTime();
 
     return order === SortingOrder.ASC ? dateA - dateB : dateB - dateA;
   });
-  return arr;
 };
