@@ -5,6 +5,7 @@ import { Category, CategoryDraft } from '../types/Category';
 import { CreatorInput } from '../types/Creator';
 import Creator from './Creator';
 import DeleteButton from './DeleteButton';
+import { useCategories } from '../hooks/useCategories';
 
 const CategoryCreator = ({
   onAddCategory,
@@ -85,8 +86,11 @@ const CategoryCreator = ({
 };
 
 const CategoriesList = (): JSX.Element => {
-  const [fetchedCategories, isLoading, errorMessage] =
-    useFetchedResource<Category>('categories');
+  const {
+    categories: fetchedCategories = [],
+    isLoading,
+    error,
+  } = useCategories();
   const [categories, addCategory, removeCategoryById] =
     useResourcesHandler(fetchedCategories);
 
@@ -100,58 +104,60 @@ const CategoriesList = (): JSX.Element => {
     removeCategoryById(categoryId);
   };
 
-  if (errorMessage) {
-    console.log(`Error: ${errorMessage}`);
+  if (error) {
+    console.log(`Error: ${error}`);
     return <div>Error when fetching data</div>;
-  } else if (isLoading) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <>
-        <CategoryCreator onAddCategory={addCategory} />
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th>
-              <th>Parent category ID</th>
-              <th>Is hidden</th>
-              <th>Is deleted</th>
-              <th>External ID</th>
-              <th>Actions</th>
-            </tr>
-            {categories.map(
-              ({
-                _id,
-                name,
-                parentCategoryId,
-                isHidden,
-                isDeleted,
-                externalId,
-              }) => (
-                <tr key={_id}>
-                  <td>{name}</td>
-                  <td>
-                    {parentCategoryId
-                      ? getCategoryNameById(parentCategoryId)
-                      : '-'}
-                  </td>
-                  <td>{isHidden ? 'Yes' : 'No'}</td>
-                  <td>{isDeleted ? 'Yes' : 'No'}</td>
-                  <td className="ellipsisCell">{externalId}</td>
-                  <td>
-                    <DeleteButton
-                      confirmationMessage={`Delete the category "${name}"?`}
-                      onDelete={() => onDelete(_id)}
-                    />
-                  </td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
-      </>
-    );
   }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <>
+      <CategoryCreator onAddCategory={addCategory} />
+      <table>
+        <tbody>
+          <tr>
+            <th>Name</th>
+            <th>Parent category ID</th>
+            <th>Is hidden</th>
+            <th>Is deleted</th>
+            <th>External ID</th>
+            <th>Actions</th>
+          </tr>
+          {categories.map(
+            ({
+              _id,
+              name,
+              parentCategoryId,
+              isHidden,
+              isDeleted,
+              externalId,
+            }) => (
+              <tr key={_id}>
+                <td>{name}</td>
+                <td>
+                  {parentCategoryId
+                    ? getCategoryNameById(parentCategoryId)
+                    : '-'}
+                </td>
+                <td>{isHidden ? 'Yes' : 'No'}</td>
+                <td>{isDeleted ? 'Yes' : 'No'}</td>
+                <td className="ellipsisCell">{externalId}</td>
+                <td>
+                  <DeleteButton
+                    confirmationMessage={`Delete the category "${name}"?`}
+                    onDelete={() => onDelete(_id)}
+                  />
+                </td>
+              </tr>
+            )
+          )}
+        </tbody>
+      </table>
+    </>
+  );
 };
 
 export default CategoriesList;
