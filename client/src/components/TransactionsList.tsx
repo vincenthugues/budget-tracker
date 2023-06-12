@@ -2,7 +2,10 @@ import { useContext, useState } from 'react';
 import { AccountsContext, CategoriesContext, PayeesContext } from '../contexts';
 import { useFetchedResource } from '../hooks/useFetchedResource';
 import { useResourcesHandler } from '../hooks/useResourcesHandler';
+import { Account } from '../types/Account';
+import { Category } from '../types/Category';
 import { CreatorInput } from '../types/Creator';
+import { Payee } from '../types/Payee';
 import { Transaction, TransactionDraft } from '../types/Transaction';
 import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
 import { getDisplayFormattedDate } from '../utils/getDisplayFormattedDate';
@@ -91,6 +94,13 @@ const TransactionCreator = ({
   );
 };
 
+function getResourceNameById<T extends { _id: string; name: string }>(
+  resources: T[]
+) {
+  return (resourceId: string): string | undefined =>
+    resources.find(({ _id }) => _id === resourceId)?.name;
+}
+
 const TransactionsList = (): JSX.Element => {
   const { accounts } = useContext(AccountsContext);
   const { categories } = useContext(CategoriesContext);
@@ -100,13 +110,6 @@ const TransactionsList = (): JSX.Element => {
   const [transactions, addTransaction, removeTransactionById] =
     useResourcesHandler(fetchedTransactions);
   sortByDate(transactions, SortingOrder.DESC);
-
-  const getAccountNameById = (accountId: string): string | undefined =>
-    accounts?.find(({ _id }) => _id === accountId)?.name;
-  const getCategoryNameById = (categoryId: string): string | undefined =>
-    categories?.find(({ _id }) => _id === categoryId)?.name;
-  const getPayeeNameById = (payeeId: string): string | undefined =>
-    payees?.find(({ _id }) => _id === payeeId)?.name;
 
   const onDelete = async (transactionId: string) => {
     await fetch(`/transactions/${transactionId}`, {
@@ -118,59 +121,68 @@ const TransactionsList = (): JSX.Element => {
   if (errorMessage) {
     console.log(`Error: ${errorMessage}`);
     return <div>Error when fetching data</div>;
-  } else if (isLoading || !accounts || !categories || !payees) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <>
-        <TransactionCreator onAddTransaction={addTransaction} />
-        <table>
-          <tbody>
-            <tr>
-              <th>Date</th>
-              <th>Account</th>
-              <th>Category</th>
-              <th>Payee</th>
-              <th>Amount</th>
-              <th>External ID</th>
-              <th>Actions</th>
-            </tr>
-            {transactions.map((transaction) => {
-              const {
-                _id,
-                date,
-                amount,
-                accountId,
-                payeeId,
-                categoryId,
-                externalId,
-              } = transaction;
-              return (
-                <tr key={_id}>
-                  <td>{getDisplayFormattedDate(date)}</td>
-                  <td>{getAccountNameById(accountId)}</td>
-                  <td>{categoryId && getCategoryNameById(categoryId)}</td>
-                  <td>{getPayeeNameById(payeeId)}</td>
-                  <td>{getDisplayFormattedAmount(amount)}</td>
-                  <td className="ellipsisCell">{externalId}</td>
-                  <td>
-                    <DeleteButton
-                      confirmationMessage={`Delete the transaction "[${getDisplayFormattedDate(
-                        date
-                      )}] ${getPayeeNameById(
-                        payeeId
-                      )} ${getDisplayFormattedAmount(amount)}"?`}
-                      onDelete={() => onDelete(_id)}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </>
-    );
   }
+
+  if (isLoading || !accounts || !categories || !payees) {
+    return <div>Loading...</div>;
+  }
+
+  const getAccountNameById = getResourceNameById<Account>(accounts);
+  const getCategoryNameById = getResourceNameById<Category>(categories);
+  const getPayeeNameById = getResourceNameById<Payee>(payees);
+
+  return (
+    <>
+      <TransactionCreator onAddTransaction={addTransaction} />
+      <table>
+        <tbody>
+          <tr>
+            <th>Date</th>
+            <th>Account</th>
+            <th>Category</th>
+            <th>Payee</th>
+            <th>Amount</th>
+            <th>External ID</th>
+            <th>Actions</th>
+          </tr>
+          {transactions.map((transaction) => {
+            const {
+              _id,
+              date,
+              amount,
+              accountId,
+              payeeId,
+              categoryId,
+              externalId,
+            } = transaction;
+
+            const deletionConfirmationMessage = `Delete the transaction "[${getDisplayFormattedDate(
+              date
+            )}] ${getPayeeNameById(payeeId)} ${getDisplayFormattedAmount(
+              amount
+            )}"?`;
+
+            return (
+              <tr key={_id}>
+                <td>{getDisplayFormattedDate(date)}</td>
+                <td>{getAccountNameById(accountId)}</td>
+                <td>{categoryId && getCategoryNameById(categoryId)}</td>
+                <td>{getPayeeNameById(payeeId)}</td>
+                <td>{getDisplayFormattedAmount(amount)}</td>
+                <td className="ellipsisCell">{externalId}</td>
+                <td>
+                  <DeleteButton
+                    confirmationMessage={deletionConfirmationMessage}
+                    onDelete={() => onDelete(_id)}
+                  />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
+  );
 };
 
 export default TransactionsList;
