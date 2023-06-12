@@ -47,24 +47,22 @@ const PayeeCreator = ({
     setShowCreator(false);
   };
 
+  if (showCreator) {
+    <Creator
+      onSubmit={onSubmit}
+      onCancel={onCancel}
+      properties={payeeCreatorProperties}
+    />;
+  }
+
   return (
-    <>
-      {showCreator ? (
-        <Creator
-          onSubmit={onSubmit}
-          onCancel={onCancel}
-          properties={payeeCreatorProperties}
-        />
-      ) : (
-        <button
-          onClick={() => {
-            setShowCreator(true);
-          }}
-        >
-          ➕
-        </button>
-      )}
-    </>
+    <button
+      onClick={() => {
+        setShowCreator(true);
+      }}
+    >
+      ➕
+    </button>
   );
 };
 

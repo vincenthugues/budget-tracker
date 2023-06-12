@@ -75,24 +75,22 @@ const TransactionCreator = ({
     setShowCreator(false);
   };
 
+  if (showCreator) {
+    <Creator
+      onSubmit={onSubmit}
+      onCancel={onCancel}
+      properties={transactionCreatorProperties}
+    />;
+  }
+
   return (
-    <>
-      {showCreator ? (
-        <Creator
-          onSubmit={onSubmit}
-          onCancel={onCancel}
-          properties={transactionCreatorProperties}
-        />
-      ) : (
-        <button
-          onClick={() => {
-            setShowCreator(true);
-          }}
-        >
-          ➕
-        </button>
-      )}
-    </>
+    <button
+      onClick={() => {
+        setShowCreator(true);
+      }}
+    >
+      ➕
+    </button>
   );
 };
 

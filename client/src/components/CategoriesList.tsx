@@ -65,24 +65,22 @@ const CategoryCreator = ({
     setShowCreator(false);
   };
 
+  if (showCreator) {
+    <Creator
+      onSubmit={onSubmit}
+      onCancel={onCancel}
+      properties={categoryCreatorProperties}
+    />;
+  }
+
   return (
-    <>
-      {showCreator ? (
-        <Creator
-          onSubmit={onSubmit}
-          onCancel={onCancel}
-          properties={categoryCreatorProperties}
-        />
-      ) : (
-        <button
-          onClick={() => {
-            setShowCreator(true);
-          }}
-        >
-          ➕
-        </button>
-      )}
-    </>
+    <button
+      onClick={() => {
+        setShowCreator(true);
+      }}
+    >
+      ➕
+    </button>
   );
 };
 

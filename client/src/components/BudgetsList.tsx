@@ -54,24 +54,24 @@ const BudgetCreator = ({
     setShowCreator(false);
   };
 
+  if (showCreator) {
+    return (
+      <Creator
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        properties={budgetCreatorProperties}
+      />
+    );
+  }
+
   return (
-    <>
-      {showCreator ? (
-        <Creator
-          onSubmit={onSubmit}
-          onCancel={onCancel}
-          properties={budgetCreatorProperties}
-        />
-      ) : (
-        <button
-          onClick={() => {
-            setShowCreator(true);
-          }}
-        >
-          ➕
-        </button>
-      )}
-    </>
+    <button
+      onClick={() => {
+        setShowCreator(true);
+      }}
+    >
+      ➕
+    </button>
   );
 };
 
