@@ -96,6 +96,26 @@ const getSortedLastMonthTransactions = (
   return sortedLastMonthTransactions;
 };
 
+const MonthTransactionRow = ({
+  transaction: { date, amount, accountId, payeeId, categoryId },
+  accounts,
+  payees,
+  categories,
+}: {
+  transaction: Transaction;
+  accounts: Account[];
+  payees: Payee[];
+  categories: Category[];
+}) => (
+  <tr>
+    <td>{getDisplayFormattedDate(date)}</td>
+    <td>{accounts.find(({ _id }) => _id === accountId)?.name}</td>
+    <td>{payees.find(({ _id }) => _id === payeeId)?.name}</td>
+    <td>{categories.find(({ _id }) => _id === categoryId)?.name}</td>
+    <td>{getDisplayFormattedAmount(amount)}</td>
+  </tr>
+);
+
 const MonthBudget = (): JSX.Element => {
   const {
     data: { accounts, categories, payees, transactions },
@@ -136,19 +156,15 @@ const MonthBudget = (): JSX.Element => {
             <th>Category</th>
             <th>Amount</th>
           </tr>
-          {sortedLastMonthTransactions.map(
-            ({ _id, date, amount, accountId, payeeId, categoryId }) => (
-              <tr key={_id}>
-                <td>{getDisplayFormattedDate(date)}</td>
-                <td>{accounts.find(({ _id }) => _id === accountId)?.name}</td>
-                <td>{payees.find(({ _id }) => _id === payeeId)?.name}</td>
-                <td>
-                  {categories.find(({ _id }) => _id === categoryId)?.name}
-                </td>
-                <td>{getDisplayFormattedAmount(amount)}</td>
-              </tr>
-            )
-          )}
+          {sortedLastMonthTransactions.map((transaction) => (
+            <MonthTransactionRow
+              key={transaction._id}
+              transaction={transaction}
+              accounts={accounts}
+              payees={payees}
+              categories={categories}
+            />
+          ))}
         </tbody>
       </table>
     </>
