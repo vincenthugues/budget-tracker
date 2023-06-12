@@ -8,6 +8,7 @@ import { Payee } from '../types/Payee';
 import { Transaction } from '../types/Transaction';
 import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
 import { getDisplayFormattedDate } from '../utils/getDisplayFormattedDate';
+import { getMonthNameFromDate } from '../utils/getMonthNameFromDate';
 import { isSameYearAndMonth } from '../utils/isSameYearAndMonth';
 import { SortingOrder, sortByDate } from '../utils/sortByDate';
 
@@ -27,10 +28,6 @@ const filterByYearAndMonth = (
   targetMonth: number
 ): Transaction[] =>
   transactions.filter(isSameYearAndMonth(targetYear, targetMonth));
-
-const getMonthNameFromDate = (date: Date): string => {
-  return date.toLocaleString('default', { month: 'long' });
-};
 
 const useMonthBudgetData = (): {
   data: {
