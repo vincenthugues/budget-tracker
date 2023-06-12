@@ -2,53 +2,63 @@ import { useAccounts } from '../hooks/useAccounts';
 import { useCategories } from '../hooks/useCategories';
 import { usePayees } from '../hooks/usePayees';
 import { useTransactions } from '../hooks/useTransactions';
+import { Account } from '../types/Account';
+import { Category } from '../types/Category';
+import { Payee } from '../types/Payee';
 import { Transaction } from '../types/Transaction';
 import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
 import { getDisplayFormattedDate } from '../utils/getDisplayFormattedDate';
+import { isSameYearAndMonth } from '../utils/isSameYearAndMonth';
 import { SortingOrder, sortByDate } from '../utils/sortByDate';
 
 const getLastTransactionYearMonth = (
   transactions: Transaction[]
-): [year: number, month: number] | [] => {
-  if (!transactions?.length) return [];
+): { year?: number; month?: number } => {
+  if (!transactions?.length) return {};
 
   const lastTransaction = transactions[transactions.length - 1];
   const lastDate = new Date(lastTransaction.date);
-  return [lastDate.getFullYear(), lastDate.getMonth() + 1];
+  return { year: lastDate.getFullYear(), month: lastDate.getMonth() + 1 };
 };
 
 const filterByYearAndMonth = (
   transactions: Transaction[],
   targetYear: number,
   targetMonth: number
-) =>
-  transactions.filter(({ date }) => {
-    const [year, month] = new Date(date).toISOString().split('-');
-    return Number(year) === targetYear && Number(month) === targetMonth;
-  });
+): Transaction[] =>
+  transactions.filter(isSameYearAndMonth(targetYear, targetMonth));
 
 const getMonthNameFromDate = (date: Date): string => {
   return date.toLocaleString('default', { month: 'long' });
 };
 
-const MonthBudget = (): JSX.Element => {
+const useMonthBudgetData = (): {
+  data: {
+    accounts: Account[];
+    categories: Category[];
+    payees: Payee[];
+    transactions: Transaction[];
+  };
+  isLoading: boolean;
+  errors: unknown[];
+} => {
   const {
-    accounts,
+    accounts = [],
     isLoading: accountsIsLoading,
     error: accountsError,
   } = useAccounts();
   const {
-    categories,
+    categories = [],
     isLoading: categoriesIsLoading,
     error: categoriesError,
   } = useCategories();
   const {
-    payees,
+    payees = [],
     isLoading: payeesIsLoading,
     error: payeesError,
   } = usePayees();
   const {
-    transactions,
+    transactions = [],
     isLoading: transactionsIsLoading,
     error: transactionsError,
   } = useTransactions();
@@ -59,34 +69,69 @@ const MonthBudget = (): JSX.Element => {
     payeesError,
     transactionsError,
   ].filter(Boolean);
-  if (errors.length) {
-    console.log(`Error(s): ${errors.join('; ')}`);
-    return <div>Error when fetching data</div>;
-  }
 
   const isLoading =
     accountsIsLoading ||
     categoriesIsLoading ||
     payeesIsLoading ||
     transactionsIsLoading;
-  if (isLoading) {
-    return <div>Loading...</div>;
+
+  return {
+    data: { accounts: accounts, categories, payees, transactions },
+    isLoading,
+    errors,
+  };
+};
+
+const getSortedLastMonthTransactions = (
+  transactions: Transaction[]
+): Transaction[] => {
+  const sortedTransactions = sortByDate(transactions) as Transaction[];
+  const { year: targetYear, month: targetMonth } =
+    getLastTransactionYearMonth(sortedTransactions);
+  if (!targetYear || !targetMonth) {
+    return [];
   }
 
-  const sortedTransactions = sortByDate(transactions || []) as Transaction[];
-  const [targetYear, targetMonth] =
-    getLastTransactionYearMonth(sortedTransactions);
-  const lastMonthTransactions =
-    targetYear && targetMonth
-      ? filterByYearAndMonth(sortedTransactions, targetYear, targetMonth)
-      : [];
+  const lastMonthTransactions = filterByYearAndMonth(
+    sortedTransactions,
+    targetYear,
+    targetMonth
+  );
+
   const sortedLastMonthTransactions = sortByDate(
     lastMonthTransactions,
     SortingOrder.DESC
   ) as Transaction[];
-  const targetMonthName = lastMonthTransactions[0]
-    ? getMonthNameFromDate(new Date(lastMonthTransactions[0].date))
+
+  return sortedLastMonthTransactions;
+};
+
+const MonthBudget = (): JSX.Element => {
+  const {
+    data: { accounts, categories, payees, transactions },
+    isLoading,
+    errors,
+  } = useMonthBudgetData();
+
+  if (errors.length) {
+    console.log(`Error(s): ${errors.join('; ')}`);
+    return <div>Error when fetching data</div>;
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  const sortedLastMonthTransactions =
+    getSortedLastMonthTransactions(transactions);
+  const targetMonthName = sortedLastMonthTransactions[0]
+    ? getMonthNameFromDate(new Date(sortedLastMonthTransactions[0].date))
     : null;
+  // refactor
+  const { year: targetYear } = getLastTransactionYearMonth(
+    sortedLastMonthTransactions
+  );
 
   return (
     <>
@@ -106,10 +151,10 @@ const MonthBudget = (): JSX.Element => {
             ({ _id, date, amount, accountId, payeeId, categoryId }) => (
               <tr key={_id}>
                 <td>{getDisplayFormattedDate(date)}</td>
-                <td>{accounts?.find(({ _id }) => _id === accountId)?.name}</td>
-                <td>{payees?.find(({ _id }) => _id === payeeId)?.name}</td>
+                <td>{accounts.find(({ _id }) => _id === accountId)?.name}</td>
+                <td>{payees.find(({ _id }) => _id === payeeId)?.name}</td>
                 <td>
-                  {categories?.find(({ _id }) => _id === categoryId)?.name}
+                  {categories.find(({ _id }) => _id === categoryId)?.name}
                 </td>
                 <td>{getDisplayFormattedAmount(amount)}</td>
               </tr>
