@@ -43,11 +43,13 @@ const PayeeCreator = ({
   };
 
   if (showCreator) {
-    <Creator
-      onSubmit={onSubmit}
-      onCancel={onCancel}
-      properties={payeeCreatorProperties}
-    />;
+    return (
+      <Creator
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        properties={payeeCreatorProperties}
+      />
+    );
   }
 
   return (

@@ -71,11 +71,13 @@ const TransactionCreator = ({
   };
 
   if (showCreator) {
-    <Creator
-      onSubmit={onSubmit}
-      onCancel={onCancel}
-      properties={transactionCreatorProperties}
-    />;
+    return (
+      <Creator
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        properties={transactionCreatorProperties}
+      />
+    );
   }
 
   return (

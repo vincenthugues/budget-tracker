@@ -61,11 +61,13 @@ const CategoryCreator = ({
   };
 
   if (showCreator) {
-    <Creator
-      onSubmit={onSubmit}
-      onCancel={onCancel}
-      properties={categoryCreatorProperties}
-    />;
+    return (
+      <Creator
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        properties={categoryCreatorProperties}
+      />
+    );
   }
 
   return (
