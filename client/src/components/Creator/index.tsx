@@ -1,69 +1,8 @@
-import { ChangeEventHandler, useState } from 'react';
+import { useState } from 'react';
 import { CreatorInput } from '../../types/Creator';
-
-const DefaultInput = ({
-  property: { name, type, isOptional },
-  value,
-  setValue,
-}: {
-  property: CreatorInput;
-  value: string;
-  setValue: Function;
-}): JSX.Element => (
-  <input
-    id={name}
-    name={name}
-    type={type}
-    value={value}
-    onChange={({ target: { value: newValue } }) => {
-      setValue(type === 'number' ? Number(newValue) : newValue);
-    }}
-    required={isOptional !== true}
-  />
-);
-
-const CheckboxInput = ({
-  property: { name, isOptional },
-  value,
-  setValue,
-}: {
-  property: CreatorInput;
-  value: string;
-  setValue: Function;
-}): JSX.Element => (
-  <input
-    id={name}
-    name={name}
-    type="checkbox"
-    value={value}
-    onChange={({ target: { value: checked } }) => {
-      setValue(checked);
-    }}
-    required={isOptional !== true}
-  />
-);
-
-const SelectInput = ({
-  property: { name, isOptional, options },
-  onChange,
-}: {
-  property: CreatorInput;
-  onChange: ChangeEventHandler<HTMLSelectElement>;
-}): JSX.Element => (
-  <select
-    id={name}
-    name={name}
-    onChange={onChange}
-    required={isOptional !== true}
-  >
-    {isOptional && <option value="">---None---</option>}
-    {options?.map(([optionKey, optionValue]) => (
-      <option key={optionKey} value={optionValue}>
-        {optionValue}
-      </option>
-    ))}
-  </select>
-);
+import { CheckboxInput } from './CheckboxInput';
+import { DefaultInput } from './DefaultInput';
+import { SelectInput } from './SelectInput';
 
 type CreatorProps = {
   onSubmit: Function;
