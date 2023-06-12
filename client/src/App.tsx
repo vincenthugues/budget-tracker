@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactElement } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import './App.css';
@@ -10,34 +11,38 @@ import {
   useFetchedPayees,
 } from './hooks';
 
+const queryClient = new QueryClient();
+
 const Providers = ({ children }: { children: ReactElement }) => {
   const [accounts, setAccounts] = useFetchedAccounts();
   const [categories, setCategories] = useFetchedCategories();
   const [payees, setPayees] = useFetchedPayees();
 
   return (
-    <CategoriesContext.Provider
-      value={{
-        categories,
-        setCategories,
-      }}
-    >
-      <AccountsContext.Provider
+    <QueryClientProvider client={queryClient}>
+      <CategoriesContext.Provider
         value={{
-          accounts,
-          setAccounts,
+          categories,
+          setCategories,
         }}
       >
-        <PayeesContext.Provider
+        <AccountsContext.Provider
           value={{
-            payees,
-            setPayees,
+            accounts,
+            setAccounts,
           }}
         >
-          {children}
-        </PayeesContext.Provider>
-      </AccountsContext.Provider>
-    </CategoriesContext.Provider>
+          <PayeesContext.Provider
+            value={{
+              payees,
+              setPayees,
+            }}
+          >
+            {children}
+          </PayeesContext.Provider>
+        </AccountsContext.Provider>
+      </CategoriesContext.Provider>
+    </QueryClientProvider>
   );
 };
 
