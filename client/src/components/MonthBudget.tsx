@@ -9,18 +9,9 @@ import { Transaction } from '../types/Transaction';
 import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
 import { getDisplayFormattedDate } from '../utils/getDisplayFormattedDate';
 import { getMonthNameFromDate } from '../utils/getMonthNameFromDate';
+import { getTransactionYearMonth } from '../utils/getTransactionYearMonth';
 import { isSameYearAndMonth } from '../utils/isSameYearAndMonth';
 import { SortingOrder, sortByDate } from '../utils/sortByDate';
-
-const getLastTransactionYearMonth = (
-  transactions: Transaction[]
-): { year?: number; month?: number } => {
-  if (!transactions?.length) return {};
-
-  const lastTransaction = transactions[transactions.length - 1];
-  const lastDate = new Date(lastTransaction.date);
-  return { year: lastDate.getFullYear(), month: lastDate.getMonth() + 1 };
-};
 
 const filterByYearAndMonth = (
   transactions: Transaction[],
@@ -84,8 +75,9 @@ const getSortedLastMonthTransactions = (
   transactions: Transaction[]
 ): Transaction[] => {
   const sortedTransactions = sortByDate(transactions) as Transaction[];
+  const lastTransaction = sortedTransactions[sortedTransactions.length - 1];
   const { year: targetYear, month: targetMonth } =
-    getLastTransactionYearMonth(sortedTransactions);
+    getTransactionYearMonth(lastTransaction);
   if (!targetYear || !targetMonth) {
     return [];
   }
@@ -122,13 +114,13 @@ const MonthBudget = (): JSX.Element => {
 
   const sortedLastMonthTransactions =
     getSortedLastMonthTransactions(transactions);
-  const targetMonthName = sortedLastMonthTransactions[0]
-    ? getMonthNameFromDate(new Date(sortedLastMonthTransactions[0].date))
-    : null;
-  // refactor
-  const { year: targetYear } = getLastTransactionYearMonth(
-    sortedLastMonthTransactions
-  );
+  const lastTransaction = sortedLastMonthTransactions.at(-1);
+  if (!lastTransaction) {
+    return <div>No transactions yet</div>;
+  }
+
+  const targetMonthName = getMonthNameFromDate(new Date(lastTransaction.date));
+  const { year: targetYear } = getTransactionYearMonth(lastTransaction);
 
   return (
     <>
