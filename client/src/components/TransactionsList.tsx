@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createTransaction } from '../api';
 import { useAccounts } from '../hooks/useAccounts';
 import { useCategories } from '../hooks/useCategories';
 import { usePayees } from '../hooks/usePayees';
@@ -50,19 +51,13 @@ const TransactionCreator = ({
       ...otherProperties,
     });
 
-    const response = await fetch('/transactions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(
-        convertTransactionAmountToCents(transactionToCreate)
-      ),
-    });
-    const createdTransaction = await response.json();
+    const createdTransaction = await createTransaction(
+      convertTransactionAmountToCents(transactionToCreate)
+    );
 
-    if (createdTransaction.error) {
+    if (createdTransaction.message) {
       console.error(
-        `Error (${createdTransaction.statusCode}: ${createdTransaction.error}) while creating the resource: `,
-        createdTransaction.message.join(', ')
+        `Error ${createdTransaction.statusCode} while creating the resource: ${createdTransaction.message}`
       );
       return;
     }

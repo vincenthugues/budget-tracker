@@ -65,7 +65,7 @@ const useMonthBudgetData = (): {
     transactionsIsLoading;
 
   return {
-    data: { accounts: accounts, categories, payees, transactions },
+    data: { accounts, categories, payees, transactions },
     isLoading,
     errors,
   };

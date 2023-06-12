@@ -1,13 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { fetchTransactions } from '../api';
 import { Transaction } from '../types/Transaction';
-
-const fetchTransactions = async (): Promise<Transaction[]> => {
-  const url = '/transactions';
-  const res = await fetch(url);
-  const transactions = await res.json();
-
-  return transactions;
-};
 
 export const useTransactions = (): {
   transactions?: Transaction[];

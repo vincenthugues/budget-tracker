@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createBudget } from '../api';
 import { useBudgets } from '../hooks/useBudgets';
 import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { Budget, BudgetDraft } from '../types/Budget';
@@ -31,17 +32,11 @@ const BudgetCreator = ({
   ];
 
   const onSubmit = async (budgetToCreate: BudgetDraft) => {
-    const response = await fetch('/budgets', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(budgetToCreate),
-    });
-    const createdBudget = await response.json();
+    const createdBudget = await createBudget(budgetToCreate);
 
-    if (createdBudget.error) {
+    if (createdBudget.message) {
       console.error(
-        `Error (${createdBudget.statusCode}: ${createdBudget.error}) while creating the resource: `,
-        createdBudget.message.join(', ')
+        `Error ${createdBudget.statusCode} while creating the resource: ${createdBudget.message}`
       );
       return;
     }

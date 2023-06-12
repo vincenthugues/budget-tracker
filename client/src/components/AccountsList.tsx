@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createAccount } from '../api';
 import { useAccounts } from '../hooks/useAccounts';
 import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { Account, AccountDraft, AccountType } from '../types/Account';
@@ -39,17 +40,11 @@ const AccountCreator = ({
   ];
 
   const onSubmit = async (accountToCreate: AccountDraft) => {
-    const response = await fetch('/accounts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(accountToCreate),
-    });
-    const createdAccount = await response.json();
+    const createdAccount = await createAccount(accountToCreate);
 
-    if (createdAccount.error) {
+    if (createdAccount.message) {
       console.error(
-        `Error (${createdAccount.statusCode}: ${createdAccount.error}) while creating the resource: `,
-        createdAccount.message.join(', ')
+        `Error ${createdAccount.statusCode} while creating the resource: ${createdAccount.message}`
       );
       return;
     }
@@ -57,6 +52,7 @@ const AccountCreator = ({
     onAddAccount(createdAccount);
     setShowCreator(false);
   };
+
   const onCancel = () => {
     setShowCreator(false);
   };

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPayee } from '../api';
 import { useFetchedResource } from '../hooks/useFetchedResource';
 import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { CreatorInput } from '../types/Creator';
@@ -24,17 +25,11 @@ const PayeeCreator = ({
   ];
 
   const onSubmit = async (payeeToCreate: PayeeDraft) => {
-    const response = await fetch('/payees', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payeeToCreate),
-    });
-    const createdPayee = await response.json();
+    const createdPayee = await createPayee(payeeToCreate);
 
-    if (createdPayee.error) {
+    if (createdPayee.message) {
       console.error(
-        `Error (${createdPayee.statusCode}: ${createdPayee.error}) while creating the resource: `,
-        createdPayee.message.join(', ')
+        `Error ${createdPayee.statusCode} while creating the resource: ${createdPayee.message}`
       );
       return;
     }

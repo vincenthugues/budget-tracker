@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useFetchedResource } from '../hooks/useFetchedResource';
+import { createCategory } from '../api';
+import { useCategories } from '../hooks/useCategories';
 import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { Category, CategoryDraft } from '../types/Category';
 import { CreatorInput } from '../types/Creator';
 import Creator from './Creator';
 import DeleteButton from './DeleteButton';
-import { useCategories } from '../hooks/useCategories';
 
 const CategoryCreator = ({
   onAddCategory,
@@ -43,17 +43,11 @@ const CategoryCreator = ({
   ];
 
   const onSubmit = async (categoryToCreate: CategoryDraft) => {
-    const response = await fetch('/categories', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(categoryToCreate),
-    });
-    const createdCategory = await response.json();
+    const createdCategory = await createCategory(categoryToCreate);
 
-    if (createdCategory.error) {
+    if (createdCategory.message) {
       console.error(
-        `Error (${createdCategory.statusCode}: ${createdCategory.error}) while creating the resource: `,
-        createdCategory.message.join(', ')
+        `Error ${createdCategory.statusCode} while creating the resource: ${createdCategory.message}`
       );
       return;
     }

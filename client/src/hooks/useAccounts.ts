@@ -1,13 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { fetchAccounts } from '../api';
 import { Account } from '../types/Account';
-
-const fetchAccounts = async (): Promise<Account[]> => {
-  const url = '/accounts';
-  const res = await fetch(url);
-  const accounts = await res.json();
-
-  return accounts;
-};
 
 export const useAccounts = (): {
   accounts?: Account[];
