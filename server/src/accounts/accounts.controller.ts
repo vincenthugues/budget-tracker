@@ -40,8 +40,21 @@ export class AccountsController {
     type: [Account],
     description: 'Returns the list of accounts matching the optional filters',
   })
-  findAll(@Query() filters?: FilterAccountDto): Promise<AccountDocument[]> {
-    return this.accountsService.findAll(filters);
+  async findAll(
+    @Query() filters?: FilterAccountDto,
+  ): Promise<AccountDocument[]> {
+    const fixLegacyAccountBalance = (
+      account: AccountDocument,
+    ): AccountDocument => {
+      const isLegacyAccount = !!account.externalId;
+      if (isLegacyAccount) {
+        account.balance /= 10;
+      }
+      return account;
+    };
+    const accounts = await this.accountsService.findAll(filters);
+
+    return accounts.map(fixLegacyAccountBalance);
   }
 
   @Get(':id')
