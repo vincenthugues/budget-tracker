@@ -148,7 +148,10 @@ const TransactionsList = (): JSX.Element => {
   } = useTransactionsListsData();
   const [transactions, addTransaction, removeTransactionById] =
     useResourcesHandler(fetchedTransactions);
-  sortByDate(transactions, SortingOrder.DESC);
+  const sortedTransactions = sortByDate(
+    transactions,
+    SortingOrder.DESC
+  ) as Transaction[];
 
   const onDelete = async (transactionId: string) => {
     await fetch(`/transactions/${transactionId}`, {
@@ -184,7 +187,7 @@ const TransactionsList = (): JSX.Element => {
             <th>External ID</th>
             <th>Actions</th>
           </tr>
-          {transactions.map((transaction) => {
+          {sortedTransactions.map((transaction) => {
             const {
               _id,
               date,
