@@ -16,10 +16,7 @@ import { CategoriesService } from '../categories/categories.service';
 import { CategoryDocument } from '../categories/schemas/category.schema';
 import { PayeesService } from '../payees/payees.service';
 import { PayeeDocument } from '../payees/schemas/payee.schema';
-import {
-  Transaction,
-  TransactionDocument,
-} from '../transactions/schemas/transaction.schema';
+import { TransactionDocument } from '../transactions/schemas/transaction.schema';
 import { TransactionsService } from '../transactions/transactions.service';
 import { ImportDto } from './dto/import.dto';
 

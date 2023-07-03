@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AccountsModule } from './accounts/accounts.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { BudgetsModule } from './budgets/budgets.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ImportModule } from './import/import.module';
@@ -21,7 +19,5 @@ const MONGODB_CONNECTION_URI = 'mongodb://localhost/budget-tracker';
     TransactionsModule,
     ImportModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
