@@ -62,7 +62,7 @@ describe('BudgetsController', () => {
       );
     });
 
-    it('should fail if the externalId is undefined', async () => {
+    it('should work if the externalId is undefined', async () => {
       const budgetPayload = {
         ...BASE_BUDGET_PAYLOAD,
         externalId: undefined,
