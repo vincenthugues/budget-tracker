@@ -113,6 +113,15 @@ describe('ImportController', () => {
           ]),
         );
       });
+
+      it('should fail for unhandled resources', async () => {
+        expect(
+          importController.create({
+            resourceName: 'test',
+            json: JSON.stringify([]),
+          }),
+        ).rejects.toThrowError('import: Resource "test" unhandled');
+      });
     });
   });
 });

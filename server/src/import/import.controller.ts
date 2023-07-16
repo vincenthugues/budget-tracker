@@ -18,7 +18,14 @@ import { PayeesService } from '../payees/payees.service';
 import { PayeeDocument } from '../payees/schemas/payee.schema';
 import { TransactionDocument } from '../transactions/schemas/transaction.schema';
 import { TransactionsService } from '../transactions/transactions.service';
-import { ImportDto } from './dto/import.dto';
+import {
+  AccountImportDto,
+  BudgetImportDto,
+  CategoryGroupImportDto,
+  ImportDto,
+  PayeeImportDto,
+  TransactionImportDto,
+} from './dto/import.dto';
 
 @ApiTags('import')
 @Controller('import')
@@ -31,15 +38,25 @@ export class ImportController {
     private readonly transactionsService: TransactionsService,
   ) {}
 
-  createBudget({ id, name, first_month }): Promise<BudgetDocument> {
+  async createBudget({
+    id,
+    name,
+    first_month,
+  }: BudgetImportDto): Promise<BudgetDocument> {
     return this.budgetsService.create({
       name,
-      startingDate: first_month,
+      startingDate: new Date(first_month),
       externalId: id,
     });
   }
 
-  createAccount({ id, name, type, closed, balance }): Promise<AccountDocument> {
+  async createAccount({
+    id,
+    name,
+    type,
+    closed,
+    balance,
+  }: AccountImportDto): Promise<AccountDocument> {
     return this.accountsService.create({
       name,
       externalId: id,
@@ -49,15 +66,17 @@ export class ImportController {
     });
   }
 
-  async createCategories(categoryGroup): Promise<CategoryDocument[]> {
+  async createCategories(
+    categoryGroup: CategoryGroupImportDto,
+  ): Promise<CategoryDocument[]> {
     const parentCategory = await this.categoriesService.create({
       name: categoryGroup.name,
-      isDeleted: categoryGroup.deleted,
       externalId: categoryGroup.id,
       isHidden: categoryGroup.hidden,
+      isDeleted: categoryGroup.deleted,
     });
-    const subCategories = categoryGroup.categories.map(
-      ({ id, name, hidden, deleted }) =>
+    const subCategories = await Promise.all(
+      categoryGroup.categories.map(({ id, name, hidden, deleted }) =>
         this.categoriesService.create({
           name,
           isDeleted: deleted,
@@ -65,11 +84,13 @@ export class ImportController {
           parentCategoryId: parentCategory._id,
           isHidden: hidden,
         }),
+      ),
     );
+
     return [parentCategory, ...subCategories];
   }
 
-  createPayee({ id, name }): Promise<PayeeDocument> {
+  async createPayee({ id, name }: PayeeImportDto): Promise<PayeeDocument> {
     return this.payeesService.create({
       name,
       externalId: id,
@@ -86,7 +107,7 @@ export class ImportController {
     memo,
     approved,
     deleted,
-  }): Promise<TransactionDocument> {
+  }: TransactionImportDto): Promise<TransactionDocument> {
     const [matchedAccounts, matchedPayees, matchedCategories] =
       await Promise.all([
         this.accountsService.findAll({
@@ -101,7 +122,7 @@ export class ImportController {
       ]);
 
     return this.transactionsService.create({
-      date,
+      date: new Date(date),
       amount,
       accountId: matchedAccounts[0]?._id,
       payeeId: matchedPayees[0]?._id,
@@ -123,10 +144,17 @@ export class ImportController {
   })
   async create(
     @Body() { resourceName, json }: ImportDto,
-  ): Promise<(BudgetDocument | AccountDocument | CategoryDocument)[]> {
+  ): Promise<
+    (
+      | BudgetDocument
+      | AccountDocument
+      | CategoryDocument
+      | PayeeDocument
+      | TransactionDocument
+    )[]
+  > {
     const parsedJSON = JSON.parse(json);
-    let parsedJSONEntities =
-      (parsedJSON?.data && parsedJSON?.data[resourceName]) ?? parsedJSON;
+    const parsedJSONEntities = parsedJSON?.data?.[resourceName] ?? parsedJSON;
 
     const HandlerByResourceName: {
       [name: string]: ({}) => Promise<
@@ -143,15 +171,19 @@ export class ImportController {
       payees: this.createPayee,
       transactions: this.createTransaction,
     };
-    let handler = HandlerByResourceName[resourceName];
+    const resourceCreationHandler = HandlerByResourceName[resourceName];
 
-    if (!handler) {
+    if (!resourceCreationHandler) {
       console.log(`import: Resource "${resourceName}" unhandled`);
       throw new BadRequestException(
         `import: Resource "${resourceName}" unhandled`,
       );
     }
 
-    return Promise.all(parsedJSONEntities.map(handler.bind(this)));
+    const resources = parsedJSONEntities.map(
+      resourceCreationHandler.bind(this),
+    );
+
+    return Promise.all(resources);
   }
 }
