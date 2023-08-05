@@ -50,6 +50,14 @@ const useMonthBudgetData = (): {
     isLoading: transactionsIsLoading,
     error: transactionsError,
   } = useTransactions();
+  const filteredTransactions = transactions.filter(({ payeeId }) => {
+    const payee = payees.find(({ _id }) => _id === payeeId);
+    const isTransferTransaction = payee?.name.startsWith('Transfer');
+    return !isTransferTransaction;
+  });
+  const sortedFilteredTransactions = filteredTransactions.length
+    ? getSortedLastMonthTransactions(filteredTransactions)
+    : [];
 
   const errors = [
     accountsError,
@@ -69,9 +77,7 @@ const useMonthBudgetData = (): {
       accounts,
       categories,
       payees,
-      transactions: transactions.length
-        ? getSortedLastMonthTransactions(transactions)
-        : [],
+      transactions: sortedFilteredTransactions,
     },
     isLoading,
     errors,
@@ -144,6 +150,26 @@ const MonthBudget = (): JSX.Element => {
     return <div>No transactions yet</div>;
   }
 
+  const transactionsByCategory: Record<string, Transaction[]> =
+    transactions.reduce((acc: Record<string, Transaction[]>, transaction) => {
+      const category: string = transaction.categoryId || '';
+      return {
+        [category]: [...(acc[category] || []), transaction],
+        ...acc,
+      };
+    }, {});
+  const monthCategories = Object.entries(transactionsByCategory).map(
+    ([categoryId, transactions]) => ({
+      categoryName: categoryId
+        ? categories.find(({ _id }) => _id === categoryId)?.name
+        : 'None',
+      total: transactions.reduce(
+        (total: number, { amount }) => total + amount,
+        0
+      ),
+    })
+  );
+
   const targetMonthName = getMonthNameFromDate(new Date(lastTransaction.date));
   const { year: targetYear } = getTransactionYearMonth(lastTransaction);
 
@@ -162,10 +188,28 @@ const MonthBudget = (): JSX.Element => {
         {targetMonthName} {targetYear}
       </h2>
       <div>Total income: {getDisplayFormattedAmount(totalIncome)}</div>
-      <div>Total spending: {getDisplayFormattedAmount(totalSpending)}</div>
+      <div>
+        Total spending: {getDisplayFormattedAmount(Math.abs(totalSpending))}
+      </div>
       <div>
         Net total: {getDisplayFormattedAmount(totalIncome + totalSpending)}
       </div>
+      <h3>Categories</h3>
+      <table>
+        <tbody>
+          <tr>
+            <th>Category name</th>
+            <th>Total</th>
+          </tr>
+          {monthCategories.map(({ categoryName, total }) => (
+            <tr key={categoryName}>
+              <td>{categoryName}</td>
+              <td>{getDisplayFormattedAmount(total)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <h3>Transactions</h3>
       <table>
         <tbody>
           <tr>
