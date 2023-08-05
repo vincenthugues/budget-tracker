@@ -142,11 +142,25 @@ const MonthBudget = (): JSX.Element => {
   const targetMonthName = getMonthNameFromDate(new Date(lastTransaction.date));
   const { year: targetYear } = getTransactionYearMonth(lastTransaction);
 
+  const totalIncome = sortedLastMonthTransactions.reduce(
+    (total, { amount }) => (amount > 0 ? total + amount : total),
+    0
+  );
+  const totalSpending = sortedLastMonthTransactions.reduce(
+    (total, { amount }) => (amount < 0 ? total + amount : total),
+    0
+  );
+
   return (
     <>
       <h2>
         {targetMonthName} {targetYear}
       </h2>
+      <div>Total income: {getDisplayFormattedAmount(totalIncome)}</div>
+      <div>Total spending: {getDisplayFormattedAmount(totalSpending)}</div>
+      <div>
+        Net total: {getDisplayFormattedAmount(totalIncome + totalSpending)}
+      </div>
       <table>
         <tbody>
           <tr>
