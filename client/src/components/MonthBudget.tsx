@@ -65,7 +65,14 @@ const useMonthBudgetData = (): {
     transactionsIsLoading;
 
   return {
-    data: { accounts, categories, payees, transactions },
+    data: {
+      accounts,
+      categories,
+      payees,
+      transactions: transactions.length
+        ? getSortedLastMonthTransactions(transactions)
+        : [],
+    },
     isLoading,
     errors,
   };
@@ -132,9 +139,7 @@ const MonthBudget = (): JSX.Element => {
     return <div>Loading...</div>;
   }
 
-  const sortedLastMonthTransactions =
-    getSortedLastMonthTransactions(transactions);
-  const lastTransaction = sortedLastMonthTransactions.at(-1);
+  const lastTransaction = transactions.at(-1);
   if (!lastTransaction) {
     return <div>No transactions yet</div>;
   }
@@ -142,11 +147,11 @@ const MonthBudget = (): JSX.Element => {
   const targetMonthName = getMonthNameFromDate(new Date(lastTransaction.date));
   const { year: targetYear } = getTransactionYearMonth(lastTransaction);
 
-  const totalIncome = sortedLastMonthTransactions.reduce(
+  const totalIncome = transactions.reduce(
     (total, { amount }) => (amount > 0 ? total + amount : total),
     0
   );
-  const totalSpending = sortedLastMonthTransactions.reduce(
+  const totalSpending = transactions.reduce(
     (total, { amount }) => (amount < 0 ? total + amount : total),
     0
   );
@@ -170,7 +175,7 @@ const MonthBudget = (): JSX.Element => {
             <th>Category</th>
             <th>Amount</th>
           </tr>
-          {sortedLastMonthTransactions.map((transaction) => (
+          {transactions.map((transaction) => (
             <MonthTransactionRow
               key={transaction._id}
               transaction={transaction}
