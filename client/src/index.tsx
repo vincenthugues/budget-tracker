@@ -1,16 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import App from './App';
 import AccountsList from './components/AccountsList';
-import BudgetsList from './components/BudgetsList';
 import CategoriesList from './components/CategoriesList';
 import MonthBudget from './components/MonthBudget';
 import PayeesList from './components/PayeesList';
 import TransactionsList from './components/TransactionsList';
 import ErrorPage from './error-page';
 import './index.css';
+import { BudgetsPage } from './pages/BudgetsPage';
 import reportWebVitals from './reportWebVitals';
-import App from './App';
 
 const router = createBrowserRouter([
   {
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'budgets',
-        element: <BudgetsList />,
+        element: <BudgetsPage />,
       },
       {
         path: 'categories',
