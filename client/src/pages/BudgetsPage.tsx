@@ -27,7 +27,7 @@ export const BudgetsPage = (): JSX.Element => {
   return (
     <>
       <BudgetCreator onAddBudget={addBudget} />
-      {budgets && <BudgetsTable budgets={budgets} onDelete={onDelete} />}
+      <BudgetsTable budgets={budgets} onDelete={onDelete} />
     </>
   );
 };
