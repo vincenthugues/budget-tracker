@@ -6,6 +6,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { ImportModule } from './import/import.module';
 import { PayeesModule } from './payees/payees.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { MonthsModule } from './months/months.module';
 
 const MONGODB_CONNECTION_URI = 'mongodb://localhost/budget-tracker';
 
@@ -18,6 +19,7 @@ const MONGODB_CONNECTION_URI = 'mongodb://localhost/budget-tracker';
     PayeesModule,
     TransactionsModule,
     ImportModule,
+    MonthsModule,
   ],
 })
 export class AppModule {}
