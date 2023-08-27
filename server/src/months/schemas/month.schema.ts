@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsDateString, IsEnum, IsOptional } from 'class-validator';
+import { SchemaTypes, Types } from 'mongoose';
+import { Category } from 'src/categories/schemas/category.schema';
 
 enum GoalType {
   BalanceByDate, // One-time bills & expenses, vacation fund, medium- and long-term projects/expenses...
@@ -8,9 +10,19 @@ enum GoalType {
 }
 
 class Goal {
+  @Prop({
+    required: true,
+    type: SchemaTypes.ObjectId,
+    ref: Category.name,
+  })
+  categoryId: Types.ObjectId;
+
   @Prop({ type: String, enum: GoalType })
   @IsEnum(GoalType)
-  type: GoalType;
+  goalType: GoalType;
+
+  @Prop()
+  target: number;
 
   @Prop()
   budgeted: number;
@@ -26,10 +38,6 @@ class Goal {
 
   @Prop({ required: true, default: false })
   isDeleted: boolean;
-
-  @Prop()
-  @IsOptional()
-  target?: number;
 
   @Prop()
   @IsOptional()

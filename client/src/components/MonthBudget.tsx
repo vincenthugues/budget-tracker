@@ -1,9 +1,11 @@
 import { Account } from '../types/Account';
 import { Category } from '../types/Category';
+import { GoalType, Month } from '../types/Month';
 import { Payee } from '../types/Payee';
 import { Transaction } from '../types/Transaction';
 import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
 import { getDisplayFormattedDate } from '../utils/getDisplayFormattedDate';
+import { getMonthNameFromDate } from '../utils/getMonthNameFromDate';
 
 const MonthTransactionRow = ({
   transaction: { date, amount, accountId, payeeId, categoryId },
@@ -28,6 +30,7 @@ const MonthTransactionRow = ({
 export const MonthBudget = ({
   monthName,
   year,
+  month,
   totalIncome,
   totalSpending,
   monthCategories,
@@ -38,6 +41,7 @@ export const MonthBudget = ({
 }: {
   monthName: string;
   year: string;
+  month: Month;
   totalIncome: number;
   totalSpending: number;
   monthCategories: { categoryName: string | undefined; total: number }[];
@@ -50,6 +54,12 @@ export const MonthBudget = ({
     <h2>
       {monthName} {year}
     </h2>
+    <div>
+      Income: {getDisplayFormattedAmount(month.income)} - Budgeted:{' '}
+      {getDisplayFormattedAmount(month.budgeted || 0)} - To Be Budgeted:{' '}
+      {getDisplayFormattedAmount(month.toBeBudgeted || 0)} - Activity{' '}
+      {getDisplayFormattedAmount(month.activity || 0)}
+    </div>
     <div>Total income: {getDisplayFormattedAmount(totalIncome)}</div>
     <div>
       Total spending: {getDisplayFormattedAmount(Math.abs(totalSpending))}
@@ -57,11 +67,36 @@ export const MonthBudget = ({
     <div>
       Net total: {getDisplayFormattedAmount(totalIncome + totalSpending)}
     </div>
+    <div>
+      Goals
+      {month.goals.map(
+        ({
+          categoryId,
+          balance,
+          activity,
+          budgeted,
+          goalType,
+          startMonth,
+          endMonth,
+          target,
+        }) => (
+          <div>
+            {categories.find(({ _id }) => _id === categoryId)?.name} (
+            {GoalType[goalType]} - {getDisplayFormattedAmount(target)} between{' '}
+            {getMonthNameFromDate(startMonth)} and{' '}
+            {getMonthNameFromDate(endMonth)}): Balance{' '}
+            {getDisplayFormattedAmount(balance)} (
+            {getDisplayFormattedAmount(budgeted)} this month) - Activity{' '}
+            {getDisplayFormattedAmount(activity)} - Goal Type - Start Month{' '}
+          </div>
+        )
+      )}
+    </div>
     <h3>Categories</h3>
     <table>
       <tbody>
         <tr>
-          <th>Category name</th>
+          <th>Category</th>
           <th>Total</th>
         </tr>
         {monthCategories.map(({ categoryName, total }) => (

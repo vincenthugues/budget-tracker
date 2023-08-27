@@ -5,6 +5,7 @@ import { usePayees } from '../hooks/usePayees';
 import { useTransactions } from '../hooks/useTransactions';
 import { Account } from '../types/Account';
 import { Category } from '../types/Category';
+import { GoalType, Month } from '../types/Month';
 import { Payee } from '../types/Payee';
 import { Transaction } from '../types/Transaction';
 import { getMonthNameFromDate } from '../utils/getMonthNameFromDate';
@@ -49,6 +50,7 @@ const useMonthBudgetData = (): {
     accounts: Account[];
     categories: Category[];
     payees: Payee[];
+    month: Month;
     transactions: Transaction[];
   };
   isLoading: boolean;
@@ -69,6 +71,48 @@ const useMonthBudgetData = (): {
     isLoading: payeesIsLoading,
     error: payeesError,
   } = usePayees();
+  const month: Month = {
+    income: 100000,
+    monthDate: new Date(),
+    goals: [
+      {
+        categoryId: '63701d1b61bb3c8261f75ba5', // Gifts
+        target: 30000,
+        balance: 0,
+        activity: 0,
+        budgeted: 0,
+        goalType: GoalType.BalanceByDate,
+        startMonth: new Date('2022-03-01T12:00:00Z'),
+        endMonth: new Date('2022-06-01T12:00:00Z'),
+        isHidden: false,
+      },
+      {
+        categoryId: '63701d1b61bb3c8261f75b93', // Health
+        target: 12000,
+        balance: 10000,
+        activity: 0,
+        budgeted: 0,
+        goalType: GoalType.MinimumBalance,
+        startMonth: new Date('2022-03-01T12:00:00Z'),
+        endMonth: new Date('2022-03-01T12:00:00Z'),
+        isHidden: false,
+      },
+      {
+        categoryId: '63701d1b61bb3c8261f75b92', // Groceries/food
+        balance: 20000,
+        activity: 0,
+        budgeted: 5000,
+        goalType: GoalType.MonthlyBudget,
+        target: 10000,
+        startMonth: new Date('2022-03-01T12:00:00Z'),
+        endMonth: new Date('2022-03-01T12:00:00Z'),
+        isHidden: false,
+      },
+    ],
+    activity: 12300,
+    budgeted: 50000,
+    toBeBudgeted: 50000,
+  };
   const {
     transactions = [],
     isLoading: transactionsIsLoading,
@@ -101,6 +145,7 @@ const useMonthBudgetData = (): {
       accounts,
       categories,
       payees,
+      month,
       transactions: sortedFilteredTransactions,
     },
     isLoading,
@@ -137,7 +182,7 @@ const getTargetMonthAndYear = (
 
 export const MonthBudgetPage = (): JSX.Element => {
   const {
-    data: { accounts, categories, payees, transactions },
+    data: { accounts, categories, payees, month, transactions },
     isLoading,
     errors,
   } = useMonthBudgetData();
@@ -150,7 +195,7 @@ export const MonthBudgetPage = (): JSX.Element => {
     return <div>Loading...</div>;
   }
 
-  const [month, year] = getTargetMonthAndYear(transactions);
+  const [targetMonth, targetYear] = getTargetMonthAndYear(transactions);
 
   const transactionsByCategory = groupTransactionsByCategory(transactions);
   const monthCategories = Object.entries(transactionsByCategory).map(
@@ -176,8 +221,9 @@ export const MonthBudgetPage = (): JSX.Element => {
 
   return (
     <MonthBudget
-      monthName={month}
-      year={year}
+      monthName={targetMonth}
+      year={targetYear}
+      month={month}
       totalIncome={totalIncome}
       totalSpending={totalSpending}
       monthCategories={monthCategories}
