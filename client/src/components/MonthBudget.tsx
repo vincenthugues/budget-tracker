@@ -7,6 +7,12 @@ import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
 import { getDisplayFormattedDate } from '../utils/getDisplayFormattedDate';
 import { getMonthNameFromDate } from '../utils/getMonthNameFromDate';
 
+const getCategoryName = (
+  categoryId: string,
+  categories: Category[]
+): string | undefined =>
+  categories.find((category) => category._id === categoryId)?.name;
+
 const MonthTransactionRow = ({
   transaction: { date, amount, accountId, payeeId, categoryId },
   accounts,
@@ -22,7 +28,7 @@ const MonthTransactionRow = ({
     <td>{getDisplayFormattedDate(date)}</td>
     <td>{accounts.find(({ _id }) => _id === accountId)?.name}</td>
     <td>{payees.find(({ _id }) => _id === payeeId)?.name}</td>
-    <td>{categories.find(({ _id }) => _id === categoryId)?.name}</td>
+    <td>{categoryId && getCategoryName(categoryId, categories)}</td>
     <td>{getDisplayFormattedAmount(amount)}</td>
   </tr>
 );
@@ -55,6 +61,24 @@ const getCategoryGoalDisplayInfo = (categoryId: string, goals: Goal[]) => {
   )} this month, activity ${getDisplayFormattedAmount(activity)}`;
 };
 
+const groupCategoriesByParentCategoryId = (categories: Category[]) =>
+  categories.reduce(
+    (acc: Record<Category['_id'], Category['_id'][]>, category: Category) => {
+      if (!category.parentCategoryId) {
+        return acc;
+      }
+
+      return {
+        ...acc,
+        [category.parentCategoryId]: [
+          ...(acc[category.parentCategoryId] || []),
+          category._id,
+        ],
+      };
+    },
+    {}
+  );
+
 export const MonthBudget = ({
   monthName,
   year,
@@ -78,6 +102,9 @@ export const MonthBudget = ({
   payees: Payee[];
   categories: Category[];
 }): JSX.Element => {
+  const groupedCategoryIds: Record<Category['_id'], Category['_id'][]> =
+    groupCategoriesByParentCategoryId(categories);
+
   return (
     <>
       <h2>
@@ -97,28 +124,24 @@ export const MonthBudget = ({
         Net total: {getDisplayFormattedAmount(totalIncome + totalSpending)}
       </div>
       <table>
-        <tbody>
-          <tr>
-            <th>Category</th>
-            <th>Parent category</th>
-            <th>Goal</th>
-          </tr>
-          {categories
-            .filter(({ isHidden, isDeleted }) => !isHidden && !isDeleted)
-            .map(({ _id, parentCategoryId, name }) => (
-              <tr key={name}>
-                <td>{name}</td>
-                <td>
-                  {
-                    categories.find(
-                      (category) => category._id === parentCategoryId
-                    )?.name
-                  }
-                </td>
-                <td>{getCategoryGoalDisplayInfo(_id, month.goals)}</td>
+        {Object.entries(groupedCategoryIds).map(
+          ([parentCategoryId, categoryIds]) => (
+            <tbody key={parentCategoryId}>
+              <tr>
+                <th>{getCategoryName(parentCategoryId, categories)}</th>
               </tr>
-            ))}
-        </tbody>
+              {categoryIds
+                .map((id) => categories.find(({ _id }) => _id === id)!)
+                .filter(({ isHidden, isDeleted }) => !isHidden && !isDeleted)
+                .map(({ _id, name }) => (
+                  <tr key={name}>
+                    <td>{name}</td>
+                    <td>{getCategoryGoalDisplayInfo(_id, month.goals)}</td>
+                  </tr>
+                ))}
+            </tbody>
+          )
+        )}
       </table>
       <h3>Month categories</h3>
       <table>
