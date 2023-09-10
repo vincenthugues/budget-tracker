@@ -27,6 +27,34 @@ const MonthTransactionRow = ({
   </tr>
 );
 
+const getCategoryGoalDisplayInfo = (categoryId: string, goals: Goal[]) => {
+  const goal = goals.find((monthGoal) => monthGoal.categoryId === categoryId);
+
+  if (!goal || goal.isHidden) return null;
+
+  const {
+    activity,
+    balance,
+    budgeted,
+    endMonth,
+    goalType,
+    startMonth,
+    target,
+  } = goal;
+
+  return `[${GoalType[goalType]}] ${getDisplayFormattedAmount(
+    balance
+  )}/${getDisplayFormattedAmount(target)} by end of ${
+    getMonthNameFromDate(startMonth) !== getMonthNameFromDate(endMonth)
+      ? `${getMonthNameFromDate(endMonth)} (since ${getMonthNameFromDate(
+          startMonth
+        )})`
+      : 'the month'
+  }: ${getDisplayFormattedAmount(
+    budgeted
+  )} this month, activity ${getDisplayFormattedAmount(activity)}`;
+};
+
 export const MonthBudget = ({
   monthName,
   year,
@@ -50,34 +78,6 @@ export const MonthBudget = ({
   payees: Payee[];
   categories: Category[];
 }): JSX.Element => {
-  const getCategoryGoalDisplayInfo = (categoryId: string, goals: Goal[]) => {
-    const goal = goals.find((monthGoal) => monthGoal.categoryId === categoryId);
-
-    if (!goal || goal.isHidden) return null;
-
-    const {
-      activity,
-      balance,
-      budgeted,
-      endMonth,
-      goalType,
-      startMonth,
-      target,
-    } = goal;
-
-    return `[${GoalType[goalType]}] ${getDisplayFormattedAmount(
-      balance
-    )}/${getDisplayFormattedAmount(target)} by end of ${
-      getMonthNameFromDate(startMonth) !== getMonthNameFromDate(endMonth)
-        ? `${getMonthNameFromDate(endMonth)} (since ${getMonthNameFromDate(
-            startMonth
-          )})`
-        : 'the month'
-    }: ${getDisplayFormattedAmount(
-      budgeted
-    )} this month, activity ${getDisplayFormattedAmount(activity)}`;
-  };
-
   return (
     <>
       <h2>
@@ -102,11 +102,10 @@ export const MonthBudget = ({
             <th>Category</th>
             <th>Parent category</th>
             <th>Goal</th>
-            <th>isHidden</th>
-            <th>isDeleted</th>
           </tr>
-          {categories.map(
-            ({ _id, parentCategoryId, name, isHidden, isDeleted }) => (
+          {categories
+            .filter(({ isHidden, isDeleted }) => !isHidden && !isDeleted)
+            .map(({ _id, parentCategoryId, name }) => (
               <tr key={name}>
                 <td>{name}</td>
                 <td>
@@ -117,11 +116,8 @@ export const MonthBudget = ({
                   }
                 </td>
                 <td>{getCategoryGoalDisplayInfo(_id, month.goals)}</td>
-                <td>{isHidden === true ? 'true' : 'false'}</td>
-                <td>{isDeleted === true ? 'true' : 'false'}</td>
               </tr>
-            )
-          )}
+            ))}
         </tbody>
       </table>
       <h3>Month categories</h3>
