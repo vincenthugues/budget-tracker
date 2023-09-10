@@ -1,6 +1,6 @@
 import { Account } from '../types/Account';
 import { Category } from '../types/Category';
-import { GoalType, Month } from '../types/Month';
+import { Goal, GoalType, Month } from '../types/Month';
 import { Payee } from '../types/Payee';
 import { Transaction } from '../types/Transaction';
 import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
@@ -50,16 +50,32 @@ export const MonthBudget = ({
   payees: Payee[];
   categories: Category[];
 }): JSX.Element => {
-  const getCategoryGoalDisplayInfo = (id: string) => {
-    const goal = month.goals.find(({ categoryId }) => categoryId === id);
+  const getCategoryGoalDisplayInfo = (categoryId: string, goals: Goal[]) => {
+    const goal = goals.find((monthGoal) => monthGoal.categoryId === categoryId);
 
-    if (!goal) return null;
+    if (!goal || goal.isHidden) return null;
 
-    return `${getDisplayFormattedAmount(
-      goal.balance
-    )}/${getDisplayFormattedAmount(goal.target)} (${getDisplayFormattedAmount(
-      goal.budgeted
-    )} this month)`;
+    const {
+      activity,
+      balance,
+      budgeted,
+      endMonth,
+      goalType,
+      startMonth,
+      target,
+    } = goal;
+
+    return `[${GoalType[goalType]}] ${getDisplayFormattedAmount(
+      balance
+    )}/${getDisplayFormattedAmount(target)} by end of ${
+      getMonthNameFromDate(startMonth) !== getMonthNameFromDate(endMonth)
+        ? `${getMonthNameFromDate(endMonth)} (since ${getMonthNameFromDate(
+            startMonth
+          )})`
+        : 'the month'
+    }: ${getDisplayFormattedAmount(
+      budgeted
+    )} this month, activity ${getDisplayFormattedAmount(activity)}`;
   };
 
   return (
@@ -80,32 +96,6 @@ export const MonthBudget = ({
       <div>
         Net total: {getDisplayFormattedAmount(totalIncome + totalSpending)}
       </div>
-      <div>
-        Goals
-        {month.goals.map(
-          ({
-            categoryId,
-            balance,
-            activity,
-            budgeted,
-            goalType,
-            startMonth,
-            endMonth,
-            target,
-          }) => (
-            <div>
-              {categories.find(({ _id }) => _id === categoryId)?.name} (
-              {GoalType[goalType]} - {getDisplayFormattedAmount(target)} between{' '}
-              {getMonthNameFromDate(startMonth)} and{' '}
-              {getMonthNameFromDate(endMonth)}): Balance{' '}
-              {getDisplayFormattedAmount(balance)} (
-              {getDisplayFormattedAmount(budgeted)} this month) - Activity{' '}
-              {getDisplayFormattedAmount(activity)} - Goal Type - Start Month{' '}
-            </div>
-          )
-        )}
-      </div>
-      <h3>Categories</h3>
       <table>
         <tbody>
           <tr>
@@ -126,7 +116,7 @@ export const MonthBudget = ({
                     )?.name
                   }
                 </td>
-                <td>{getCategoryGoalDisplayInfo(_id)}</td>
+                <td>{getCategoryGoalDisplayInfo(_id, month.goals)}</td>
                 <td>{isHidden === true ? 'true' : 'false'}</td>
                 <td>{isDeleted === true ? 'true' : 'false'}</td>
               </tr>
