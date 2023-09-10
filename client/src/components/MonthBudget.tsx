@@ -124,8 +124,14 @@ export const MonthBudget = ({
         Net total: {getDisplayFormattedAmount(totalIncome + totalSpending)}
       </div>
       <table>
-        {Object.entries(groupedCategoryIds).map(
-          ([parentCategoryId, categoryIds]) => (
+        {Object.entries(groupedCategoryIds)
+          .filter(([parentCategoryId]) => {
+            const category = categories.find(
+              ({ _id }) => _id === parentCategoryId
+            );
+            return category && !category.isDeleted && !category.isHidden;
+          })
+          .map(([parentCategoryId, categoryIds]) => (
             <tbody key={parentCategoryId}>
               <tr>
                 <th>{getCategoryName(parentCategoryId, categories)}</th>
@@ -140,8 +146,7 @@ export const MonthBudget = ({
                   </tr>
                 ))}
             </tbody>
-          )
-        )}
+          ))}
       </table>
       <h3>Month categories</h3>
       <table>

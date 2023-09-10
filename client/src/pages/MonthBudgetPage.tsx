@@ -219,6 +219,11 @@ export const MonthBudgetPage = (): JSX.Element => {
     0
   );
 
+  const categoriesWithEnforcedDefaultHidden = categories.map((category) => {
+    if (category.name === 'Hidden Categories') category.isHidden = true;
+    return category;
+  });
+
   return (
     <MonthBudget
       monthName={targetMonth}
@@ -230,7 +235,7 @@ export const MonthBudgetPage = (): JSX.Element => {
       transactions={transactions}
       accounts={accounts}
       payees={payees}
-      categories={categories}
+      categories={categoriesWithEnforcedDefaultHidden}
     />
   );
 };
