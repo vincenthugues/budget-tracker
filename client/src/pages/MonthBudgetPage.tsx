@@ -198,16 +198,11 @@ export const MonthBudgetPage = (): JSX.Element => {
   const [targetMonth, targetYear] = getTargetMonthAndYear(transactions);
 
   const transactionsByCategory = groupTransactionsByCategory(transactions);
-  const monthCategories = Object.entries(transactionsByCategory).map(
-    ([categoryId, transactions]) => ({
-      categoryName: categoryId
-        ? categories.find(({ _id }) => _id === categoryId)?.name
-        : 'None',
-      total: transactions.reduce(
-        (total: number, { amount }) => total + amount,
-        0
-      ),
-    })
+  const totalByCategoryId = Object.fromEntries(
+    Object.entries(transactionsByCategory).map(([categoryId, transactions]) => [
+      categoryId,
+      transactions.reduce((total: number, { amount }) => total + amount, 0),
+    ])
   );
 
   const totalIncome = transactions.reduce(
@@ -231,7 +226,7 @@ export const MonthBudgetPage = (): JSX.Element => {
       month={month}
       totalIncome={totalIncome}
       totalSpending={totalSpending}
-      monthCategories={monthCategories}
+      totalByCategoryId={totalByCategoryId}
       transactions={transactions}
       accounts={accounts}
       payees={payees}

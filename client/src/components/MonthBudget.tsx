@@ -85,7 +85,7 @@ export const MonthBudget = ({
   month,
   totalIncome,
   totalSpending,
-  monthCategories,
+  totalByCategoryId,
   transactions,
   accounts,
   payees,
@@ -96,7 +96,7 @@ export const MonthBudget = ({
   month: Month;
   totalIncome: number;
   totalSpending: number;
-  monthCategories: { categoryName: string | undefined; total: number }[];
+  totalByCategoryId: { [categoryId: Category['_id']]: number };
   transactions: Transaction[];
   accounts: Account[];
   payees: Payee[];
@@ -143,27 +143,15 @@ export const MonthBudget = ({
                   <tr key={name}>
                     <td>{name}</td>
                     <td>{getCategoryGoalDisplayInfo(_id, month.goals)}</td>
+                    <td>
+                      {getDisplayFormattedAmount(totalByCategoryId[_id] || 0)}
+                    </td>
                   </tr>
                 ))}
             </tbody>
           ))}
       </table>
-      <h3>Month categories</h3>
-      <table>
-        <tbody>
-          <tr>
-            <th>Category</th>
-            <th>Total</th>
-          </tr>
-          {monthCategories.map(({ categoryName, total }) => (
-            <tr key={categoryName}>
-              <td>{categoryName}</td>
-              <td>{getDisplayFormattedAmount(total)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h3>Transactions</h3>
+      <h3>Month transactions</h3>
       <table>
         <tbody>
           <tr>
