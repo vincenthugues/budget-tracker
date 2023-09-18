@@ -5,22 +5,25 @@ export enum GoalType {
 }
 
 export type Goal = {
-  categoryId: string;
   goalType: GoalType;
   target: number;
+  startMonth: Date;
+  endMonth: Date;
+};
+
+export type MonthCategory = {
+  categoryId: string;
   budgeted: number;
   activity: number;
   balance: number;
-  isHidden: boolean;
-  startMonth: Date;
-  endMonth: Date;
+  goals: Goal[];
 };
 
 export type Month = {
   monthDate: Date;
   income: number;
-  goals: Goal[];
-  budgeted?: number;
-  toBeBudgeted?: number;
-  activity?: number;
+  budgeted: number;
+  toBeBudgeted: number;
+  activity: number;
+  monthCategories: MonthCategory[];
 };

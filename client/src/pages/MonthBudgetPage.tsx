@@ -5,7 +5,7 @@ import { usePayees } from '../hooks/usePayees';
 import { useTransactions } from '../hooks/useTransactions';
 import { Account } from '../types/Account';
 import { Category } from '../types/Category';
-import { GoalType, Month } from '../types/Month';
+import { Goal, GoalType, Month, MonthCategory } from '../types/Month';
 import { Payee } from '../types/Payee';
 import { Transaction } from '../types/Transaction';
 import { getMonthNameFromDate } from '../utils/getMonthNameFromDate';
@@ -66,53 +66,64 @@ const useMonthBudgetData = (): {
     isLoading: categoriesIsLoading,
     error: categoriesError,
   } = useCategories();
+  const categoriesWithEnforcedDefaultHidden = categories.map((category) => {
+    if (
+      [
+        'Hidden Categories',
+        'Credit Card Payments',
+        'Internal Master Category',
+      ].includes(category.name)
+    )
+      category.isHidden = true;
+    return category;
+  });
+
   const {
     payees = [],
     isLoading: payeesIsLoading,
     error: payeesError,
   } = usePayees();
+
+  const goalsByCategoryId: Record<Category['_id'], Goal> = {
+    // Gifts
+    '63701d1b61bb3c8261f75ba5': {
+      target: 30000,
+      goalType: GoalType.BalanceByDate,
+      startMonth: new Date('2022-03-01T12:00:00Z'),
+      endMonth: new Date('2022-06-01T12:00:00Z'),
+    },
+    // Health
+    '63701d1b61bb3c8261f75b93': {
+      target: 12000,
+      goalType: GoalType.MinimumBalance,
+      startMonth: new Date('2022-03-01T12:00:00Z'),
+      endMonth: new Date('2022-03-01T12:00:00Z'),
+    },
+    // Groceries/food
+    '63701d1b61bb3c8261f75b92': {
+      goalType: GoalType.MonthlyBudget,
+      target: 10000,
+      startMonth: new Date('2022-03-01T12:00:00Z'),
+      endMonth: new Date('2022-03-01T12:00:00Z'),
+    },
+  };
+  const monthCategories: MonthCategory[] =
+    categoriesWithEnforcedDefaultHidden.map(({ _id }) => ({
+      categoryId: _id,
+      balance: 0,
+      activity: 0,
+      budgeted: 0,
+      goals: goalsByCategoryId[_id] ? [goalsByCategoryId[_id]] : [],
+    }));
   const month: Month = {
     income: 100000,
     monthDate: new Date(),
-    goals: [
-      {
-        categoryId: '63701d1b61bb3c8261f75ba5', // Gifts
-        target: 30000,
-        balance: 0,
-        activity: 0,
-        budgeted: 0,
-        goalType: GoalType.BalanceByDate,
-        startMonth: new Date('2022-03-01T12:00:00Z'),
-        endMonth: new Date('2022-06-01T12:00:00Z'),
-        isHidden: false,
-      },
-      {
-        categoryId: '63701d1b61bb3c8261f75b93', // Health
-        target: 12000,
-        balance: 10000,
-        activity: 0,
-        budgeted: 0,
-        goalType: GoalType.MinimumBalance,
-        startMonth: new Date('2022-03-01T12:00:00Z'),
-        endMonth: new Date('2022-03-01T12:00:00Z'),
-        isHidden: false,
-      },
-      {
-        categoryId: '63701d1b61bb3c8261f75b92', // Groceries/food
-        balance: 20000,
-        activity: 0,
-        budgeted: 5000,
-        goalType: GoalType.MonthlyBudget,
-        target: 10000,
-        startMonth: new Date('2022-03-01T12:00:00Z'),
-        endMonth: new Date('2022-03-01T12:00:00Z'),
-        isHidden: false,
-      },
-    ],
+    monthCategories,
     activity: 12300,
     budgeted: 50000,
     toBeBudgeted: 50000,
   };
+
   const {
     transactions = [],
     isLoading: transactionsIsLoading,
@@ -143,7 +154,7 @@ const useMonthBudgetData = (): {
   return {
     data: {
       accounts,
-      categories,
+      categories: categoriesWithEnforcedDefaultHidden,
       payees,
       month,
       transactions: sortedFilteredTransactions,
@@ -214,11 +225,6 @@ export const MonthBudgetPage = (): JSX.Element => {
     0
   );
 
-  const categoriesWithEnforcedDefaultHidden = categories.map((category) => {
-    if (category.name === 'Hidden Categories') category.isHidden = true;
-    return category;
-  });
-
   return (
     <MonthBudget
       monthName={targetMonth}
@@ -230,7 +236,7 @@ export const MonthBudgetPage = (): JSX.Element => {
       transactions={transactions}
       accounts={accounts}
       payees={payees}
-      categories={categoriesWithEnforcedDefaultHidden}
+      categories={categories}
     />
   );
 };

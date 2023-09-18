@@ -1,6 +1,6 @@
 import { Account } from '../types/Account';
 import { Category } from '../types/Category';
-import { Goal, GoalType, Month } from '../types/Month';
+import { Goal, GoalType, Month, MonthCategory } from '../types/Month';
 import { Payee } from '../types/Payee';
 import { Transaction } from '../types/Transaction';
 import { getDisplayFormattedAmount } from '../utils/getDisplayFormattedAmount';
@@ -33,20 +33,13 @@ const MonthTransactionRow = ({
   </tr>
 );
 
-const getCategoryGoalDisplayInfo = (categoryId: string, goals: Goal[]) => {
-  const goal = goals.find((monthGoal) => monthGoal.categoryId === categoryId);
-
-  if (!goal || goal.isHidden) return null;
-
-  const {
-    activity,
-    balance,
-    budgeted,
-    endMonth,
-    goalType,
-    startMonth,
-    target,
-  } = goal;
+const getCategoryGoalDisplayInfo = (
+  goal: Goal,
+  balance: number,
+  budgeted: number,
+  activity: number
+) => {
+  const { endMonth, goalType, startMonth, target } = goal;
 
   return `[${GoalType[goalType]}] ${getDisplayFormattedAmount(
     balance
@@ -61,33 +54,30 @@ const getCategoryGoalDisplayInfo = (categoryId: string, goals: Goal[]) => {
   )} this month, activity ${getDisplayFormattedAmount(activity)}`;
 };
 
-const groupCategoriesByParentCategoryId = (categories: Category[]) =>
-  categories.reduce(
-    (acc: Record<Category['_id'], Category['_id'][]>, category: Category) => {
-      if (!category.parentCategoryId) {
-        return acc;
-      }
+const getChildMonthCategories = (
+  parentCategoryId: string,
+  monthCategories: MonthCategory[],
+  categories: Category[]
+) => {
+  return monthCategories.filter(({ categoryId }) => {
+    const category = categories.find(({ _id }) => _id === categoryId);
+    return category?.parentCategoryId === parentCategoryId;
+  });
+};
 
-      return {
-        ...acc,
-        [category.parentCategoryId]: [
-          ...(acc[category.parentCategoryId] || []),
-          category._id,
-        ],
-      };
-    },
-    {}
-  );
+const isCategoryDisplayed = (categoryId: string, categories: Category[]) => {
+  const category = categories.find(({ _id }) => _id === categoryId);
+
+  return category && !category.isHidden && !category.isDeleted;
+};
 
 const CategoryGroupTable = ({
   parentCategoryId,
-  categoryIds,
   categories,
   month,
   totalByCategoryId,
 }: {
   parentCategoryId: Category['_id'];
-  categoryIds: Category['_id'][];
   categories: Category[];
   month: Month;
   totalByCategoryId: { [categoryId: Category['_id']]: number };
@@ -96,14 +86,30 @@ const CategoryGroupTable = ({
     <tr>
       <th>{getCategoryName(parentCategoryId, categories)}</th>
     </tr>
-    {categoryIds
-      .map((id) => categories.find(({ _id }) => _id === id)!)
-      .filter(({ isHidden, isDeleted }) => !isHidden && !isDeleted)
-      .map(({ _id, name }) => (
-        <tr key={name}>
-          <td>{name}</td>
-          <td>{getCategoryGoalDisplayInfo(_id, month.goals)}</td>
-          <td>{getDisplayFormattedAmount(totalByCategoryId[_id] || 0)}</td>
+    {getChildMonthCategories(
+      parentCategoryId,
+      month.monthCategories,
+      categories
+    )
+      .filter(({ categoryId }) => isCategoryDisplayed(categoryId, categories))
+      .map(({ categoryId, balance, budgeted, activity, goals }) => (
+        <tr key={categoryId}>
+          <td>{getCategoryName(categoryId, categories)}</td>
+          <td>
+            {goals[0]
+              ? getCategoryGoalDisplayInfo(
+                  goals[0],
+                  balance,
+                  budgeted,
+                  activity
+                )
+              : '-'}
+          </td>
+          <td>-</td>
+          <td>
+            {getDisplayFormattedAmount(totalByCategoryId[categoryId] || 0)}
+          </td>
+          <td>-</td>
         </tr>
       ))}
   </tbody>
@@ -132,13 +138,17 @@ export const MonthBudget = ({
   payees: Payee[];
   categories: Category[];
 }): JSX.Element => {
-  const groupedCategoryIds: Record<Category['_id'], Category['_id'][]> =
-    groupCategoriesByParentCategoryId(categories);
-  const visibleCategoryGroups: Array<[Category['_id'], Category['_id'][]]> =
-    Object.entries(groupedCategoryIds).filter(([parentCategoryId]) => {
-      const category = categories.find(({ _id }) => _id === parentCategoryId);
-      return category && !category.isDeleted && !category.isHidden;
-    });
+  const visibleParentCategories = month.monthCategories.filter(
+    ({ categoryId }) => {
+      const category = categories.find(({ _id }) => _id === categoryId);
+      return (
+        category &&
+        !category.parentCategoryId &&
+        !category.isHidden &&
+        !category.isDeleted
+      );
+    }
+  );
 
   return (
     <>
@@ -163,14 +173,15 @@ export const MonthBudget = ({
           <tr>
             <th>Category</th>
             <th>Goal</th>
+            <th>Budgeted</th>
             <th>Activity</th>
+            <th>Available</th>
           </tr>
         </thead>
-        {visibleCategoryGroups.map(([parentCategoryId, categoryIds]) => (
+        {visibleParentCategories.map(({ categoryId }) => (
           <CategoryGroupTable
-            key={parentCategoryId}
-            parentCategoryId={parentCategoryId}
-            categoryIds={categoryIds}
+            key={categoryId}
+            parentCategoryId={categoryId}
             categories={categories}
             month={month}
             totalByCategoryId={totalByCategoryId}
