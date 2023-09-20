@@ -4,7 +4,7 @@ import { useCategories } from '../hooks/useCategories';
 import { usePayees } from '../hooks/usePayees';
 import { useTransactions } from '../hooks/useTransactions';
 import { Account } from '../types/Account';
-import { Category } from '../types/Category';
+import { Category, DEFAULT_IGNORED_CATEGORIES } from '../types/Category';
 import { Goal, GoalType, Month, MonthCategory } from '../types/Month';
 import { Payee } from '../types/Payee';
 import { Transaction } from '../types/Transaction';
@@ -66,17 +66,12 @@ const useMonthBudgetData = (): {
     isLoading: categoriesIsLoading,
     error: categoriesError,
   } = useCategories();
-  const categoriesWithEnforcedDefaultHidden = categories.map((category) => {
-    if (
-      [
-        'Hidden Categories',
-        'Credit Card Payments',
-        'Internal Master Category',
-      ].includes(category.name)
-    )
-      category.isHidden = true;
-    return category;
-  });
+  const categoriesWithEnforcedDefaultHidden = categories.map(
+    ({ isHidden, ...category }) => ({
+      ...category,
+      isHidden: isHidden || DEFAULT_IGNORED_CATEGORIES.includes(category.name),
+    })
+  );
 
   const {
     payees = [],

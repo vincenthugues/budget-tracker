@@ -13,10 +13,11 @@ export const SelectInput = ({
     name={name}
     onChange={onChange}
     required={isOptional !== true}
+    defaultValue=""
   >
-    {isOptional && <option value="">---None---</option>}
+    <option value="">--- None ---</option>
     {options?.map(([optionKey, optionValue]) => (
-      <option key={optionKey} value={optionValue}>
+      <option key={optionKey} value={optionKey}>
         {optionValue}
       </option>
     ))}

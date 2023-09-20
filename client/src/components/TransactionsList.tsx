@@ -6,7 +6,7 @@ import { usePayees } from '../hooks/usePayees';
 import { useResourcesHandler } from '../hooks/useResourcesHandler';
 import { useTransactions } from '../hooks/useTransactions';
 import { Account } from '../types/Account';
-import { Category } from '../types/Category';
+import { Category, DEFAULT_IGNORED_CATEGORIES } from '../types/Category';
 import { CreatorInput } from '../types/Creator';
 import { Payee } from '../types/Payee';
 import { Transaction, TransactionDraft } from '../types/Transaction';
@@ -18,8 +18,14 @@ import Creator from './Creator';
 import DeleteButton from './DeleteButton';
 
 const TransactionCreator = ({
+  accounts,
+  payees,
+  categories,
   onAddTransaction,
 }: {
+  accounts: Account[];
+  payees: Payee[];
+  categories: Category[];
   onAddTransaction: (transaction: Transaction) => void;
 }) => {
   const [showCreator, setShowCreator] = useState(false);
@@ -32,12 +38,30 @@ const TransactionCreator = ({
       defaultValue: getInputCurrentDateTime(),
     },
     { name: 'amount', label: 'Amount', type: 'number' },
-    { name: 'accountId', label: 'Account ID', type: 'string' },
-    { name: 'payeeId', label: 'Payee ID', type: 'string' },
+    {
+      name: 'accountId',
+      label: 'Account',
+      type: 'string',
+      options: accounts.map(({ _id, name }) => [_id, name]),
+    },
+    {
+      name: 'payeeId',
+      label: 'Payee',
+      type: 'string',
+      options: payees.map(({ _id, name }) => [_id, name]),
+    },
     {
       name: 'categoryId',
-      label: 'Category ID',
+      label: 'Category',
       type: 'string',
+      options: categories
+        .filter(
+          ({ name, parentCategoryId, isDeleted }) =>
+            !!parentCategoryId &&
+            !DEFAULT_IGNORED_CATEGORIES.includes(name) &&
+            !isDeleted
+        )
+        .map(({ _id, name }) => [_id, name]),
       isOptional: true,
     },
   ];
@@ -175,7 +199,12 @@ const TransactionsList = (): JSX.Element => {
 
   return (
     <>
-      <TransactionCreator onAddTransaction={addTransaction} />
+      <TransactionCreator
+        accounts={accounts}
+        payees={payees}
+        categories={categories}
+        onAddTransaction={addTransaction}
+      />
       <table>
         <tbody>
           <tr>

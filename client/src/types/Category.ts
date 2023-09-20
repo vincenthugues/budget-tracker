@@ -1,3 +1,11 @@
+export const DEFAULT_IGNORED_CATEGORIES = [
+  'Hidden Categories',
+  'Credit Card Payments',
+  'Internal Master Category',
+  'Deferred Income SubCategory',
+  'Uncategorized',
+];
+
 export type CategoryDraft = {
   _id: string;
   name: string;
