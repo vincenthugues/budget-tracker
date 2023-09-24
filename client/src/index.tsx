@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import AccountsList from './components/AccountsList';
 import CategoriesList from './components/CategoriesList';
 import PayeesList from './components/PayeesList';
 import TransactionsList from './components/TransactionsList';
 import ErrorPage from './error-page';
 import './index.css';
+import { AccountsPage } from './pages/AccountsPage';
 import { BudgetsPage } from './pages/BudgetsPage';
 import { MonthBudgetPage } from './pages/MonthBudgetPage';
 import reportWebVitals from './reportWebVitals';
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'accounts',
-        element: <AccountsList />,
+        element: <AccountsPage />,
       },
       {
         path: 'budgets',
