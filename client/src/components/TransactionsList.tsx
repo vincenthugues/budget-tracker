@@ -8,7 +8,11 @@ import { Account } from '../types/Account';
 import { Category, DEFAULT_IGNORED_CATEGORIES } from '../types/Category';
 import { CreatorInput } from '../types/Creator';
 import { Payee } from '../types/Payee';
-import { Transaction, TransactionDraft } from '../types/Transaction';
+import {
+  Transaction,
+  TransactionDraft,
+  TransferType,
+} from '../types/Transaction';
 import { getInputCurrentDateTime } from '../utils/getInputCurrentDateTime';
 import Creator from './Creator';
 
@@ -32,7 +36,17 @@ export const TransactionCreator = ({
       type: 'datetime-local',
       defaultValue: getInputCurrentDateTime(),
     },
-    { name: 'amount', label: 'Amount', type: 'number' },
+    { name: 'amount', label: 'Amount', type: 'number', min: 0.01 },
+    {
+      name: 'transferType',
+      label: 'Transfer Type',
+      type: 'string',
+      options: [
+        [TransferType.DEBIT, 'Debit'],
+        [TransferType.CREDIT, 'Credit'],
+      ],
+      defaultValue: TransferType.DEBIT,
+    },
     {
       name: 'accountId',
       label: 'Account',

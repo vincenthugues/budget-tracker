@@ -1,3 +1,4 @@
+import { TransferType } from '../types/Transaction';
 import { getTransactionYearMonth } from './getTransactionYearMonth';
 
 describe('getTransactionYearMonth', () => {
@@ -5,6 +6,7 @@ describe('getTransactionYearMonth', () => {
     const transaction = {
       _id: '',
       amount: 123,
+      transferType: TransferType.DEBIT,
       accountId: '',
       payeeId: '',
     };

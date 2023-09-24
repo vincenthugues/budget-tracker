@@ -4,7 +4,11 @@ import { Model, Types } from 'mongoose';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { FilterTransactionDto } from './dto/filter-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
-import { Transaction, TransactionDocument } from './schemas/transaction.schema';
+import {
+  Transaction,
+  TransactionDocument,
+  TransferType,
+} from './schemas/transaction.schema';
 
 @Injectable()
 export class TransactionsService {
@@ -16,7 +20,13 @@ export class TransactionsService {
   create(
     createTransactionDto: CreateTransactionDto,
   ): Promise<TransactionDocument> {
-    return this.transactionModel.create(createTransactionDto);
+    const { transferType, ...transaction } = createTransactionDto;
+
+    return this.transactionModel.create({
+      ...transaction,
+      amount:
+        transaction.amount * (transferType === TransferType.CREDIT ? 1 : -1),
+    });
   }
 
   findAll(filters?: FilterTransactionDto): Promise<TransactionDocument[]> {
@@ -36,8 +46,19 @@ export class TransactionsService {
     id: Types.ObjectId,
     updateTransactionDto: UpdateTransactionDto,
   ): Promise<TransactionDocument> {
+    const { transferType, ...transactionUpdate } = updateTransactionDto;
+
     const transaction = await this.transactionModel
-      .findByIdAndUpdate(id, updateTransactionDto, { new: true })
+      .findByIdAndUpdate(
+        id,
+        {
+          ...transactionUpdate,
+          amount:
+            transactionUpdate.amount *
+            (transferType === TransferType.CREDIT ? 1 : -1),
+        },
+        { new: true },
+      )
       .exec();
     if (!transaction) {
       throw new NotFoundException(`No transaction found for id ${id}`);

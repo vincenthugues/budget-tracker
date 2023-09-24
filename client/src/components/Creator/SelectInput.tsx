@@ -2,7 +2,7 @@ import { ChangeEventHandler } from 'react';
 import { CreatorInput } from '../../types/Creator';
 
 export const SelectInput = ({
-  property: { name, isOptional, options },
+  property: { name, isOptional, options, defaultValue },
   onChange,
 }: {
   property: CreatorInput;
@@ -13,9 +13,9 @@ export const SelectInput = ({
     name={name}
     onChange={onChange}
     required={isOptional !== true}
-    defaultValue=""
+    defaultValue={defaultValue || ''}
   >
-    <option value="">--- None ---</option>
+    {(isOptional || !defaultValue) && <option value="">--- None ---</option>}
     {options?.map(([optionKey, optionValue]) => (
       <option key={optionKey} value={optionKey}>
         {optionValue}

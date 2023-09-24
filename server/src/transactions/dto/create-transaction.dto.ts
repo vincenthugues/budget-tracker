@@ -2,12 +2,15 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsDateString,
+  IsEnum,
   IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
 } from 'class-validator';
+import { TransferType } from '../schemas/transaction.schema';
 
 export class CreateTransactionDto {
   @IsDateString()
@@ -15,8 +18,13 @@ export class CreateTransactionDto {
   readonly date: Date;
 
   @IsNumber()
+  @IsPositive()
   @Type(() => Number)
   readonly amount: number;
+
+  @IsEnum(TransferType)
+  @IsNotEmpty()
+  readonly transferType: TransferType;
 
   @IsMongoId()
   @IsNotEmpty()

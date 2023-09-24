@@ -5,6 +5,11 @@ import { Account } from '../../accounts/schemas/account.schema';
 import { Category } from '../../categories/schemas/category.schema';
 import { Payee } from '../../payees/schemas/payee.schema';
 
+export enum TransferType {
+  DEBIT = 'Debit',
+  CREDIT = 'Credit',
+}
+
 export type TransactionDocument = Transaction & Document;
 
 @Schema({ timestamps: true })

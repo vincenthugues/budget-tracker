@@ -1,7 +1,7 @@
 import { CreatorInput } from '../../types/Creator';
 
 export const DefaultInput = ({
-  property: { name, type, isOptional },
+  property: { name, type, isOptional, min },
   value,
   setValue,
 }: {
@@ -13,6 +13,7 @@ export const DefaultInput = ({
     id={name}
     name={name}
     type={type}
+    min={min}
     value={value}
     onChange={({ target: { value: newValue } }) => {
       setValue(type === 'number' ? Number(newValue) : newValue);
