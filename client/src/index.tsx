@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import CategoriesList from './components/CategoriesList';
-import PayeesList from './components/PayeesList';
 import TransactionsList from './components/TransactionsList';
 import ErrorPage from './error-page';
 import './index.css';
 import { AccountsPage } from './pages/AccountsPage';
 import { BudgetsPage } from './pages/BudgetsPage';
 import { MonthBudgetPage } from './pages/MonthBudgetPage';
+import { PayeesPage } from './pages/PayeesPage';
 import reportWebVitals from './reportWebVitals';
 
 const router = createBrowserRouter([
@@ -36,7 +36,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'payees',
-        element: <PayeesList />,
+        element: <PayeesPage />,
       },
       {
         path: 'transactions',
