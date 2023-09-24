@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import TransactionsList from './components/TransactionsList';
 import ErrorPage from './error-page';
 import './index.css';
 import { AccountsPage } from './pages/AccountsPage';
@@ -10,6 +9,7 @@ import { BudgetsPage } from './pages/BudgetsPage';
 import { CategoriesPage } from './pages/CategoriesPage';
 import { MonthBudgetPage } from './pages/MonthBudgetPage';
 import { PayeesPage } from './pages/PayeesPage';
+import { TransactionsPage } from './pages/TransactionsPage';
 import reportWebVitals from './reportWebVitals';
 
 const router = createBrowserRouter([
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'transactions',
-        element: <TransactionsList />,
+        element: <TransactionsPage />,
       },
     ],
   },
