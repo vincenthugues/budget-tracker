@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMonthDto } from './dto/create-month.dto';
 import { UpdateMonthDto } from './dto/update-month.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class MonthsService {
@@ -12,15 +13,15 @@ export class MonthsService {
     return `This action returns all months`;
   }
 
-  findOne(id: number) {
+  findOne(id: Types.ObjectId) {
     return `This action returns a #${id} month`;
   }
 
-  update(id: number, updateMonthDto: UpdateMonthDto) {
+  update(id: Types.ObjectId, updateMonthDto: UpdateMonthDto) {
     return `This action updates a #${id} month`;
   }
 
-  remove(id: number) {
+  remove(id: Types.ObjectId) {
     return `This action removes a #${id} month`;
   }
 }

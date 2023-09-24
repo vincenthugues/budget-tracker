@@ -1,7 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { MonthsService } from './months.service';
 import { CreateMonthDto } from './dto/create-month.dto';
 import { UpdateMonthDto } from './dto/update-month.dto';
+import { Types } from 'mongoose';
 
 @Controller('months')
 export class MonthsController {
@@ -18,17 +27,20 @@ export class MonthsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.monthsService.findOne(+id);
+  findOne(@Param('id') id: Types.ObjectId) {
+    return this.monthsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMonthDto: UpdateMonthDto) {
-    return this.monthsService.update(+id, updateMonthDto);
+  update(
+    @Param('id') id: Types.ObjectId,
+    @Body() updateMonthDto: UpdateMonthDto,
+  ) {
+    return this.monthsService.update(id, updateMonthDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.monthsService.remove(+id);
+  remove(@Param('id') id: Types.ObjectId) {
+    return this.monthsService.remove(id);
   }
 }
