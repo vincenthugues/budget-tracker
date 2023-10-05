@@ -7,9 +7,15 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
+import { CreateTransactionUseCase } from './create-transaction.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { Transaction, TransactionSchema } from './schemas/transaction.schema';
+import {
+  Transaction,
+  TransactionSchema,
+  TransferType,
+} from './schemas/transaction.schema';
 import { TransactionsController } from './transactions.controller';
+import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
 
 describe('TransactionsService', () => {
@@ -19,6 +25,7 @@ describe('TransactionsService', () => {
   const BASE_TRANSACTION_PAYLOAD: CreateTransactionDto = {
     date: new Date('2022-01-15'),
     amount: 123,
+    transferType: TransferType.DEBIT,
     accountId: '5e1a0651741b255ddda996c4',
     payeeId: '5e1a0651741b255ddda996c4',
     categoryId: '5e1a0651741b255ddda996c4',
@@ -38,6 +45,8 @@ describe('TransactionsService', () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [TransactionsController],
       providers: [
+        CreateTransactionUseCase,
+        TransactionsRepository,
         TransactionsService,
         {
           provide: getModelToken(Transaction.name),
@@ -56,21 +65,6 @@ describe('TransactionsService', () => {
 
   afterAll(async () => {
     await teardownInMemoryMongo();
-  });
-
-  describe('create', () => {
-    it('should return the saved object with timestamps', async () => {
-      const createdTransaction = await transactionsService.create({
-        ...BASE_TRANSACTION_PAYLOAD,
-        notes: '[create] Test transaction',
-      });
-
-      expect(createdTransaction).toMatchObject({
-        notes: '[create] Test transaction',
-      });
-      expect(createdTransaction.createdAt).toBeDefined();
-      expect(createdTransaction.updatedAt).toBeDefined();
-    });
   });
 
   describe('findAll', () => {

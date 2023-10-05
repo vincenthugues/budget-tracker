@@ -16,11 +16,8 @@ import { CategoriesService } from '../categories/categories.service';
 import { CategoryDocument } from '../categories/schemas/category.schema';
 import { PayeesService } from '../payees/payees.service';
 import { PayeeDocument } from '../payees/schemas/payee.schema';
-import {
-  TransactionDocument,
-  TransferType,
-} from '../transactions/schemas/transaction.schema';
-import { TransactionsService } from '../transactions/transactions.service';
+import { TransactionDocument } from '../transactions/schemas/transaction.schema';
+import { TransactionsRepository } from '../transactions/transactions.repository';
 import {
   AccountImportDto,
   BudgetImportDto,
@@ -38,7 +35,7 @@ export class ImportController {
     private readonly accountsService: AccountsService,
     private readonly categoriesService: CategoriesService,
     private readonly payeesService: PayeesService,
-    private readonly transactionsService: TransactionsService,
+    private readonly transactionsRepository: TransactionsRepository,
   ) {}
 
   async createBudget({
@@ -124,10 +121,9 @@ export class ImportController {
         }),
       ]);
 
-    return this.transactionsService.create({
+    return this.transactionsRepository.create({
       date: new Date(date),
-      amount: Math.abs(amount),
-      transferType: amount <= 0 ? TransferType.DEBIT : TransferType.CREDIT,
+      amount,
       accountId: matchedAccounts[0]?._id,
       payeeId: matchedPayees[0]?._id,
       categoryId: matchedCategories[0]?._id,
@@ -178,7 +174,7 @@ export class ImportController {
     const resourceCreationHandler = HandlerByResourceName[resourceName];
 
     if (!resourceCreationHandler) {
-      console.log(`import: Resource "${resourceName}" unhandled`);
+      console.warn(`import: Resource "${resourceName}" unhandled`);
       throw new BadRequestException(
         `import: Resource "${resourceName}" unhandled`,
       );

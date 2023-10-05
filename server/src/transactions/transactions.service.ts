@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { FilterTransactionDto } from './dto/filter-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import {
@@ -16,18 +15,6 @@ export class TransactionsService {
     @InjectModel(Transaction.name)
     private transactionModel: Model<TransactionDocument>,
   ) {}
-
-  create(
-    createTransactionDto: CreateTransactionDto,
-  ): Promise<TransactionDocument> {
-    const { transferType, ...transaction } = createTransactionDto;
-
-    return this.transactionModel.create({
-      ...transaction,
-      amount:
-        transaction.amount * (transferType === TransferType.CREDIT ? 1 : -1),
-    });
-  }
 
   findAll(filters?: FilterTransactionDto): Promise<TransactionDocument[]> {
     return this.transactionModel.find(filters).exec();
@@ -46,7 +33,7 @@ export class TransactionsService {
     id: Types.ObjectId,
     updateTransactionDto: UpdateTransactionDto,
   ): Promise<TransactionDocument> {
-    const { transferType, ...transactionUpdate } = updateTransactionDto;
+    const { transferType, amount, ...transactionUpdate } = updateTransactionDto;
 
     const transaction = await this.transactionModel
       .findByIdAndUpdate(
@@ -54,8 +41,9 @@ export class TransactionsService {
         {
           ...transactionUpdate,
           amount:
-            transactionUpdate.amount *
-            (transferType === TransferType.CREDIT ? 1 : -1),
+            amount !== undefined
+              ? amount * (transferType === TransferType.CREDIT ? 1 : -1)
+              : undefined,
         },
         { new: true },
       )

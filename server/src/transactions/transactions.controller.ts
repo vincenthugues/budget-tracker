@@ -20,11 +20,15 @@ import { FilterTransactionDto } from './dto/filter-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 import { TransactionsService } from './transactions.service';
+import { CreateTransactionUseCase } from './create-transaction.use-case';
 
 @ApiTags('transactions')
 @Controller('transactions')
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(
+    private readonly createTransactionUseCase: CreateTransactionUseCase,
+    private readonly transactionsService: TransactionsService,
+  ) {}
 
   @Post()
   @ApiCreatedResponse({
@@ -34,7 +38,7 @@ export class TransactionsController {
   create(
     @Body() createTransactionDto: CreateTransactionDto,
   ): Promise<TransactionDocument> {
-    return this.transactionsService.create(createTransactionDto);
+    return this.createTransactionUseCase.execute(createTransactionDto);
   }
 
   @Get()

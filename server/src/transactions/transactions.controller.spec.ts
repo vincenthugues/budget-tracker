@@ -7,13 +7,15 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
+import { CreateTransactionUseCase } from './create-transaction.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import {
   Transaction,
-  TransactionDocument,
   TransactionSchema,
+  TransferType,
 } from './schemas/transaction.schema';
 import { TransactionsController } from './transactions.controller';
+import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
 
 describe('TransactionsController', () => {
@@ -23,6 +25,7 @@ describe('TransactionsController', () => {
   const BASE_TRANSACTION_PAYLOAD: CreateTransactionDto = {
     date: new Date('2022-01-15'),
     amount: 123,
+    transferType: TransferType.DEBIT,
     accountId: '5e1a0651741b255ddda996c4',
     payeeId: '5e1a0651741b255ddda996c4',
     categoryId: '5e1a0651741b255ddda996c4',
@@ -42,6 +45,8 @@ describe('TransactionsController', () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [TransactionsController],
       providers: [
+        CreateTransactionUseCase,
+        TransactionsRepository,
         TransactionsService,
         {
           provide: getModelToken(Transaction.name),
@@ -65,12 +70,14 @@ describe('TransactionsController', () => {
 
   describe('[POST]', () => {
     it('should return the saved object', async () => {
-      const createdTransaction = await transactionsController.create({
+      const transactionPayload = {
         ...BASE_TRANSACTION_PAYLOAD,
         notes: 'Test',
-      });
+      };
 
-      expect(createdTransaction).toMatchObject({ notes: 'Test' });
+      await expect(
+        transactionsController.create(transactionPayload),
+      ).resolves.toMatchObject({ notes: 'Test' });
     });
 
     it('should fail if the date is empty', async () => {
@@ -79,7 +86,7 @@ describe('TransactionsController', () => {
         date: null,
       };
 
-      expect(
+      await expect(
         transactionsController.create(transactionPayload),
       ).rejects.toThrowError(
         'Transaction validation failed: date: Path `date` is required.',
@@ -89,13 +96,13 @@ describe('TransactionsController', () => {
     it('should fail if the amount is empty', async () => {
       const transactionPayload = {
         ...BASE_TRANSACTION_PAYLOAD,
-        amount: null,
+        amount: undefined,
       };
 
-      expect(
+      await expect(
         transactionsController.create(transactionPayload),
       ).rejects.toThrowError(
-        'Transaction validation failed: amount: Path `amount` is required.',
+        'Transaction validation failed: amount: Cast to Number failed for value "NaN" (type number) at path "amount"',
       );
     });
 
@@ -105,7 +112,7 @@ describe('TransactionsController', () => {
         accountId: null,
       };
 
-      expect(
+      await expect(
         transactionsController.create(transactionPayload),
       ).rejects.toThrowError(
         'Transaction validation failed: accountId: Path `accountId` is required.',
@@ -118,7 +125,7 @@ describe('TransactionsController', () => {
         payeeId: null,
       };
 
-      expect(
+      await expect(
         transactionsController.create(transactionPayload),
       ).rejects.toThrowError(
         'Transaction validation failed: payeeId: Path `payeeId` is required.',
@@ -131,9 +138,11 @@ describe('TransactionsController', () => {
         categoryId: null,
       };
 
-      expect(
-        await transactionsController.create(transactionPayload),
-      ).toMatchObject({ categoryId: null });
+      await expect(
+        transactionsController.create(transactionPayload),
+      ).resolves.toMatchObject({
+        categoryId: null,
+      });
     });
 
     it('should work if isCleared is undefined; defaults to false', async () => {
@@ -142,9 +151,9 @@ describe('TransactionsController', () => {
         isCleared: undefined,
       };
 
-      expect(
-        await transactionsController.create(transactionPayload),
-      ).toMatchObject({
+      await expect(
+        transactionsController.create(transactionPayload),
+      ).resolves.toMatchObject({
         isCleared: false,
       });
     });
@@ -155,9 +164,9 @@ describe('TransactionsController', () => {
         isDeleted: undefined,
       };
 
-      expect(
-        await transactionsController.create(transactionPayload),
-      ).toMatchObject({
+      await expect(
+        transactionsController.create(transactionPayload),
+      ).resolves.toMatchObject({
         isDeleted: false,
       });
     });
@@ -168,9 +177,9 @@ describe('TransactionsController', () => {
         externalId: undefined,
       };
 
-      expect(
-        await transactionsController.create(transactionPayload),
-      ).toMatchObject({
+      await expect(
+        transactionsController.create(transactionPayload),
+      ).resolves.toMatchObject({
         externalId: undefined,
       });
     });
@@ -181,9 +190,9 @@ describe('TransactionsController', () => {
         notes: undefined,
       };
 
-      expect(
-        await transactionsController.create(transactionPayload),
-      ).toMatchObject({
+      await expect(
+        transactionsController.create(transactionPayload),
+      ).resolves.toMatchObject({
         notes: undefined,
       });
     });
@@ -222,16 +231,17 @@ describe('TransactionsController', () => {
 
   describe('[PATCH]', () => {
     it('should return the updated object', async () => {
-      const createdTransaction: TransactionDocument =
-        await transactionsController.create(BASE_TRANSACTION_PAYLOAD);
-      const transactionUpdate = { amount: 456 };
-      const updatedTransaction = await transactionsController.update(
-        createdTransaction._id,
-        transactionUpdate,
+      const transaction = await transactionsController.create(
+        BASE_TRANSACTION_PAYLOAD,
       );
-
-      expect(updatedTransaction).toMatchObject({
+      const transactionUpdate = {
         amount: 456,
+      };
+
+      await expect(
+        transactionsController.update(transaction._id, transactionUpdate),
+      ).resolves.toMatchObject({
+        amount: -456,
       });
     });
   });

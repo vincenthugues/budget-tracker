@@ -7,7 +7,6 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
 } from 'class-validator';
 import { TransferType } from '../schemas/transaction.schema';
@@ -18,7 +17,7 @@ export class CreateTransactionDto {
   readonly date: Date;
 
   @IsNumber()
-  @IsPositive()
+  @IsNotEmpty()
   @Type(() => Number)
   readonly amount: number;
 

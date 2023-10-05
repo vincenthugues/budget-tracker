@@ -22,6 +22,7 @@ import {
   Transaction,
   TransactionSchema,
 } from '../transactions/schemas/transaction.schema';
+import { TransactionsRepository } from '../transactions/transactions.repository';
 import { TransactionsService } from '../transactions/transactions.service';
 import { ImportController } from './import.controller';
 
@@ -58,6 +59,7 @@ describe('ImportController', () => {
         { provide: getModelToken(Category.name), useValue: categoryModel },
         PayeesService,
         { provide: getModelToken(Payee.name), useValue: payeeModel },
+        TransactionsRepository,
         TransactionsService,
         {
           provide: getModelToken(Transaction.name),

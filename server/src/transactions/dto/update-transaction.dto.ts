@@ -25,7 +25,8 @@ export class UpdateTransactionDto {
 
   @IsEnum(TransferType)
   @IsNotEmpty()
-  readonly transferType: TransferType;
+  @IsOptional()
+  readonly transferType?: TransferType;
 
   @IsMongoId()
   @IsOptional()
