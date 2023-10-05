@@ -8,5 +8,6 @@ export type CreatorInput = {
   isOptional?: boolean;
   options?: [key: string, value: string][];
   min?: number;
+  step?: number;
   // valueTransformer?: <Type>(arg: Type) => Type;
 };

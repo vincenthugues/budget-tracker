@@ -36,7 +36,7 @@ export const TransactionCreator = ({
       type: 'datetime-local',
       defaultValue: getInputCurrentDateTime(),
     },
-    { name: 'amount', label: 'Amount', type: 'number', min: 0.01 },
+    { name: 'amount', label: 'Amount', type: 'number', min: 0, step: 0.01 },
     {
       name: 'transferType',
       label: 'Transfer Type',
