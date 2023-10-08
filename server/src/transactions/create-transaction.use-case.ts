@@ -5,7 +5,6 @@ import {
   TransferType,
 } from './schemas/transaction.schema';
 import { TransactionsRepository } from './transactions.repository';
-import { ValidationError } from 'class-validator';
 
 @Injectable()
 export class CreateTransactionUseCase {
@@ -14,6 +13,8 @@ export class CreateTransactionUseCase {
   async execute(
     createTransactionDto: CreateTransactionDto,
   ): Promise<TransactionDocument> {
+    console.log('UpdateTransactionUseCase', { createTransactionDto });
+
     if (createTransactionDto.amount <= 0) {
       console.log(
         `Transaction amount must be positive: ${createTransactionDto.amount}`,
@@ -22,17 +23,10 @@ export class CreateTransactionUseCase {
     }
 
     return this.transactionsRepository.create({
-      date: createTransactionDto.date,
+      ...createTransactionDto,
       amount:
         createTransactionDto.amount *
         (createTransactionDto.transferType === TransferType.CREDIT ? 1 : -1),
-      accountId: createTransactionDto.accountId,
-      payeeId: createTransactionDto.payeeId,
-      categoryId: createTransactionDto.categoryId,
-      isCleared: createTransactionDto.isCleared,
-      isDeleted: createTransactionDto.isDeleted,
-      externalId: createTransactionDto.externalId,
-      notes: createTransactionDto.notes,
     });
   }
 }

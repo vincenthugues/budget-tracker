@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,
@@ -29,7 +29,7 @@ describe('CreateTransactionUseCase', () => {
     accountId: '5e1a0651741b255ddda996c4',
     payeeId: '5e1a0651741b255ddda996c4',
     categoryId: '5e1a0651741b255ddda996c4',
-    isCleared: true,
+    isCleared: false,
     isDeleted: false,
     externalId: 'abc123',
     notes: 'Test',
@@ -73,10 +73,19 @@ describe('CreateTransactionUseCase', () => {
     });
 
     expect(createdTransaction).toMatchObject({
+      _id: expect.any(Types.ObjectId),
+      date: expect.any(Date),
+      amount: -123,
+      accountId: expect.any(Types.ObjectId),
+      payeeId: expect.any(Types.ObjectId),
+      categoryId: expect.any(Types.ObjectId),
+      isCleared: false,
+      isDeleted: false,
+      externalId: expect.any(String),
       notes: '[create] Test transaction',
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
     });
-    expect(createdTransaction.createdAt).toBeDefined();
-    expect(createdTransaction.updatedAt).toBeDefined();
   });
 
   it('should fail if the amount is negative', async () => {
