@@ -7,7 +7,6 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
-import { PayeesController } from './payees.controller';
 import { PayeesService } from './payees.service';
 import { Payee, PayeeSchema } from './schemas/payee.schema';
 
@@ -20,7 +19,6 @@ describe('PayeesService', () => {
     payeeModel = inMemoryMongoConnection.model(Payee.name, PayeeSchema);
 
     const moduleRef: TestingModule = await Test.createTestingModule({
-      controllers: [PayeesController],
       providers: [
         PayeesService,
         { provide: getModelToken(Payee.name), useValue: payeeModel },

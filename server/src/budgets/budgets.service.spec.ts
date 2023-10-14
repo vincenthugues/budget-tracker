@@ -7,7 +7,6 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
-import { BudgetsController } from './budgets.controller';
 import { BudgetsService } from './budgets.service';
 import { Budget, BudgetSchema } from './schemas/budget.schema';
 
@@ -20,7 +19,6 @@ describe('BudgetsService', () => {
     budgetModel = inMemoryMongoConnection.model(Budget.name, BudgetSchema);
 
     const moduleRef: TestingModule = await Test.createTestingModule({
-      controllers: [BudgetsController],
       providers: [
         BudgetsService,
         { provide: getModelToken(Budget.name), useValue: budgetModel },

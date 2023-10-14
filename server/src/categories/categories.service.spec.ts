@@ -7,7 +7,6 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
-import { CategoriesController } from './categories.controller';
 import { CategoriesService } from './categories.service';
 import { Category, CategorySchema } from './schemas/category.schema';
 
@@ -23,7 +22,6 @@ describe('CategoriesService', () => {
     );
 
     const moduleRef: TestingModule = await Test.createTestingModule({
-      controllers: [CategoriesController],
       providers: [
         CategoriesService,
         { provide: getModelToken(Category.name), useValue: categoryModel },

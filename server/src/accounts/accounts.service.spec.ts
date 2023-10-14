@@ -7,7 +7,6 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
-import { AccountsController } from './accounts.controller';
 import { AccountsService } from './accounts.service';
 import { Account, AccountSchema, AccountType } from './schemas/account.schema';
 
@@ -20,7 +19,6 @@ describe('AccountsService', () => {
     accountModel = inMemoryMongoConnection.model(Account.name, AccountSchema);
 
     const moduleRef: TestingModule = await Test.createTestingModule({
-      controllers: [AccountsController],
       providers: [
         AccountsService,
         { provide: getModelToken(Account.name), useValue: accountModel },
