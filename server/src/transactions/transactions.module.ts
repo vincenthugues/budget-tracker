@@ -5,6 +5,7 @@ import { Transaction, TransactionSchema } from './schemas/transaction.schema';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
+import { UpdateTransactionUseCase } from './update-transaction.use-case';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TransactionsService } from './transactions.service';
   controllers: [TransactionsController],
   providers: [
     CreateTransactionUseCase,
+    UpdateTransactionUseCase,
     TransactionsRepository,
     TransactionsService,
   ],

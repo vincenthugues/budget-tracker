@@ -17,6 +17,7 @@ import {
 import { TransactionsController } from './transactions.controller';
 import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
+import { UpdateTransactionUseCase } from './update-transaction.use-case';
 
 describe('TransactionsController', () => {
   let transactionsController: TransactionsController;
@@ -46,6 +47,7 @@ describe('TransactionsController', () => {
       controllers: [TransactionsController],
       providers: [
         CreateTransactionUseCase,
+        UpdateTransactionUseCase,
         TransactionsRepository,
         TransactionsService,
         {

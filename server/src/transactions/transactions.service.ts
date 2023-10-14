@@ -2,12 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { FilterTransactionDto } from './dto/filter-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
-import {
-  Transaction,
-  TransactionDocument,
-  TransferType,
-} from './schemas/transaction.schema';
+import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 
 @Injectable()
 export class TransactionsService {
@@ -22,32 +17,6 @@ export class TransactionsService {
 
   async findOne(id: Types.ObjectId): Promise<TransactionDocument> {
     const transaction = await this.transactionModel.findById(id).exec();
-    if (!transaction) {
-      throw new NotFoundException(`No transaction found for id ${id}`);
-    }
-
-    return transaction;
-  }
-
-  async update(
-    id: Types.ObjectId,
-    updateTransactionDto: UpdateTransactionDto,
-  ): Promise<TransactionDocument> {
-    const { transferType, amount, ...transactionUpdate } = updateTransactionDto;
-
-    const transaction = await this.transactionModel
-      .findByIdAndUpdate(
-        id,
-        {
-          ...transactionUpdate,
-          amount:
-            amount !== undefined
-              ? amount * (transferType === TransferType.CREDIT ? 1 : -1)
-              : undefined,
-        },
-        { new: true },
-      )
-      .exec();
     if (!transaction) {
       throw new NotFoundException(`No transaction found for id ${id}`);
     }

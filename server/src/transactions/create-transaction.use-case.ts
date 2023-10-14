@@ -13,7 +13,7 @@ export class CreateTransactionUseCase {
   async execute(
     createTransactionDto: CreateTransactionDto,
   ): Promise<TransactionDocument> {
-    console.log('UpdateTransactionUseCase', { createTransactionDto });
+    console.debug('CreateTransactionUseCase', { createTransactionDto });
 
     if (createTransactionDto.amount <= 0) {
       console.log(

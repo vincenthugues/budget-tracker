@@ -21,12 +21,14 @@ import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionUseCase } from './create-transaction.use-case';
+import { UpdateTransactionUseCase } from './update-transaction.use-case';
 
 @ApiTags('transactions')
 @Controller('transactions')
 export class TransactionsController {
   constructor(
     private readonly createTransactionUseCase: CreateTransactionUseCase,
+    private readonly updateTransactionUseCase: UpdateTransactionUseCase,
     private readonly transactionsService: TransactionsService,
   ) {}
 
@@ -84,7 +86,7 @@ export class TransactionsController {
     @Param('id') id: Types.ObjectId,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ): Promise<TransactionDocument> {
-    return this.transactionsService.update(id, updateTransactionDto);
+    return this.updateTransactionUseCase.execute(id, updateTransactionDto);
   }
 
   @Delete(':id')

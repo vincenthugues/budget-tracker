@@ -14,7 +14,6 @@ import {
   TransactionSchema,
   TransferType,
 } from './schemas/transaction.schema';
-import { TransactionsController } from './transactions.controller';
 import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
 
@@ -43,7 +42,6 @@ describe('TransactionsService', () => {
     );
 
     const moduleRef: TestingModule = await Test.createTestingModule({
-      controllers: [TransactionsController],
       providers: [
         CreateTransactionUseCase,
         TransactionsRepository,
@@ -110,29 +108,6 @@ describe('TransactionsService', () => {
 
       expect(
         transactionsService.findOne(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No transaction found for id ${id}`);
-    });
-  });
-
-  describe('update', () => {
-    it('should update the transaction', async () => {
-      const { _id } = await transactionModel.create({
-        ...BASE_TRANSACTION_PAYLOAD,
-        notes: 'Test transaction',
-      });
-      const update = { notes: 'Test transaction (updated)' };
-
-      const updatedCategory = await transactionsService.update(_id, update);
-
-      expect(updatedCategory.notes).toEqual(update.notes);
-    });
-
-    it('should fail if no transaction matches the id', async () => {
-      const id = '6348784df0ea88d406093123';
-      const update = { notes: 'Category (updated)' };
-
-      expect(
-        transactionsService.update(id as unknown as Types.ObjectId, update),
       ).rejects.toThrowError(`No transaction found for id ${id}`);
     });
   });
