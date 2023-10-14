@@ -14,9 +14,7 @@ import {
   TransactionSchema,
   TransferType,
 } from './schemas/transaction.schema';
-import { TransactionsController } from './transactions.controller';
 import { TransactionsRepository } from './transactions.repository';
-import { TransactionsService } from './transactions.service';
 
 describe('CreateTransactionUseCase', () => {
   let useCase: CreateTransactionUseCase;
@@ -43,7 +41,6 @@ describe('CreateTransactionUseCase', () => {
     );
 
     const moduleRef: TestingModule = await Test.createTestingModule({
-      controllers: [TransactionsController],
       providers: [
         CreateTransactionUseCase,
         TransactionsRepository,
@@ -51,7 +48,6 @@ describe('CreateTransactionUseCase', () => {
           provide: getModelToken(Transaction.name),
           useValue: transactionModel,
         },
-        TransactionsService,
       ],
     }).compile();
 
