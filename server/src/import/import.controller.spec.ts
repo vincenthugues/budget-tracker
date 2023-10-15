@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
@@ -66,7 +67,9 @@ describe('ImportController', () => {
           useValue: transactionModel,
         },
       ],
-    }).compile();
+    })
+      .setLogger(new Logger())
+      .compile();
 
     importController = moduleRef.get<ImportController>(ImportController);
   });

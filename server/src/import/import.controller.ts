@@ -1,4 +1,10 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Logger,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -30,6 +36,8 @@ import {
 @ApiTags('import')
 @Controller('import')
 export class ImportController {
+  private readonly logger = new Logger(ImportController.name);
+
   constructor(
     private readonly budgetsService: BudgetsService,
     private readonly accountsService: AccountsService,
@@ -174,7 +182,7 @@ export class ImportController {
     const resourceCreationHandler = HandlerByResourceName[resourceName];
 
     if (!resourceCreationHandler) {
-      console.warn(`import: Resource "${resourceName}" unhandled`);
+      this.logger.warn(`import: Resource "${resourceName}" unhandled`);
       throw new BadRequestException(
         `import: Resource "${resourceName}" unhandled`,
       );

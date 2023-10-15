@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import {
   TransactionDocument,
@@ -8,13 +8,15 @@ import { TransactionsRepository } from './transactions.repository';
 
 @Injectable()
 export class UpdateTransactionUseCase {
+  private readonly logger = new Logger(UpdateTransactionUseCase.name);
+
   constructor(private transactionsRepository: TransactionsRepository) {}
 
   async execute(
     transactionId: TransactionDocument['_id'],
     updateTransactionDto: UpdateTransactionDto,
   ): Promise<TransactionDocument> {
-    console.debug('UpdateTransactionUseCase', {
+    this.logger.debug('CreateTransactionUseCase', {
       transactionId,
       updateTransactionDto,
     });
@@ -30,7 +32,7 @@ export class UpdateTransactionUseCase {
       (transaction.amount > 0 ? TransferType.CREDIT : TransferType.DEBIT);
 
     if (updateTransactionDto.amount <= 0) {
-      console.log(
+      this.logger.log(
         `Transaction amount must be positive: ${updateTransactionDto.amount}`,
       );
       throw new Error('Transaction amount must be positive');

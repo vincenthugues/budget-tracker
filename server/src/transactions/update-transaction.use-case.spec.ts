@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model, Types } from 'mongoose';
@@ -36,7 +37,9 @@ describe('UpdateTransactionUseCase', () => {
           useValue: transactionModel,
         },
       ],
-    }).compile();
+    })
+      .setLogger(new Logger())
+      .compile();
 
     useCase = moduleRef.get<UpdateTransactionUseCase>(UpdateTransactionUseCase);
   });
