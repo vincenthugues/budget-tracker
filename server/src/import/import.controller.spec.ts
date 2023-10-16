@@ -24,7 +24,6 @@ import {
   TransactionSchema,
 } from '../transactions/schemas/transaction.schema';
 import { TransactionsRepository } from '../transactions/transactions.repository';
-import { TransactionsService } from '../transactions/transactions.service';
 import { ImportController } from './import.controller';
 
 describe('ImportController', () => {
@@ -61,11 +60,11 @@ describe('ImportController', () => {
         PayeesService,
         { provide: getModelToken(Payee.name), useValue: payeeModel },
         TransactionsRepository,
-        TransactionsService,
         {
           provide: getModelToken(Transaction.name),
           useValue: transactionModel,
         },
+        Logger,
       ],
     })
       .setLogger(new Logger())

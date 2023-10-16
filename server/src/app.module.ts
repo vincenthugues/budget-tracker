@@ -4,9 +4,9 @@ import { AccountsModule } from './accounts/accounts.module';
 import { BudgetsModule } from './budgets/budgets.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ImportModule } from './import/import.module';
+import { MonthsModule } from './months/months.module';
 import { PayeesModule } from './payees/payees.module';
 import { TransactionsModule } from './transactions/transactions.module';
-import { MonthsModule } from './months/months.module';
 
 const MONGODB_CONNECTION_URI = 'mongodb://localhost/budget-tracker';
 

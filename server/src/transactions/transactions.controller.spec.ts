@@ -18,6 +18,7 @@ import { TransactionsController } from './transactions.controller';
 import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
 import { UpdateTransactionUseCase } from './update-transaction.use-case';
+import { Logger } from '@nestjs/common';
 
 describe('TransactionsController', () => {
   let transactionsController: TransactionsController;
@@ -54,8 +55,11 @@ describe('TransactionsController', () => {
           provide: getModelToken(Transaction.name),
           useValue: transactionModel,
         },
+        Logger,
       ],
-    }).compile();
+    })
+      .setLogger(new Logger())
+      .compile();
 
     transactionsController = moduleRef.get<TransactionsController>(
       TransactionsController,

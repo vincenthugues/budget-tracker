@@ -8,9 +8,10 @@ import { TransactionsRepository } from './transactions.repository';
 
 @Injectable()
 export class CreateTransactionUseCase {
-  private readonly logger = new Logger(CreateTransactionUseCase.name);
-
-  constructor(private transactionsRepository: TransactionsRepository) {}
+  constructor(
+    private transactionsRepository: TransactionsRepository,
+    private readonly logger: Logger,
+  ) {}
 
   async execute(
     createTransactionDto: CreateTransactionDto,

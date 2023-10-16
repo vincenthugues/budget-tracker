@@ -49,6 +49,7 @@ describe('CreateTransactionUseCase', () => {
           provide: getModelToken(Transaction.name),
           useValue: transactionModel,
         },
+        Logger,
       ],
     })
       .setLogger(new Logger())

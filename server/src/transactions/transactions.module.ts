@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CreateTransactionUseCase } from './create-transaction.use-case';
 import { Transaction, TransactionSchema } from './schemas/transaction.schema';
@@ -19,6 +19,7 @@ import { UpdateTransactionUseCase } from './update-transaction.use-case';
     UpdateTransactionUseCase,
     TransactionsRepository,
     TransactionsService,
+    Logger,
   ],
   exports: [TransactionsService, TransactionsRepository],
 })

@@ -36,14 +36,13 @@ import {
 @ApiTags('import')
 @Controller('import')
 export class ImportController {
-  private readonly logger = new Logger(ImportController.name);
-
   constructor(
     private readonly budgetsService: BudgetsService,
     private readonly accountsService: AccountsService,
     private readonly categoriesService: CategoriesService,
     private readonly payeesService: PayeesService,
     private readonly transactionsRepository: TransactionsRepository,
+    private readonly logger: Logger,
   ) {}
 
   async createBudget({
