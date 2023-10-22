@@ -20,7 +20,9 @@ export type MonthCategory = {
 };
 
 export type Month = {
-  monthDate: Date;
+  date: Date;
+  name: string;
+  year: string;
   income: number;
   budgeted: number;
   toBeBudgeted: number;

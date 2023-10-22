@@ -45,6 +45,35 @@ const getSortedLastMonthTransactions = (
   return sortedLastMonthTransactions;
 };
 
+const getTargetMonthAndYear = (
+  transactions: Transaction[]
+): [month: string, year: string] => {
+  const lastTransaction = transactions.at(-1);
+  if (!lastTransaction) {
+    const currentYear = new Date().toDateString().split(' ').at(-1) as string;
+    const currentMonthName = getMonthNameFromDate(new Date());
+    return [currentMonthName, currentYear];
+  }
+
+  const targetMonthName = getMonthNameFromDate(new Date(lastTransaction.date));
+  const { year: targetYear } = getTransactionYearMonth(lastTransaction);
+
+  return [targetMonthName, targetYear.toString()];
+};
+
+const sumTransactionAmounts = (
+  transactions: Transaction[],
+  amountFilter: (amount: number) => boolean
+) =>
+  transactions.reduce(
+    (total, { amount }) => (amountFilter(amount) ? total + amount : total),
+    0
+  );
+const getTotalIncome = (transactions: Transaction[]) =>
+  sumTransactionAmounts(transactions, (amount: number) => amount > 0);
+const getTotalSpending = (transactions: Transaction[]) =>
+  sumTransactionAmounts(transactions, (amount: number) => amount < 0);
+
 const useMonthBudgetData = (): {
   data: {
     accounts: Account[];
@@ -110,14 +139,6 @@ const useMonthBudgetData = (): {
       budgeted: 0,
       goals: goalsByCategoryId[_id] ? [goalsByCategoryId[_id]] : [],
     }));
-  const month: Month = {
-    income: 100000,
-    monthDate: new Date(),
-    monthCategories,
-    activity: 12300,
-    budgeted: 50000,
-    toBeBudgeted: 50000,
-  };
 
   const {
     transactions = [],
@@ -132,6 +153,20 @@ const useMonthBudgetData = (): {
   const sortedFilteredTransactions = filteredTransactions.length
     ? getSortedLastMonthTransactions(filteredTransactions)
     : [];
+
+  const [targetMonth, targetYear] = getTargetMonthAndYear(
+    sortedFilteredTransactions
+  );
+  const month: Month = {
+    date: new Date(),
+    name: targetMonth,
+    year: targetYear,
+    monthCategories,
+    income: getTotalIncome(sortedFilteredTransactions),
+    activity: getTotalSpending(sortedFilteredTransactions),
+    budgeted: 0,
+    toBeBudgeted: 0,
+  };
 
   const errors = [
     accountsError,
@@ -170,22 +205,6 @@ const groupTransactionsByCategory = (
     };
   }, {});
 
-const getTargetMonthAndYear = (
-  transactions: Transaction[]
-): [month: string, year: string] => {
-  const lastTransaction = transactions.at(-1);
-  if (!lastTransaction) {
-    const currentYear = new Date().toDateString().split(' ').at(-1) as string;
-    const currentMonthName = getMonthNameFromDate(new Date());
-    return [currentMonthName, currentYear];
-  }
-
-  const targetMonthName = getMonthNameFromDate(new Date(lastTransaction.date));
-  const { year: targetYear } = getTransactionYearMonth(lastTransaction);
-
-  return [targetMonthName, targetYear.toString()];
-};
-
 export const MonthBudgetPage = (): JSX.Element => {
   const {
     data: { accounts, categories, payees, month, transactions },
@@ -201,8 +220,6 @@ export const MonthBudgetPage = (): JSX.Element => {
     return <div>Loading...</div>;
   }
 
-  const [targetMonth, targetYear] = getTargetMonthAndYear(transactions);
-
   const transactionsByCategory = groupTransactionsByCategory(transactions);
   const totalByCategoryId = Object.fromEntries(
     Object.entries(transactionsByCategory).map(([categoryId, transactions]) => [
@@ -211,22 +228,9 @@ export const MonthBudgetPage = (): JSX.Element => {
     ])
   );
 
-  const totalIncome = transactions.reduce(
-    (total, { amount }) => (amount > 0 ? total + amount : total),
-    0
-  );
-  const totalSpending = transactions.reduce(
-    (total, { amount }) => (amount < 0 ? total + amount : total),
-    0
-  );
-
   return (
     <MonthBudget
-      monthName={targetMonth}
-      year={targetYear}
       month={month}
-      totalIncome={totalIncome}
-      totalSpending={totalSpending}
       totalByCategoryId={totalByCategoryId}
       transactions={transactions}
       accounts={accounts}

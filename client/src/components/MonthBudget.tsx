@@ -127,22 +127,14 @@ const CategoryGroupTable = ({
 );
 
 export const MonthBudget = ({
-  monthName,
-  year,
   month,
-  totalIncome,
-  totalSpending,
   totalByCategoryId,
   transactions,
   accounts,
   payees,
   categories,
 }: {
-  monthName: string;
-  year: string;
   month: Month;
-  totalIncome: number;
-  totalSpending: number;
   totalByCategoryId: { [categoryId: Category['_id']]: number };
   transactions: Transaction[];
   accounts: Account[];
@@ -171,21 +163,18 @@ export const MonthBudget = ({
   return (
     <>
       <h2>
-        {monthName} {year}
+        {month.name} {month.year}
       </h2>
       <div>
-        Income: {getDisplayFormattedAmount(month.income)} - Budgeted:{' '}
-        {getDisplayFormattedAmount(month.budgeted || 0)} - To Be Budgeted:{' '}
-        {getDisplayFormattedAmount(month.toBeBudgeted || 0)} - Activity{' '}
-        {getDisplayFormattedAmount(month.activity || 0)}
-      </div>
-      <div>Total income: {getDisplayFormattedAmount(totalIncome)}</div>
-      <div>
-        Total spending: {getDisplayFormattedAmount(Math.abs(totalSpending))}
+        Income: {getDisplayFormattedAmount(month.income)} — Amount spent:{' '}
+        {getDisplayFormattedAmount(Math.abs(month.activity))} — Net total:{' '}
+        {getDisplayFormattedAmount(month.income + month.activity)}
       </div>
       <div>
-        Net total: {getDisplayFormattedAmount(totalIncome + totalSpending)}
+        Budgeted: {getDisplayFormattedAmount(month.budgeted || 0)} — To Be
+        Budgeted: {getDisplayFormattedAmount(month.toBeBudgeted || 0)}
       </div>
+
       <dialog open={isModalOpen}>
         <p>{modalContents}</p>
         <button
@@ -216,6 +205,7 @@ export const MonthBudget = ({
           />
         ))}
       </table>
+
       <h3>Month transactions</h3>
       <table>
         <tbody>
