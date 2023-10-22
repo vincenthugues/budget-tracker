@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Account } from '../types/Account';
 import { Category } from '../types/Category';
 import { Goal, GoalType, Month, MonthCategory } from '../types/Month';
@@ -76,11 +77,13 @@ const CategoryGroupTable = ({
   categories,
   month,
   totalByCategoryId,
+  openModalWithContents,
 }: {
   parentCategoryId: Category['_id'];
   categories: Category[];
   month: Month;
   totalByCategoryId: { [categoryId: Category['_id']]: number };
+  openModalWithContents: (modalContents: string) => void;
 }) => (
   <tbody key={parentCategoryId}>
     <tr>
@@ -96,16 +99,24 @@ const CategoryGroupTable = ({
         <tr key={categoryId}>
           <td>{getCategoryName(categoryId, categories)}</td>
           <td>
-            {goals[0]
-              ? getCategoryGoalDisplayInfo(
-                  goals[0],
-                  balance,
-                  budgeted,
-                  activity
-                )
-              : '-'}
+            -{' '}
+            {goals[0] && (
+              <button
+                onClick={() => {
+                  openModalWithContents(
+                    getCategoryGoalDisplayInfo(
+                      goals[0],
+                      balance,
+                      budgeted,
+                      activity
+                    )
+                  );
+                }}
+              >
+                Goal info
+              </button>
+            )}
           </td>
-          <td>-</td>
           <td>
             {getDisplayFormattedAmount(totalByCategoryId[categoryId] || 0)}
           </td>
@@ -150,6 +161,13 @@ export const MonthBudget = ({
     }
   );
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContents, setModalContents] = useState('');
+  const openModalWithContents = (modalContents: string) => {
+    setModalContents(modalContents);
+    setIsModalOpen(true);
+  };
+
   return (
     <>
       <h2>
@@ -168,11 +186,20 @@ export const MonthBudget = ({
       <div>
         Net total: {getDisplayFormattedAmount(totalIncome + totalSpending)}
       </div>
+      <dialog open={isModalOpen}>
+        <p>{modalContents}</p>
+        <button
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
+        >
+          Close
+        </button>
+      </dialog>
       <table>
         <thead>
           <tr>
             <th>Category</th>
-            <th>Goal</th>
             <th>Budgeted</th>
             <th>Activity</th>
             <th>Available</th>
@@ -185,6 +212,7 @@ export const MonthBudget = ({
             categories={categories}
             month={month}
             totalByCategoryId={totalByCategoryId}
+            openModalWithContents={openModalWithContents}
           />
         ))}
       </table>
