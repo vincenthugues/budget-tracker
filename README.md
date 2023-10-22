@@ -16,10 +16,16 @@ mongodb
 
 ## To do
 
-- improve test quality & coverage (hooks, components)
-- transactions pagination
-- recurrent & future transactions
 - budgeting
-- graphs
+- improve test quality & coverage (hooks, components)
+- reconciliation
+- overspending
+- auto budgeting
+- recurrent & future transactions
+- category group creation
+- transactions pagination
+- moving money from one category budget to another
+- graphs/reports
 - auth
 - deployment
+- month category budget info over time
