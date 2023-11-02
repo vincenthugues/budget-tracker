@@ -15,13 +15,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Types } from 'mongoose';
+import { CreateTransactionUseCase } from '../use-cases/create-transaction.use-case';
+import { DeleteTransactionUseCase } from '../use-cases/delete-transaction.use-case';
+import { UpdateTransactionUseCase } from '../use-cases/update-transaction.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { FilterTransactionDto } from './dto/filter-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 import { TransactionsService } from './transactions.service';
-import { CreateTransactionUseCase } from '../use-cases/create-transaction.use-case';
-import { UpdateTransactionUseCase } from '../use-cases/update-transaction.use-case';
 
 @ApiTags('transactions')
 @Controller('transactions')
@@ -29,6 +30,7 @@ export class TransactionsController {
   constructor(
     private readonly createTransactionUseCase: CreateTransactionUseCase,
     private readonly updateTransactionUseCase: UpdateTransactionUseCase,
+    private readonly deleteTransactionUseCase: DeleteTransactionUseCase,
     private readonly transactionsService: TransactionsService,
   ) {}
 
@@ -92,7 +94,7 @@ export class TransactionsController {
   @Delete(':id')
   @ApiOkResponse({ description: 'The requested transaction was deleted' })
   @ApiNotFoundResponse({ description: 'Transaction not found' })
-  remove(@Param('id') id: Types.ObjectId): Promise<any> {
-    return this.transactionsService.remove(id);
+  remove(@Param('id') id: string): Promise<any> {
+    return this.deleteTransactionUseCase.execute(id);
   }
 }

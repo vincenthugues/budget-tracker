@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model, Types } from 'mongoose';
@@ -16,7 +17,6 @@ import {
 } from './schemas/transaction.schema';
 import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
-import { Logger } from '@nestjs/common';
 
 describe('TransactionsService', () => {
   let transactionsService: TransactionsService;
@@ -112,27 +112,6 @@ describe('TransactionsService', () => {
 
       expect(
         transactionsService.findOne(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No transaction found for id ${id}`);
-    });
-  });
-
-  describe('remove', () => {
-    it('should remove the transaction', async () => {
-      const { _id } = await transactionModel.create({
-        ...BASE_TRANSACTION_PAYLOAD,
-        notes: 'Test transaction',
-      });
-
-      await transactionsService.remove(_id);
-
-      expect(await transactionModel.find({})).toMatchObject([]);
-    });
-
-    it('should fail if no transaction matches the id', async () => {
-      const id = '6348784df0ea88d406093123';
-
-      expect(
-        transactionsService.remove(id as unknown as Types.ObjectId),
       ).rejects.toThrowError(`No transaction found for id ${id}`);
     });
   });

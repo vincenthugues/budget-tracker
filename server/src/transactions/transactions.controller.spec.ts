@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
@@ -8,6 +9,8 @@ import {
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
 import { CreateTransactionUseCase } from '../use-cases/create-transaction.use-case';
+import { DeleteTransactionUseCase } from '../use-cases/delete-transaction.use-case';
+import { UpdateTransactionUseCase } from '../use-cases/update-transaction.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import {
   Transaction,
@@ -17,8 +20,6 @@ import {
 import { TransactionsController } from './transactions.controller';
 import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
-import { UpdateTransactionUseCase } from '../use-cases/update-transaction.use-case';
-import { Logger } from '@nestjs/common';
 
 describe('TransactionsController', () => {
   let transactionsController: TransactionsController;
@@ -49,6 +50,7 @@ describe('TransactionsController', () => {
       providers: [
         CreateTransactionUseCase,
         UpdateTransactionUseCase,
+        DeleteTransactionUseCase,
         TransactionsRepository,
         TransactionsService,
         {

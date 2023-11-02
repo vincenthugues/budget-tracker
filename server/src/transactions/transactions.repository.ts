@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Transaction, TransactionDocument } from './schemas/transaction.schema';
@@ -47,5 +47,16 @@ export class TransactionsRepository {
     return this.transactionModel.findByIdAndUpdate(id, transaction, {
       new: true,
     });
+  }
+
+  async delete(id: TransactionDocument['_id']): Promise<TransactionDocument> {
+    const transaction = await this.transactionModel
+      .findByIdAndDelete(id)
+      .exec();
+    if (!transaction) {
+      throw new NotFoundException(`No transaction found for id ${id}`);
+    }
+
+    return transaction;
   }
 }

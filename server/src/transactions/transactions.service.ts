@@ -23,15 +23,4 @@ export class TransactionsService {
 
     return transaction;
   }
-
-  async remove(id: Types.ObjectId): Promise<any> {
-    const transaction = await this.transactionModel
-      .findByIdAndDelete(id)
-      .exec();
-    if (!transaction) {
-      throw new NotFoundException(`No transaction found for id ${id}`);
-    }
-
-    return transaction;
-  }
 }
