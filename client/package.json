@@ -10,23 +10,23 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.36.1",
+    "@tanstack/react-query": "^5.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.16.0",
+    "react-router-dom": "^6.18.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^3.5.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@tanstack/eslint-plugin-query": "^4.36.1",
+    "@tanstack/eslint-plugin-query": "^5.0.5",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.5.1",
-    "@types/jest": "^29.5.5",
-    "@types/node": "^20.8.6",
-    "@types/react": "^18.2.28",
-    "@types/react-dom": "^18.2.13",
+    "@types/jest": "^29.5.7",
+    "@types/node": "^20.8.10",
+    "@types/react": "^18.2.34",
+    "@types/react-dom": "^18.2.14",
     "typescript": "^5.2.2"
   },
   "eslintConfig": {
