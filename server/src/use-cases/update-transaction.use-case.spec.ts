@@ -12,8 +12,8 @@ import {
   Transaction,
   TransactionSchema,
   TransferType,
-} from './schemas/transaction.schema';
-import { TransactionsRepository } from './transactions.repository';
+} from '../transactions/schemas/transaction.schema';
+import { TransactionsRepository } from '../transactions/transactions.repository';
 import { UpdateTransactionUseCase } from './update-transaction.use-case';
 
 describe('UpdateTransactionUseCase', () => {

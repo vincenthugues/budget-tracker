@@ -7,7 +7,7 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
-import { CreateTransactionUseCase } from './create-transaction.use-case';
+import { CreateTransactionUseCase } from '../use-cases/create-transaction.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import {
   Transaction,
@@ -17,7 +17,7 @@ import {
 import { TransactionsController } from './transactions.controller';
 import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
-import { UpdateTransactionUseCase } from './update-transaction.use-case';
+import { UpdateTransactionUseCase } from '../use-cases/update-transaction.use-case';
 import { Logger } from '@nestjs/common';
 
 describe('TransactionsController', () => {

@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { UpdateTransactionDto } from '../transactions/dto/update-transaction.dto';
 import {
   TransactionDocument,
   TransferType,
-} from './schemas/transaction.schema';
-import { TransactionsRepository } from './transactions.repository';
+} from '../transactions/schemas/transaction.schema';
+import { TransactionsRepository } from '../transactions/transactions.repository';
 
 @Injectable()
 export class UpdateTransactionUseCase {

@@ -7,7 +7,7 @@ import {
   setupInMemoryMongo,
   teardownInMemoryMongo,
 } from '../../test/utils/inMemoryMongo';
-import { CreateTransactionUseCase } from './create-transaction.use-case';
+import { CreateTransactionUseCase } from '../use-cases/create-transaction.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import {
   Transaction,

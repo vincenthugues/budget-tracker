@@ -20,8 +20,8 @@ import { FilterTransactionDto } from './dto/filter-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction, TransactionDocument } from './schemas/transaction.schema';
 import { TransactionsService } from './transactions.service';
-import { CreateTransactionUseCase } from './create-transaction.use-case';
-import { UpdateTransactionUseCase } from './update-transaction.use-case';
+import { CreateTransactionUseCase } from '../use-cases/create-transaction.use-case';
+import { UpdateTransactionUseCase } from '../use-cases/update-transaction.use-case';
 
 @ApiTags('transactions')
 @Controller('transactions')
