@@ -22,7 +22,10 @@ import { CategoriesService } from '../categories/categories.service';
 import { CategoryDocument } from '../categories/schemas/category.schema';
 import { PayeesService } from '../payees/payees.service';
 import { PayeeDocument } from '../payees/schemas/payee.schema';
-import { TransactionDocument } from '../transactions/schemas/transaction.schema';
+import {
+  TransactionDocument,
+  TransferType,
+} from '../transactions/schemas/transaction.schema';
 import { TransactionsRepository } from '../transactions/transactions.repository';
 import {
   AccountImportDto,
@@ -131,6 +134,7 @@ export class ImportController {
     return this.transactionsRepository.create({
       date: new Date(date),
       amount,
+      transferType: amount < 0 ? TransferType.DEBIT : TransferType.CREDIT,
       accountId: matchedAccounts[0]?._id,
       payeeId: matchedPayees[0]?._id,
       categoryId: matchedCategories[0]?._id,

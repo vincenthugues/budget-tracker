@@ -25,6 +25,9 @@ export class Transaction {
   @IsNumber()
   amount: number;
 
+  @Prop({ required: true })
+  transferType: TransferType;
+
   @Prop({
     required: true,
     type: SchemaTypes.ObjectId,

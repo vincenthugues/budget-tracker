@@ -10,6 +10,7 @@ import {
 } from '../../test/utils/inMemoryMongo';
 import { CreateTransactionUseCase } from '../use-cases/create-transaction.use-case';
 import { DeleteTransactionUseCase } from '../use-cases/delete-transaction.use-case';
+import { GetTransactionByIdUseCase } from '../use-cases/get-transaction-by-id.use-case';
 import { UpdateTransactionUseCase } from '../use-cases/update-transaction.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import {
@@ -49,6 +50,7 @@ describe('TransactionsController', () => {
       controllers: [TransactionsController],
       providers: [
         CreateTransactionUseCase,
+        GetTransactionByIdUseCase,
         UpdateTransactionUseCase,
         DeleteTransactionUseCase,
         TransactionsRepository,

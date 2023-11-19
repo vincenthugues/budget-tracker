@@ -17,6 +17,7 @@ import {
 import { Types } from 'mongoose';
 import { CreateTransactionUseCase } from '../use-cases/create-transaction.use-case';
 import { DeleteTransactionUseCase } from '../use-cases/delete-transaction.use-case';
+import { GetTransactionByIdUseCase } from '../use-cases/get-transaction-by-id.use-case';
 import { UpdateTransactionUseCase } from '../use-cases/update-transaction.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { FilterTransactionDto } from './dto/filter-transaction.dto';
@@ -29,6 +30,7 @@ import { TransactionsService } from './transactions.service';
 export class TransactionsController {
   constructor(
     private readonly createTransactionUseCase: CreateTransactionUseCase,
+    private readonly getTransactionByIdUseCase: GetTransactionByIdUseCase,
     private readonly updateTransactionUseCase: UpdateTransactionUseCase,
     private readonly deleteTransactionUseCase: DeleteTransactionUseCase,
     private readonly transactionsService: TransactionsService,
@@ -75,7 +77,7 @@ export class TransactionsController {
   })
   @ApiNotFoundResponse({ description: 'Transaction not found' })
   findOne(@Param('id') id: Types.ObjectId): Promise<TransactionDocument> {
-    return this.transactionsService.findOne(id);
+    return this.getTransactionByIdUseCase.execute(id);
   }
 
   @Patch(':id')

@@ -12,6 +12,7 @@ import {
   Transaction,
   TransactionDocument,
   TransactionSchema,
+  TransferType,
 } from '../transactions/schemas/transaction.schema';
 import { TransactionsRepository } from '../transactions/transactions.repository';
 import { DeleteTransactionUseCase } from './delete-transaction.use-case';
@@ -49,6 +50,7 @@ describe('DeleteTransactionUseCase', () => {
     transaction = await transactionModel.create({
       date: new Date('2022-01-15'),
       amount: 123,
+      transferType: TransferType.DEBIT,
       accountId: '5e1a0651741b255ddda996c4',
       payeeId: '5e1a0651741b255ddda996c4',
     });

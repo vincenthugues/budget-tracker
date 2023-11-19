@@ -7,6 +7,7 @@ import { Transaction, TransactionSchema } from './schemas/transaction.schema';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsRepository } from './transactions.repository';
 import { TransactionsService } from './transactions.service';
+import { GetTransactionByIdUseCase } from 'src/use-cases/get-transaction-by-id.use-case';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { TransactionsService } from './transactions.service';
   controllers: [TransactionsController],
   providers: [
     CreateTransactionUseCase,
+    GetTransactionByIdUseCase,
     UpdateTransactionUseCase,
     DeleteTransactionUseCase,
     TransactionsRepository,

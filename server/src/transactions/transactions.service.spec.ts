@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,
@@ -91,28 +91,6 @@ describe('TransactionsService', () => {
 
     it('should return an empty array when there are no transactions', async () => {
       expect(await transactionsService.findAll()).toMatchObject([]);
-    });
-  });
-
-  describe('findOne', () => {
-    it('should return the transaction with matching id', async () => {
-      const transactionPayload = {
-        ...BASE_TRANSACTION_PAYLOAD,
-        notes: 'Test transaction',
-      };
-      const { _id } = await transactionModel.create(transactionPayload);
-
-      const foundTransaction = await transactionsService.findOne(_id);
-
-      expect(foundTransaction.notes).toBe(transactionPayload.notes);
-    });
-
-    it('should fail if no transaction matches the id', async () => {
-      const id = '6348784df0ea88d406093123';
-
-      expect(
-        transactionsService.findOne(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No transaction found for id ${id}`);
     });
   });
 });

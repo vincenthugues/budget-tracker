@@ -13,6 +13,7 @@ export class TransactionsRepository {
   create(transaction: {
     date: Date;
     amount: number;
+    transferType: string;
     accountId: string;
     payeeId: string;
     categoryId?: string;
@@ -35,6 +36,7 @@ export class TransactionsRepository {
     transaction: {
       date?: Date;
       amount?: number;
+      transferType?: string;
       accountId?: string;
       payeeId?: string;
       categoryId?: string;
