@@ -56,14 +56,14 @@ describe('PayeesService', () => {
       const payee2Payload = { name: 'Payee 2' };
       await payeeModel.create(payee1Payload, payee2Payload);
 
-      expect(await payeesService.findAll()).toMatchObject([
+      await expect(payeesService.findAll()).resolves.toMatchObject([
         payee1Payload,
         payee2Payload,
       ]);
     });
 
     it('should return an empty array when there are no payees', async () => {
-      expect(await payeesService.findAll()).toMatchObject([]);
+      await expect(payeesService.findAll()).resolves.toMatchObject([]);
     });
   });
 
