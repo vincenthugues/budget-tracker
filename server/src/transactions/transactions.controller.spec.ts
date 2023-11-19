@@ -98,7 +98,7 @@ describe('TransactionsController', () => {
 
       await expect(
         transactionsController.create(transactionPayload),
-      ).rejects.toThrowError(
+      ).rejects.toThrow(
         'Transaction validation failed: date: Path `date` is required.',
       );
     });
@@ -111,7 +111,7 @@ describe('TransactionsController', () => {
 
       await expect(
         transactionsController.create(transactionPayload),
-      ).rejects.toThrowError(
+      ).rejects.toThrow(
         'Transaction validation failed: amount: Cast to Number failed for value "NaN" (type number) at path "amount"',
       );
     });
@@ -124,7 +124,7 @@ describe('TransactionsController', () => {
 
       await expect(
         transactionsController.create(transactionPayload),
-      ).rejects.toThrowError(
+      ).rejects.toThrow(
         'Transaction validation failed: accountId: Path `accountId` is required.',
       );
     });
@@ -137,7 +137,7 @@ describe('TransactionsController', () => {
 
       await expect(
         transactionsController.create(transactionPayload),
-      ).rejects.toThrowError(
+      ).rejects.toThrow(
         'Transaction validation failed: payeeId: Path `payeeId` is required.',
       );
     });

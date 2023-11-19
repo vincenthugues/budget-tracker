@@ -91,7 +91,7 @@ describe('CreateTransactionUseCase', () => {
   it('should fail if the amount is negative', async () => {
     const createTransactionDto = { ...BASE_TRANSACTION_PAYLOAD, amount: -1 };
 
-    await expect(useCase.execute(createTransactionDto)).rejects.toThrowError(
+    await expect(useCase.execute(createTransactionDto)).rejects.toThrow(
       'Transaction amount must be positive',
     );
   });
@@ -99,7 +99,7 @@ describe('CreateTransactionUseCase', () => {
   it('should fail if the amount is 0', async () => {
     const createTransactionDto = { ...BASE_TRANSACTION_PAYLOAD, amount: 0 };
 
-    await expect(useCase.execute(createTransactionDto)).rejects.toThrowError(
+    await expect(useCase.execute(createTransactionDto)).rejects.toThrow(
       'Transaction amount must be positive',
     );
   });

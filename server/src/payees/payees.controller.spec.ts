@@ -57,7 +57,7 @@ describe('PayeesController', () => {
         name: '',
       };
 
-      expect(payeesController.create(payeePayload)).rejects.toThrowError(
+      expect(payeesController.create(payeePayload)).rejects.toThrow(
         'Payee validation failed: name: Path `name` is required.',
       );
     });

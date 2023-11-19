@@ -82,7 +82,7 @@ describe('PayeesService', () => {
 
       expect(
         payeesService.findOne(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No payee found for id ${id}`);
+      ).rejects.toThrow(`No payee found for id ${id}`);
     });
   });
 
@@ -102,7 +102,7 @@ describe('PayeesService', () => {
 
       expect(
         payeesService.update(id as unknown as Types.ObjectId, update),
-      ).rejects.toThrowError(`No payee found for id ${id}`);
+      ).rejects.toThrow(`No payee found for id ${id}`);
     });
   });
 
@@ -120,7 +120,7 @@ describe('PayeesService', () => {
 
       expect(
         payeesService.remove(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No payee found for id ${id}`);
+      ).rejects.toThrow(`No payee found for id ${id}`);
     });
   });
 });

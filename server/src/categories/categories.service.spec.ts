@@ -87,7 +87,7 @@ describe('CategoriesService', () => {
 
       expect(
         categoriesService.findOne(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No category found for id ${id}`);
+      ).rejects.toThrow(`No category found for id ${id}`);
     });
   });
 
@@ -107,7 +107,7 @@ describe('CategoriesService', () => {
 
       expect(
         categoriesService.update(id as unknown as Types.ObjectId, update),
-      ).rejects.toThrowError(`No category found for id ${id}`);
+      ).rejects.toThrow(`No category found for id ${id}`);
     });
   });
 
@@ -125,7 +125,7 @@ describe('CategoriesService', () => {
 
       expect(
         categoriesService.remove(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No category found for id ${id}`);
+      ).rejects.toThrow(`No category found for id ${id}`);
     });
   });
 });

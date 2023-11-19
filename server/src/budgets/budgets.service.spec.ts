@@ -82,7 +82,7 @@ describe('BudgetsService', () => {
 
       expect(
         budgetsService.findOne(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No budget found for id ${id}`);
+      ).rejects.toThrow(`No budget found for id ${id}`);
     });
   });
 
@@ -102,7 +102,7 @@ describe('BudgetsService', () => {
 
       expect(
         budgetsService.update(id as unknown as Types.ObjectId, update),
-      ).rejects.toThrowError(`No budget found for id ${id}`);
+      ).rejects.toThrow(`No budget found for id ${id}`);
     });
   });
 
@@ -120,7 +120,7 @@ describe('BudgetsService', () => {
 
       expect(
         budgetsService.remove(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No budget found for id ${id}`);
+      ).rejects.toThrow(`No budget found for id ${id}`);
     });
   });
 });

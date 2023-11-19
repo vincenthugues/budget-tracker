@@ -48,9 +48,8 @@ describe('AccountsController', () => {
     };
 
     it('should return the saved object', async () => {
-      const createdAccount = await accountsController.create(
-        BASE_ACCOUNT_PAYLOAD,
-      );
+      const createdAccount =
+        await accountsController.create(BASE_ACCOUNT_PAYLOAD);
 
       expect(createdAccount).toMatchObject(BASE_ACCOUNT_PAYLOAD);
     });
@@ -61,7 +60,7 @@ describe('AccountsController', () => {
         name: '',
       };
 
-      expect(accountsController.create(accountPayload)).rejects.toThrowError(
+      expect(accountsController.create(accountPayload)).rejects.toThrow(
         'Account validation failed: name: Path `name` is required.',
       );
     });

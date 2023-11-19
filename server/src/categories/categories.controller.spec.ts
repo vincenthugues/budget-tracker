@@ -71,7 +71,7 @@ describe('CategoriesController', () => {
         name: '',
       };
 
-      expect(categoriesController.create(categoryPayload)).rejects.toThrowError(
+      expect(categoriesController.create(categoryPayload)).rejects.toThrow(
         'Category validation failed: name: Path `name` is required.',
       );
     });

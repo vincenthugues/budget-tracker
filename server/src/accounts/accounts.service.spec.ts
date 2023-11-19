@@ -81,7 +81,7 @@ describe('AccountsService', () => {
       const id = '6348784df0ea88d406093123';
       expect(
         accountsService.findOne(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No account found for id ${id}`);
+      ).rejects.toThrow(`No account found for id ${id}`);
     });
   });
 
@@ -102,7 +102,7 @@ describe('AccountsService', () => {
 
       expect(
         accountsService.update(id as unknown as Types.ObjectId, update),
-      ).rejects.toThrowError(`No account found for id ${id}`);
+      ).rejects.toThrow(`No account found for id ${id}`);
     });
   });
 
@@ -121,7 +121,7 @@ describe('AccountsService', () => {
 
       expect(
         accountsService.remove(id as unknown as Types.ObjectId),
-      ).rejects.toThrowError(`No account found for id ${id}`);
+      ).rejects.toThrow(`No account found for id ${id}`);
     });
   });
 });

@@ -124,7 +124,7 @@ describe('ImportController', () => {
             resourceName: 'test',
             json: JSON.stringify([]),
           }),
-        ).rejects.toThrowError('import: Resource "test" unhandled');
+        ).rejects.toThrow('import: Resource "test" unhandled');
       });
     });
   });

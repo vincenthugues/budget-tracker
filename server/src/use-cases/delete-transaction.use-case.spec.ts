@@ -88,7 +88,7 @@ describe('DeleteTransactionUseCase', () => {
 
   it('should fail if the transaction is not found', async () => {
     const wrongId = '6348784df0ea88d406093123';
-    await expect(useCase.execute(wrongId)).rejects.toThrowError(
+    await expect(useCase.execute(wrongId)).rejects.toThrow(
       /^No transaction found for id .*/,
     );
   });

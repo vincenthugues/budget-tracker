@@ -84,7 +84,7 @@ describe('UpdateTransactionUseCase', () => {
 
     await expect(
       useCase.execute(wrongId as unknown as Types.ObjectId, transactionUpdate),
-    ).rejects.toThrowError(`No transaction found for id ${wrongId}`);
+    ).rejects.toThrow(`No transaction found for id ${wrongId}`);
   });
 
   it('should fail if the amount is negative', async () => {
@@ -92,7 +92,7 @@ describe('UpdateTransactionUseCase', () => {
 
     await expect(
       useCase.execute(transaction._id, transactionUpdate),
-    ).rejects.toThrowError('Transaction amount must be positive');
+    ).rejects.toThrow('Transaction amount must be positive');
   });
 
   it('should fail if the amount is 0', async () => {
@@ -100,6 +100,6 @@ describe('UpdateTransactionUseCase', () => {
 
     await expect(
       useCase.execute(transaction._id, transactionUpdate),
-    ).rejects.toThrowError('Transaction amount must be positive');
+    ).rejects.toThrow('Transaction amount must be positive');
   });
 });

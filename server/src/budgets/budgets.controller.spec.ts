@@ -57,7 +57,7 @@ describe('BudgetsController', () => {
         name: '',
       };
 
-      expect(budgetsController.create(budgetPayload)).rejects.toThrowError(
+      expect(budgetsController.create(budgetPayload)).rejects.toThrow(
         'Budget validation failed: name: Path `name` is required.',
       );
     });
