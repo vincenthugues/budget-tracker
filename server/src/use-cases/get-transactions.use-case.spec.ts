@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import {
   dropInMemoryMongoCollections,
   inMemoryMongoConnection,
@@ -14,10 +14,10 @@ import {
   TransferType,
 } from '../transactions/schemas/transaction.schema';
 import { TransactionsRepository } from '../transactions/transactions.repository';
-import { GetTransactionByIdUseCase } from './get-transaction-by-id.use-case';
+import { GetTransactionsUseCase } from './get-transactions.use-case';
 
-describe('GetTransactionByIdUseCase', () => {
-  let useCase: GetTransactionByIdUseCase;
+describe('GetTransactionsUseCase', () => {
+  let useCase: GetTransactionsUseCase;
   let transactionModel: Model<Transaction>;
   let transaction;
 
@@ -30,7 +30,7 @@ describe('GetTransactionByIdUseCase', () => {
 
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [
-        GetTransactionByIdUseCase,
+        GetTransactionsUseCase,
         TransactionsRepository,
         {
           provide: getModelToken(Transaction.name),
@@ -42,9 +42,7 @@ describe('GetTransactionByIdUseCase', () => {
       .setLogger(new Logger())
       .compile();
 
-    useCase = moduleRef.get<GetTransactionByIdUseCase>(
-      GetTransactionByIdUseCase,
-    );
+    useCase = moduleRef.get<GetTransactionsUseCase>(GetTransactionsUseCase);
   });
 
   afterEach(async () => {
@@ -66,34 +64,22 @@ describe('GetTransactionByIdUseCase', () => {
       isCleared: true,
       isDeleted: false,
       externalId: 'abc123',
-      notes: 'Test',
+      notes: 'Transaction 1',
     });
   });
 
-  it('should return the transaction with matching id', async () => {
-    const result = await useCase.execute(transaction._id);
-
-    await expect(result).toMatchObject({
-      date: new Date('2022-01-15T00:00:00.000Z'),
-      amount: 123,
-      transferType: 'Credit',
-      accountId: new Types.ObjectId('5e1a0651741b255ddda996c4'),
-      payeeId: new Types.ObjectId('5e1a0651741b255ddda996c4'),
-      categoryId: new Types.ObjectId('5e1a0651741b255ddda996c4'),
-      isCleared: true,
-      isDeleted: false,
-      externalId: 'abc123',
-      notes: 'Test',
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
-    });
+  it('should return an array of all transactions', async () => {
+    await expect(useCase.execute()).resolves.toMatchObject([
+      {
+        _id: transaction._id,
+        notes: 'Transaction 1',
+      },
+    ]);
   });
 
-  it('should fail if no transaction matches the id', async () => {
-    const wrongId = '6348784df0ea88d406093123';
+  it('should return an empty array when there are no transactions', async () => {
+    await transactionModel.deleteMany();
 
-    await expect(
-      useCase.execute(wrongId as unknown as Types.ObjectId),
-    ).rejects.toThrow(`No transaction found for id ${wrongId}`);
+    await expect(useCase.execute()).resolves.toMatchObject([]);
   });
 });

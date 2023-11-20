@@ -25,6 +25,16 @@ export class TransactionsRepository {
     return this.transactionModel.create(transaction);
   }
 
+  findAll({
+    externalId,
+  }: {
+    externalId?: string;
+  }): Promise<TransactionDocument[]> {
+    return this.transactionModel.find({
+      ...(externalId ? { externalId } : {}),
+    });
+  }
+
   findById(
     id: TransactionDocument['_id'],
   ): Promise<TransactionDocument | null> {

@@ -11,6 +11,7 @@ import {
 import { CreateTransactionUseCase } from '../use-cases/create-transaction.use-case';
 import { DeleteTransactionUseCase } from '../use-cases/delete-transaction.use-case';
 import { GetTransactionByIdUseCase } from '../use-cases/get-transaction-by-id.use-case';
+import { GetTransactionsUseCase } from '../use-cases/get-transactions.use-case';
 import { UpdateTransactionUseCase } from '../use-cases/update-transaction.use-case';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import {
@@ -20,7 +21,6 @@ import {
 } from './schemas/transaction.schema';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsRepository } from './transactions.repository';
-import { TransactionsService } from './transactions.service';
 
 describe('TransactionsController', () => {
   let transactionsController: TransactionsController;
@@ -50,11 +50,11 @@ describe('TransactionsController', () => {
       controllers: [TransactionsController],
       providers: [
         CreateTransactionUseCase,
+        GetTransactionsUseCase,
         GetTransactionByIdUseCase,
         UpdateTransactionUseCase,
         DeleteTransactionUseCase,
         TransactionsRepository,
-        TransactionsService,
         {
           provide: getModelToken(Transaction.name),
           useValue: transactionModel,
@@ -215,7 +215,7 @@ describe('TransactionsController', () => {
         notes: 'Test',
       });
 
-      expect(await transactionsController.findAll()).toEqual(
+      await expect(transactionsController.findAll()).resolves.toEqual(
         expect.arrayContaining([expect.objectContaining({ notes: 'Test' })]),
       );
     });
@@ -233,9 +233,9 @@ describe('TransactionsController', () => {
       };
       await transactionModel.create(transactionPayload1, transactionPayload2);
 
-      expect(
-        await transactionsController.findAll({ externalId: 'def456' }),
-      ).toMatchObject([{ notes: 'Transaction 2' }]);
+      await expect(
+        transactionsController.findAll({ externalId: 'def456' }),
+      ).resolves.toMatchObject([{ notes: 'Transaction 2' }]);
     });
   });
 
