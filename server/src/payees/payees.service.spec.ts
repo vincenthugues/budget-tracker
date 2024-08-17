@@ -70,9 +70,9 @@ describe('PayeesService', () => {
   describe('findOne', () => {
     it('should return the payee with matching id', async () => {
       const payeePayload = { name: 'New Payee' };
-      const { _id } = await payeeModel.create(payeePayload);
+      const { id } = await payeeModel.create(payeePayload);
 
-      const foundPayee = await payeesService.findOne(_id);
+      const foundPayee = await payeesService.findOne(id);
 
       expect(foundPayee.name).toBe(payeePayload.name);
     });
@@ -88,10 +88,10 @@ describe('PayeesService', () => {
 
   describe('update', () => {
     it('should update the payee', async () => {
-      const { _id } = await payeeModel.create({ name: 'Test Payee' });
+      const { id } = await payeeModel.create({ name: 'Test Payee' });
       const update = { name: 'Test Payee (updated)' };
 
-      const updatedPayee = await payeesService.update(_id, update);
+      const updatedPayee = await payeesService.update(id, update);
 
       expect(updatedPayee.name).toEqual(update.name);
     });
@@ -108,9 +108,9 @@ describe('PayeesService', () => {
 
   describe('remove', () => {
     it('should remove the payee', async () => {
-      const { _id } = await payeeModel.create({ name: 'Test Payee' });
+      const { id } = await payeeModel.create({ name: 'Test Payee' });
 
-      await payeesService.remove(_id);
+      await payeesService.remove(id);
 
       expect(await payeeModel.find({})).toMatchObject([]);
     });

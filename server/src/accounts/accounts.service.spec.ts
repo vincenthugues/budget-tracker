@@ -71,8 +71,8 @@ describe('AccountsService', () => {
   describe('findOne', () => {
     it('should return the account with matching id', async () => {
       const accountPayload = { name: '[findOne] Test account' };
-      const { _id } = await accountModel.create(accountPayload);
-      const foundAccount = await accountsService.findOne(_id);
+      const { id } = await accountModel.create(accountPayload);
+      const foundAccount = await accountsService.findOne(id);
 
       expect(foundAccount.name).toEqual(accountPayload.name);
     });
@@ -87,11 +87,11 @@ describe('AccountsService', () => {
 
   describe('update', () => {
     it('should update the account', async () => {
-      const { _id } = await accountModel.create({
+      const { id } = await accountModel.create({
         name: '[update] Test account',
       });
       const update = { name: '[update] Test account (updated)' };
-      const updatedAccount = await accountsService.update(_id, update);
+      const updatedAccount = await accountsService.update(id, update);
 
       expect(updatedAccount.name).toEqual(update.name);
     });
@@ -108,10 +108,10 @@ describe('AccountsService', () => {
 
   describe('remove', () => {
     it('should remove the account', async () => {
-      const { _id } = await accountModel.create({
+      const { id } = await accountModel.create({
         name: '[remove] Test account',
       });
-      await accountsService.remove(_id);
+      await accountsService.remove(id);
 
       expect(await accountModel.find({})).toMatchObject([]);
     });

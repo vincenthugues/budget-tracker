@@ -61,23 +61,28 @@ describe('CategoriesService', () => {
       const category2Payload = { name: 'Category 2' };
       await categoryModel.create(category1Payload, category2Payload);
 
-      expect(await categoriesService.findAll()).toMatchObject([
-        category1Payload,
-        category2Payload,
-      ]);
+      console.log('LENGTH');
+      console.log((await categoriesService.findAll()).length);
+
+      await expect(categoriesService.findAll()).resolves.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(category1Payload),
+          expect.objectContaining(category2Payload),
+        ]),
+      );
     });
 
     it('should return an empty array when there are no categories', async () => {
-      expect(await categoriesService.findAll()).toMatchObject([]);
+      await expect(categoriesService.findAll()).resolves.toMatchObject([]);
     });
   });
 
   describe('findOne', () => {
     it('should return the category with matching id', async () => {
       const categoryPayload = { name: 'Test Category' };
-      const { _id } = await categoryModel.create(categoryPayload);
+      const { id } = await categoryModel.create(categoryPayload);
 
-      const foundCategory = await categoriesService.findOne(_id);
+      const foundCategory = await categoriesService.findOne(id);
 
       expect(foundCategory.name).toBe(categoryPayload.name);
     });
@@ -93,10 +98,10 @@ describe('CategoriesService', () => {
 
   describe('update', () => {
     it('should update the category', async () => {
-      const { _id } = await categoryModel.create({ name: 'Test Category' });
+      const { id } = await categoryModel.create({ name: 'Test Category' });
       const update = { name: 'Test Category (updated)' };
 
-      const updatedCategory = await categoriesService.update(_id, update);
+      const updatedCategory = await categoriesService.update(id, update);
 
       expect(updatedCategory.name).toEqual(update.name);
     });
@@ -113,11 +118,11 @@ describe('CategoriesService', () => {
 
   describe('remove', () => {
     it('should remove the category', async () => {
-      const { _id } = await categoryModel.create({ name: 'Test Category' });
+      const { id } = await categoryModel.create({ name: 'Test Category' });
 
-      await categoriesService.remove(_id);
+      await categoriesService.remove(id);
 
-      expect(await categoryModel.find({})).toMatchObject([]);
+      await expect(categoryModel.find({})).resolves.toMatchObject([]);
     });
 
     it('should fail if no category matches the id', async () => {

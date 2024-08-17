@@ -56,23 +56,23 @@ describe('BudgetsService', () => {
       const budget2Payload = { name: 'Budget 2' };
       await budgetModel.create(budget1Payload, budget2Payload);
 
-      expect(await budgetsService.findAll()).toMatchObject([
+      await expect(budgetsService.findAll()).resolves.toMatchObject([
         budget1Payload,
         budget2Payload,
       ]);
     });
 
     it('should return an empty array when there are no budgets', async () => {
-      expect(await budgetsService.findAll()).toMatchObject([]);
+      await expect(budgetsService.findAll()).resolves.toMatchObject([]);
     });
   });
 
   describe('findOne', () => {
     it('should return the budget with matching id', async () => {
       const budgetPayload = { name: 'Test Budget' };
-      const { _id } = await budgetModel.create(budgetPayload);
+      const { id } = await budgetModel.create(budgetPayload);
 
-      const foundBudget = await budgetsService.findOne(_id);
+      const foundBudget = await budgetsService.findOne(id);
 
       expect(foundBudget.name).toBe(budgetPayload.name);
     });
@@ -88,10 +88,10 @@ describe('BudgetsService', () => {
 
   describe('update', () => {
     it('should update the budget', async () => {
-      const { _id } = await budgetModel.create({ name: 'Test Budget' });
+      const { id } = await budgetModel.create({ name: 'Test Budget' });
       const update = { name: 'Test Budget (updated)' };
 
-      const updatedBudget = await budgetsService.update(_id, update);
+      const updatedBudget = await budgetsService.update(id, update);
 
       expect(updatedBudget.name).toEqual(update.name);
     });
@@ -108,9 +108,9 @@ describe('BudgetsService', () => {
 
   describe('remove', () => {
     it('should remove the budget', async () => {
-      const { _id } = await budgetModel.create({ name: 'Test Budget' });
+      const { id } = await budgetModel.create({ name: 'Test Budget' });
 
-      await budgetsService.remove(_id);
+      await budgetsService.remove(id);
 
       expect(await budgetModel.find({})).toMatchObject([]);
     });

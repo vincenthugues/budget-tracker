@@ -71,7 +71,7 @@ describe('GetTransactionByIdUseCase', () => {
   });
 
   it('should return the transaction with matching id', async () => {
-    const result = await useCase.execute(transaction._id);
+    const result = await useCase.execute(transaction.id);
 
     await expect(result).toMatchObject({
       date: new Date('2022-01-15T00:00:00.000Z'),

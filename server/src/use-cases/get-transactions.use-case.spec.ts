@@ -80,11 +80,11 @@ describe('GetTransactionsUseCase', () => {
   it('should return an array of all transactions', async () => {
     await expect(useCase.execute()).resolves.toEqual([
       expect.objectContaining({
-        _id: transaction1._id,
+        id: transaction1.id,
         notes: 'Transaction 1',
       }),
       expect.objectContaining({
-        _id: transaction2._id,
+        id: transaction2.id,
         notes: 'Transaction 2',
       }),
     ]);

@@ -249,7 +249,7 @@ describe('TransactionsController', () => {
       };
 
       await expect(
-        transactionsController.update(transaction._id, transactionUpdate),
+        transactionsController.update(transaction.id, transactionUpdate),
       ).resolves.toMatchObject({
         amount: -456,
       });

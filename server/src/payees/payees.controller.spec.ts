@@ -115,7 +115,7 @@ describe('PayeesController', () => {
         externalId: 'def456',
       };
       const updatedPayee = await payeesController.update(
-        createdPayee._id,
+        createdPayee.id,
         payeeUpdate,
       );
 

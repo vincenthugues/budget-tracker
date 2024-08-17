@@ -178,7 +178,7 @@ describe('CategoriesController', () => {
         isDeleted: true,
       };
       const updatedCategory = await categoriesController.update(
-        createdCategory._id,
+        createdCategory.id,
         categoryUpdate,
       );
 
