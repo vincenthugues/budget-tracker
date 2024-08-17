@@ -19,7 +19,7 @@ import { GetTransactionsUseCase } from './get-transactions.use-case';
 describe('GetTransactionsUseCase', () => {
   let useCase: GetTransactionsUseCase;
   let transactionModel: Model<Transaction>;
-  let transaction;
+  let transaction1, transaction2;
 
   beforeAll(async () => {
     await setupInMemoryMongo();
@@ -43,19 +43,8 @@ describe('GetTransactionsUseCase', () => {
       .compile();
 
     useCase = moduleRef.get<GetTransactionsUseCase>(GetTransactionsUseCase);
-  });
 
-  afterEach(async () => {
-    await dropInMemoryMongoCollections();
-  });
-
-  afterAll(async () => {
-    await teardownInMemoryMongo();
-  });
-
-  beforeEach(async () => {
-    transaction = await transactionModel.create({
-      date: new Date('2022-01-15'),
+    transaction1 = await transactionModel.create({
       amount: 123,
       transferType: TransferType.CREDIT,
       accountId: '5e1a0651741b255ddda996c4',
@@ -66,20 +55,42 @@ describe('GetTransactionsUseCase', () => {
       externalId: 'abc123',
       notes: 'Transaction 1',
     });
+
+    transaction2 = await transactionModel.create({
+      amount: 123,
+      transferType: TransferType.CREDIT,
+      accountId: '5e1a0651741b255ddda996c4',
+      payeeId: '5e1a0651741b255ddda996c4',
+      categoryId: '5e1a0651741b255ddda996c4',
+      isCleared: true,
+      isDeleted: false,
+      externalId: 'abc123',
+      notes: 'Transaction 2',
+    });
+  });
+
+  afterEach(async () => {
+    await dropInMemoryMongoCollections();
+  });
+
+  afterAll(async () => {
+    await teardownInMemoryMongo();
   });
 
   it('should return an array of all transactions', async () => {
-    await expect(useCase.execute()).resolves.toMatchObject([
-      {
-        _id: transaction._id,
+    await expect(useCase.execute()).resolves.toEqual([
+      expect.objectContaining({
+        _id: transaction1._id,
         notes: 'Transaction 1',
-      },
+      }),
+      expect.objectContaining({
+        _id: transaction2._id,
+        notes: 'Transaction 2',
+      }),
     ]);
   });
 
   it('should return an empty array when there are no transactions', async () => {
-    await transactionModel.deleteMany();
-
-    await expect(useCase.execute()).resolves.toMatchObject([]);
+    await expect(useCase.execute()).resolves.toEqual([]);
   });
 });
