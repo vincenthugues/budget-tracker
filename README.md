@@ -2,7 +2,7 @@
 
 ## Description
 
-Budget tracking app written with Nest and React, with json-based YNAB data import and simple transactions/categories/etc. list views
+Budget tracking app using NestJS and React, with json-based YNAB data import and simple transactions/categories/etc. list views
 
 ## Dependencies
 

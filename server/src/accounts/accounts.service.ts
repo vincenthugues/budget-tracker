@@ -17,7 +17,11 @@ export class AccountsService {
   }
 
   findAll(filters?: FilterAccountDto): Promise<AccountDocument[]> {
-    return this.accountModel.find(filters).exec();
+    return this.accountModel
+      .find({
+        ...(filters?.externalId ? { externalId: filters.externalId } : {}),
+      })
+      .exec();
   }
 
   async findOne(id: Types.ObjectId): Promise<AccountDocument> {

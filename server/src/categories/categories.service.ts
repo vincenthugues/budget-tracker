@@ -17,7 +17,11 @@ export class CategoriesService {
   }
 
   findAll(filters?: FilterCategoryDto): Promise<CategoryDocument[]> {
-    return this.categoryModel.find(filters).exec();
+    return this.categoryModel
+      .find({
+        ...(filters?.externalId ? { externalId: filters.externalId } : {}),
+      })
+      .exec();
   }
 
   async findOne(id: Types.ObjectId): Promise<CategoryDocument> {

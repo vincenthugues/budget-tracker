@@ -17,7 +17,11 @@ export class PayeesService {
   }
 
   findAll(filters?: FilterPayeeDto): Promise<PayeeDocument[]> {
-    return this.payeeModel.find(filters).exec();
+    return this.payeeModel
+      .find({
+        ...(filters?.externalId ? { externalId: filters.externalId } : {}),
+      })
+      .exec();
   }
 
   async findOne(id: Types.ObjectId): Promise<PayeeDocument> {
