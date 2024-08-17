@@ -55,7 +55,7 @@ export class TransactionsRepository {
       externalId?: string;
       notes?: string;
     },
-  ): Promise<TransactionDocument> {
+  ): Promise<TransactionDocument | null> {
     return this.transactionModel.findByIdAndUpdate(id, transaction, {
       new: true,
     });

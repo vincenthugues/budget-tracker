@@ -89,7 +89,7 @@ export class TransactionsController {
   update(
     @Param('id') id: Types.ObjectId,
     @Body() updateTransactionDto: UpdateTransactionDto,
-  ): Promise<TransactionDocument> {
+  ): Promise<TransactionDocument | null> {
     return this.updateTransactionUseCase.execute(id, updateTransactionDto);
   }
 

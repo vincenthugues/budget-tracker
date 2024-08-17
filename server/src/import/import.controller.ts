@@ -70,7 +70,7 @@ export class ImportController {
     return this.accountsService.create({
       name,
       externalId: id,
-      type: AccountType[type.toUpperCase()],
+      type: AccountType[type.toUpperCase() as keyof typeof AccountType],
       isClosed: closed,
       balance,
     });

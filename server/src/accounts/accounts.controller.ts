@@ -47,7 +47,7 @@ export class AccountsController {
       account: AccountDocument,
     ): AccountDocument => {
       const isLegacyAccount = !!account.externalId;
-      if (isLegacyAccount) {
+      if (isLegacyAccount && account.balance) {
         account.balance /= 10;
       }
       return account;

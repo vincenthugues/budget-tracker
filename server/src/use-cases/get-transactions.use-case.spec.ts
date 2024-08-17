@@ -10,6 +10,7 @@ import {
 } from '../../test/utils/inMemoryMongo';
 import {
   Transaction,
+  TransactionDocument,
   TransactionSchema,
   TransferType,
 } from '../transactions/schemas/transaction.schema';
@@ -19,7 +20,8 @@ import { GetTransactionsUseCase } from './get-transactions.use-case';
 describe('GetTransactionsUseCase', () => {
   let useCase: GetTransactionsUseCase;
   let transactionModel: Model<Transaction>;
-  let transaction1, transaction2;
+  let transaction1: TransactionDocument;
+  let transaction2: TransactionDocument;
 
   beforeAll(async () => {
     await setupInMemoryMongo();

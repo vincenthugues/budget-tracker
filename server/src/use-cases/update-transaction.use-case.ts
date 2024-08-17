@@ -16,7 +16,7 @@ export class UpdateTransactionUseCase {
   async execute(
     transactionId: TransactionDocument['_id'],
     updateTransactionDto: UpdateTransactionDto,
-  ): Promise<TransactionDocument> {
+  ): Promise<TransactionDocument | null> {
     this.logger.debug('CreateTransactionUseCase', {
       transactionId,
       updateTransactionDto,
@@ -32,7 +32,7 @@ export class UpdateTransactionUseCase {
       updateTransactionDto.transferType ||
       (transaction.amount > 0 ? TransferType.CREDIT : TransferType.DEBIT);
 
-    if (updateTransactionDto.amount <= 0) {
+    if (updateTransactionDto.amount && updateTransactionDto.amount <= 0) {
       this.logger.log(
         `Transaction amount must be positive: ${updateTransactionDto.amount}`,
       );

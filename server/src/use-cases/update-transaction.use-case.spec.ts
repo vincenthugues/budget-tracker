@@ -10,6 +10,7 @@ import {
 } from '../../test/utils/inMemoryMongo';
 import {
   Transaction,
+  TransactionDocument,
   TransactionSchema,
   TransferType,
 } from '../transactions/schemas/transaction.schema';
@@ -19,7 +20,7 @@ import { UpdateTransactionUseCase } from './update-transaction.use-case';
 describe('UpdateTransactionUseCase', () => {
   let useCase: UpdateTransactionUseCase;
   let transactionModel: Model<Transaction>;
-  let transaction;
+  let transaction: TransactionDocument;
 
   beforeAll(async () => {
     await setupInMemoryMongo();
@@ -70,7 +71,7 @@ describe('UpdateTransactionUseCase', () => {
 
   it('should return the updated object', async () => {
     await expect(
-      useCase.execute(transaction._id, {
+      useCase.execute(transaction.id, {
         notes: 'update',
       }),
     ).resolves.toMatchObject({
@@ -91,7 +92,7 @@ describe('UpdateTransactionUseCase', () => {
     const transactionUpdate = { amount: -1 };
 
     await expect(
-      useCase.execute(transaction._id, transactionUpdate),
+      useCase.execute(transaction.id, transactionUpdate),
     ).rejects.toThrow('Transaction amount must be positive');
   });
 
@@ -99,7 +100,7 @@ describe('UpdateTransactionUseCase', () => {
     const transactionUpdate = { amount: 0 };
 
     await expect(
-      useCase.execute(transaction._id, transactionUpdate),
+      useCase.execute(transaction.id, transactionUpdate),
     ).rejects.toThrow('Transaction amount must be positive');
   });
 });
