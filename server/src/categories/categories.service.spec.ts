@@ -61,9 +61,6 @@ describe('CategoriesService', () => {
       const category2Payload = { name: 'Category 2' };
       await categoryModel.create(category1Payload, category2Payload);
 
-      console.log('LENGTH');
-      console.log((await categoriesService.findAll()).length);
-
       await expect(categoriesService.findAll()).resolves.toEqual(
         expect.arrayContaining([
           expect.objectContaining(category1Payload),

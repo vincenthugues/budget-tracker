@@ -57,14 +57,14 @@ describe('AccountsService', () => {
       const account2Payload = { name: 'Account 2' };
       await accountModel.create(account1Payload, account2Payload);
 
-      expect(await accountsService.findAll()).toMatchObject([
-        account1Payload,
-        account2Payload,
+      await expect(accountsService.findAll()).resolves.toEqual([
+        expect.objectContaining(account1Payload),
+        expect.objectContaining(account2Payload),
       ]);
     });
 
     it('should return an empty array when there are no accounts', async () => {
-      expect(await accountsService.findAll()).toMatchObject([]);
+      await expect(accountsService.findAll()).resolves.toEqual([]);
     });
   });
 
@@ -113,7 +113,7 @@ describe('AccountsService', () => {
       });
       await accountsService.remove(id);
 
-      expect(await accountModel.find({})).toMatchObject([]);
+      await expect(accountModel.find({})).resolves.toEqual([]);
     });
 
     it('should fail if no account matches the id', async () => {

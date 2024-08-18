@@ -62,10 +62,10 @@ describe('PayeesController', () => {
       );
     });
 
-    it('should work if the externalId is null', async () => {
-      const payeePayload = {
+    it('should work if the externalId is undefined', async () => {
+      const payeePayload: CreatePayeeDto = {
         ...BASE_PAYEE_PAYLOAD,
-        externalId: null,
+        externalId: undefined,
       };
 
       const createdPayee = await payeesController.create(payeePayload);
@@ -82,7 +82,9 @@ describe('PayeesController', () => {
 
       await payeeModel.create(payeePayload);
 
-      expect(await payeesController.findAll()).toMatchObject([payeePayload]);
+      await expect(payeesController.findAll()).resolves.toMatchObject([
+        payeePayload,
+      ]);
     });
 
     it('should return an array of payees matching the filter', async () => {

@@ -112,7 +112,7 @@ describe('BudgetsService', () => {
 
       await budgetsService.remove(id);
 
-      expect(await budgetModel.find({})).toMatchObject([]);
+      await expect(budgetModel.find({})).resolves.toMatchObject([]);
     });
 
     it('should fail if no budget matches the id', async () => {

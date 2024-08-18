@@ -32,7 +32,10 @@ export class UpdateTransactionUseCase {
       updateTransactionDto.transferType ||
       (transaction.amount > 0 ? TransferType.CREDIT : TransferType.DEBIT);
 
-    if (updateTransactionDto.amount && updateTransactionDto.amount <= 0) {
+    if (
+      updateTransactionDto.amount !== undefined &&
+      updateTransactionDto.amount <= 0
+    ) {
       this.logger.log(
         `Transaction amount must be positive: ${updateTransactionDto.amount}`,
       );

@@ -80,7 +80,9 @@ describe('AccountsController', () => {
         externalId: undefined,
       };
 
-      expect(await accountsController.create(accountPayload)).toMatchObject({
+      await expect(
+        accountsController.create(accountPayload),
+      ).resolves.toMatchObject({
         name: 'Compte Courant',
         externalId: undefined,
       });
@@ -92,7 +94,9 @@ describe('AccountsController', () => {
         type: undefined,
       };
 
-      expect(await accountsController.create(accountPayload)).toMatchObject({
+      await expect(
+        accountsController.create(accountPayload),
+      ).resolves.toMatchObject({
         name: 'Compte Courant',
         type: undefined,
       });
@@ -104,7 +108,9 @@ describe('AccountsController', () => {
         isClosed: undefined,
       };
 
-      expect(await accountsController.create(accountPayload)).toMatchObject({
+      await expect(
+        accountsController.create(accountPayload),
+      ).resolves.toMatchObject({
         name: 'Compte Courant',
         isClosed: false,
       });
@@ -116,7 +122,9 @@ describe('AccountsController', () => {
         balance: undefined,
       };
 
-      expect(await accountsController.create(accountPayload)).toMatchObject({
+      await expect(
+        accountsController.create(accountPayload),
+      ).resolves.toMatchObject({
         name: 'Compte Courant',
         balance: 0,
       });
@@ -131,7 +139,7 @@ describe('AccountsController', () => {
       };
       await accountModel.create(accountPayload);
 
-      expect(await accountsController.findAll()).toMatchObject([
+      await expect(accountsController.findAll()).resolves.toMatchObject([
         accountPayload,
       ]);
     });

@@ -68,7 +68,9 @@ describe('BudgetsController', () => {
         externalId: undefined,
       };
 
-      expect(await budgetsController.create(budgetPayload)).toMatchObject({
+      await expect(
+        budgetsController.create(budgetPayload),
+      ).resolves.toMatchObject({
         name: 'New budget',
         externalId: undefined,
       });
@@ -80,7 +82,9 @@ describe('BudgetsController', () => {
         startingDate: undefined,
       };
 
-      expect(await budgetsController.create(budgetPayload)).toMatchObject({
+      await expect(
+        budgetsController.create(budgetPayload),
+      ).resolves.toMatchObject({
         name: 'New budget',
         externalId: 'abc123',
       });
@@ -95,7 +99,9 @@ describe('BudgetsController', () => {
       };
       await budgetModel.create(budgetPayload);
 
-      expect(await budgetsController.findAll()).toMatchObject([budgetPayload]);
+      await expect(budgetsController.findAll()).resolves.toMatchObject([
+        budgetPayload,
+      ]);
     });
 
     it('should return an array of budgets matching the filter', async () => {

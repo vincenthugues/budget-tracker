@@ -82,7 +82,9 @@ describe('CategoriesController', () => {
         externalId: undefined,
       };
 
-      expect(await categoriesController.create(categoryPayload)).toMatchObject({
+      await expect(
+        categoriesController.create(categoryPayload),
+      ).resolves.toMatchObject({
         name: 'Coffee shop',
         externalId: undefined,
       });
@@ -94,7 +96,9 @@ describe('CategoriesController', () => {
         parentCategoryId: undefined,
       };
 
-      expect(await categoriesController.create(categoryPayload)).toMatchObject({
+      await expect(
+        categoriesController.create(categoryPayload),
+      ).resolves.toMatchObject({
         name: 'Coffee shop',
         externalId: 'abc123',
         parentCategoryId: undefined,
@@ -107,7 +111,9 @@ describe('CategoriesController', () => {
         isHidden: undefined,
       };
 
-      expect(await categoriesController.create(categoryPayload)).toMatchObject({
+      await expect(
+        categoriesController.create(categoryPayload),
+      ).resolves.toMatchObject({
         name: 'Coffee shop',
         isHidden: false,
       });
@@ -119,7 +125,9 @@ describe('CategoriesController', () => {
         isDeleted: undefined,
       };
 
-      expect(await categoriesController.create(categoryPayload)).toMatchObject({
+      await expect(
+        categoriesController.create(categoryPayload),
+      ).resolves.toMatchObject({
         name: 'Coffee shop',
         isDeleted: false,
       });
@@ -135,7 +143,7 @@ describe('CategoriesController', () => {
 
       await categoryModel.create(categoryPayload);
 
-      expect(await categoriesController.findAll()).toMatchObject([
+      await expect(categoriesController.findAll()).resolves.toMatchObject([
         categoryPayload,
       ]);
     });

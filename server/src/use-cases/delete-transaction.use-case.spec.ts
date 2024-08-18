@@ -67,7 +67,7 @@ describe('DeleteTransactionUseCase', () => {
   it('should delete the object', async () => {
     await useCase.execute(transaction.id);
 
-    expect(await transactionModel.findById(transaction._id)).toBeNull();
+    await expect(transactionModel.findById(transaction.id)).resolves.toBeNull();
   });
 
   it('should return the deleted object', async () => {

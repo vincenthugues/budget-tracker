@@ -9,6 +9,7 @@ import {
 } from '../../test/utils/inMemoryMongo';
 import { PayeesService } from './payees.service';
 import { Payee, PayeeSchema } from './schemas/payee.schema';
+import { CreatePayeeDto } from './dto/create-payee.dto';
 
 describe('PayeesService', () => {
   let payeesService: PayeesService;
@@ -44,9 +45,13 @@ describe('PayeesService', () => {
       };
       const createdPayee = await payeesService.create(payeePayload);
 
-      expect(createdPayee).toMatchObject(payeePayload);
-      expect(createdPayee.createdAt).toBeDefined();
-      expect(createdPayee.updatedAt).toBeDefined();
+      expect(createdPayee).toEqual(
+        expect.objectContaining({
+          ...payeePayload,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+        }),
+      );
     });
   });
 
@@ -56,14 +61,14 @@ describe('PayeesService', () => {
       const payee2Payload = { name: 'Payee 2' };
       await payeeModel.create(payee1Payload, payee2Payload);
 
-      await expect(payeesService.findAll()).resolves.toMatchObject([
-        payee1Payload,
-        payee2Payload,
+      await expect(payeesService.findAll()).resolves.toEqual([
+        expect.objectContaining(payee1Payload),
+        expect.objectContaining(payee2Payload),
       ]);
     });
 
     it('should return an empty array when there are no payees', async () => {
-      await expect(payeesService.findAll()).resolves.toMatchObject([]);
+      await expect(payeesService.findAll()).resolves.toEqual([]);
     });
   });
 
@@ -112,7 +117,7 @@ describe('PayeesService', () => {
 
       await payeesService.remove(id);
 
-      expect(await payeeModel.find({})).toMatchObject([]);
+      await expect(payeeModel.find({})).resolves.toMatchObject([]);
     });
 
     it('should fail if no payee matches the id', async () => {
