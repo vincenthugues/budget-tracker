@@ -9,6 +9,6 @@
     "client:start": "cd client && yarn start",
     "server:start": "cd server && yarn start",
     "server:start:dev": "cd server && yarn start:dev",
-    "server:db": "mongod"
+    "db:start": "mongod"
   }
 }

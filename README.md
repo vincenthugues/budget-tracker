@@ -10,9 +10,14 @@ mongodb
 
 ## Run locally
 
-- `yarn server:db`
+- `yarn db:start`
 - `yarn server:start:dev`
-- `yarn client:start:dev`
+- `yarn client:start`
+
+## Run tests
+
+- `(cd server && yarn test)`
+- `(cd client && yarn test)`
 
 ## To do
 
