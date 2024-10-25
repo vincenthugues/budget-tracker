@@ -57,9 +57,9 @@ describe('AccountsService', () => {
       const account2Payload = { name: 'Account 2' };
       await accountModel.create(account1Payload, account2Payload);
 
-      await expect(accountsService.findAll()).resolves.toEqual([
-        expect.objectContaining(account1Payload),
-        expect.objectContaining(account2Payload),
+      await expect(accountsService.findAll()).resolves.toMatchObject([
+        account1Payload,
+        account2Payload,
       ]);
     });
 

@@ -60,9 +60,9 @@ describe('PayeesService', () => {
       const payee2Payload = { name: 'Payee 2' };
       await payeeModel.create(payee1Payload, payee2Payload);
 
-      await expect(payeesService.findAll()).resolves.toEqual([
-        expect.objectContaining(payee1Payload),
-        expect.objectContaining(payee2Payload),
+      await expect(payeesService.findAll()).resolves.toMatchObject([
+        payee1Payload,
+        payee2Payload,
       ]);
     });
 
