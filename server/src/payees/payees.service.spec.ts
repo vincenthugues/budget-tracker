@@ -9,7 +9,6 @@ import {
 } from '../../test/utils/inMemoryMongo';
 import { PayeesService } from './payees.service';
 import { Payee, PayeeSchema } from './schemas/payee.schema';
-import { CreatePayeeDto } from './dto/create-payee.dto';
 
 describe('PayeesService', () => {
   let payeesService: PayeesService;
